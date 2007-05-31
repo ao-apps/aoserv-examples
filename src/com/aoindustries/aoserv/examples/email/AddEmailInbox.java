@@ -5,12 +5,21 @@ package com.aoindustries.aoserv.examples.email;
  * 816 Azalea Rd, Mobile, Alabama, 36693, U.S.A.
  * All rights reserved.
  */
+import com.aoindustries.aoserv.client.AOServConnector;
+import com.aoindustries.aoserv.client.AOServer;
+import com.aoindustries.aoserv.client.EmailAddress;
+import com.aoindustries.aoserv.client.EmailDomain;
+import com.aoindustries.aoserv.client.LinuxAccount;
+import com.aoindustries.aoserv.client.LinuxAccountType;
+import com.aoindustries.aoserv.client.LinuxGroup;
+import com.aoindustries.aoserv.client.LinuxServerAccount;
 import com.aoindustries.aoserv.client.Package;
-import com.aoindustries.aoserv.client.*;
-import com.aoindustries.io.*;
-import com.aoindustries.sql.*;
-import java.io.*;
-import java.sql.*;
+import com.aoindustries.aoserv.client.Shell;
+import com.aoindustries.aoserv.client.SimpleAOClient;
+import com.aoindustries.aoserv.client.Username;
+import java.io.IOException;
+import java.sql.SQLException;
+import java.util.Locale;
 
 /**
  * An email inbox is a restricted Linux account. It can be used for sending 
@@ -102,7 +111,7 @@ public static LinuxServerAccount addEmailInbox(
     AOServer ao=conn.servers.get(server).getAOServer();
 
     // Grant the new Linux account access to the server
-    int lsaPKey=la.addLinuxServerAccount(ao, LinuxServerAccount.getDefaultHomeDirectory(username));
+    int lsaPKey=la.addLinuxServerAccount(ao, LinuxServerAccount.getDefaultHomeDirectory(username, Locale.getDefault()));
     LinuxServerAccount lsa=conn.linuxServerAccounts.get(lsaPKey);
 
     // Find the EmailDomain
