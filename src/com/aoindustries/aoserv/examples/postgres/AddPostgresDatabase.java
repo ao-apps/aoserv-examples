@@ -34,6 +34,7 @@ final public class AddPostgresDatabase {
  * @param  server          the hostname of the server to add the database to
  * @param  datdba          the username of the database administrator <code>PostgresUser</code>
  * @param  encoding        the encoding to use
+ * @param  enablePostgis   enables PostGIS on the database
  */
 public static void addPostgresDatabase(
     SimpleAOClient aoClient,
@@ -41,9 +42,10 @@ public static void addPostgresDatabase(
     String postgresServer,
     String server,
     String datdba,
-    String encoding
+    String encoding,
+    boolean enablePostgis
 ) throws IOException, SQLException {
-    aoClient.addPostgresDatabase(name, postgresServer, server, datdba, encoding);
+    aoClient.addPostgresDatabase(name, postgresServer, server, datdba, encoding, enablePostgis);
 }
 
 /**
@@ -55,6 +57,7 @@ public static void addPostgresDatabase(
  * @param  server          the hostname of the server to add the database to
  * @param  datdba          the username of the database administrator <code>PostgresUser</code>
  * @param  encoding        the encoding to use
+ * @param  enablePostgis   enables PostGIS on the database
  *
  * @return  the new <code>PostgresDatabase</code>
  */
@@ -64,7 +67,8 @@ public static PostgresDatabase addPostgresDatabase(
     String postgresServer,
     String server,
     String datdba,
-    String encoding
+    String encoding,
+    boolean enablePostgis
 ) throws IOException, SQLException {
 
     // Resolve the Server
@@ -80,7 +84,7 @@ public static PostgresDatabase addPostgresDatabase(
     PostgresEncoding pe=ps.getPostgresVersion().getPostgresEncoding(conn, encoding);
 
     // Add the PostgresDatabase
-    int pdPKey=ps.addPostgresDatabase(name, psu, pe);
+    int pdPKey=ps.addPostgresDatabase(name, psu, pe, enablePostgis);
     
     // Return the object
     return conn.postgresDatabases.get(pdPKey);
