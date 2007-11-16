@@ -105,7 +105,7 @@ final public class CreateAccount {
 	client.addPackage(
             packageName,
             accounting,
-            packageDefinition.getPKey()
+            packageDefinition.getPkey()
 	);
 	if(out!=null) out.print("Package added, name=").println(packageName).flush();
 
