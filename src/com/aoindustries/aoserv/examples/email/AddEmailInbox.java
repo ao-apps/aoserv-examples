@@ -122,7 +122,7 @@ public static LinuxServerAccount addEmailInbox(
     EmailAddress ea=conn.emailAddresses.get(eaPKey);
 
     // Attach the email address to the new inbox
-    la.addEmailAddress(ea);
+    lsa.addEmailAddress(ea);
 
     // Wait for rebuild
     ao.waitForLinuxAccountRebuild();
