@@ -74,25 +74,25 @@ public static PostgresServerUser addPostgresUser(
     String password
 ) throws IOException, SQLException {
     // Find the Package
-    Package pk=conn.packages.get(packageName);
+    Package pk=conn.getPackages().get(packageName);
 
     // Reserve the username
     pk.addUsername(username);
-    Username un=conn.usernames.get(username);
+    Username un=conn.getUsernames().get(username);
 
     // Indicate the username will be used for PostgreSQL accounts
     un.addPostgresUser();
     PostgresUser pu=un.getPostgresUser();
 
     // Resolve the Server
-    AOServer ao=conn.servers.get(server).getAOServer();
+    AOServer ao=conn.getServers().get(server).getAOServer();
 
     // Resolve the PostgresServer
     PostgresServer ps=ao.getPostgresServer(postgresServer);
 
     // Grant access to the server
     int psuPKey=pu.addPostgresServerUser(ps);
-    PostgresServerUser psu=conn.postgresServerUsers.get(psuPKey);
+    PostgresServerUser psu=conn.getPostgresServerUsers().get(psuPKey);
     
     // Commit the changes before setting the password
     ao.waitForPostgresUserRebuild();

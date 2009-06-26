@@ -72,7 +72,7 @@ public static PostgresDatabase addPostgresDatabase(
 ) throws IOException, SQLException {
 
     // Resolve the Server
-    AOServer ao=conn.aoServers.get(server);
+    AOServer ao=conn.getAoServers().get(server);
 
     // Resolve the PostgresServer
     PostgresServer ps=ao.getPostgresServer(postgresServer);
@@ -87,6 +87,6 @@ public static PostgresDatabase addPostgresDatabase(
     int pdPKey=ps.addPostgresDatabase(name, psu, pe, enablePostgis);
     
     // Return the object
-    return conn.postgresDatabases.get(pdPKey);
+    return conn.getPostgresDatabases().get(pdPKey);
 }
 }

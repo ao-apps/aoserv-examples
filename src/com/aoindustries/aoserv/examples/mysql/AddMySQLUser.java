@@ -81,17 +81,17 @@ public static MySQLServerUser addMySQLUser(
     String password
 ) throws IOException, SQLException {
     // Find the Package
-    Package pk=conn.packages.get(packageName);
+    Package pk=conn.getPackages().get(packageName);
 
     // Resolve the Server
-    AOServer ao=conn.aoServers.get(server);
+    AOServer ao=conn.getAoServers().get(server);
 
     // Resolve the MySQLServer
     MySQLServer ms=ao.getMySQLServer(mysqlServer);
 
     // Reserve the username
     pk.addUsername(username);
-    Username un=conn.usernames.get(username);
+    Username un=conn.getUsernames().get(username);
 
     // Indicate the username will be used for MySQL accounts
     un.addMySQLUser();
@@ -99,7 +99,7 @@ public static MySQLServerUser addMySQLUser(
 
     // Grant access to the server
     int msuPKey=mu.addMySQLServerUser(ms, MySQLServerUser.ANY_LOCAL_HOST);
-    MySQLServerUser msu=conn.mysqlServerUsers.get(msuPKey);
+    MySQLServerUser msu=conn.getMysqlServerUsers().get(msuPKey);
     
     // Find the MySQLDatabase
     MySQLDatabase md=ms.getMySQLDatabase(database);

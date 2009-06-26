@@ -5,12 +5,17 @@ package com.aoindustries.aoserv.examples.ftp;
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
+import com.aoindustries.aoserv.client.AOServConnector;
+import com.aoindustries.aoserv.client.AOServer;
+import com.aoindustries.aoserv.client.LinuxAccount;
+import com.aoindustries.aoserv.client.LinuxAccountType;
+import com.aoindustries.aoserv.client.LinuxServerAccount;
 import com.aoindustries.aoserv.client.Package;
-import com.aoindustries.aoserv.client.*;
-import com.aoindustries.io.*;
-import com.aoindustries.sql.*;
-import java.io.*;
-import java.sql.*;
+import com.aoindustries.aoserv.client.Shell;
+import com.aoindustries.aoserv.client.SimpleAOClient;
+import com.aoindustries.aoserv.client.Username;
+import java.io.IOException;
+import java.sql.SQLException;
 
 /**
  * An FTP Guest User is a restricted Linux Account.  The account is allowed to
@@ -94,11 +99,11 @@ public static LinuxServerAccount addFTPGuestuser(
     String password
 ) throws IOException, SQLException {
     // Resolve the Package
-    Package pk=conn.packages.get(packageName);
+    Package pk=conn.getPackages().get(packageName);
 
     // Allocate the username
     pk.addUsername(username);
-    Username un=conn.usernames.get(username);
+    Username un=conn.getUsernames().get(username);
     
     // Reserve the username for use as a Linux account
     un.addLinuxAccount(fullName, group, null, null, null, LinuxAccountType.FTPONLY, Shell.FTPPASSWD);
@@ -108,11 +113,11 @@ public static LinuxServerAccount addFTPGuestuser(
     la.addFTPGuestUser();
 
     // Find the server
-    AOServer ao=conn.aoServers.get(server);
+    AOServer ao=conn.getAoServers().get(server);
 
     // Grant the user access to the server
     int lsaPKey=la.addLinuxServerAccount(ao, home);
-    LinuxServerAccount lsa=conn.linuxServerAccounts.get(lsaPKey);
+    LinuxServerAccount lsa=conn.getLinuxServerAccounts().get(lsaPKey);
 
     // Wait for rebuild
     ao.waitForLinuxAccountRebuild();

@@ -97,29 +97,29 @@ public static LinuxServerAccount addEmailInbox(
     String password
 ) throws IOException, SQLException {
     // Resolve the Package
-    Package pk=conn.packages.get(packageName);
+    Package pk=conn.getPackages().get(packageName);
 
     // Reserve the username
     pk.addUsername(username);
-    Username un=conn.usernames.get(username);
+    Username un=conn.getUsernames().get(username);
 
     // Indicate the username will be used for Linux accounts
     un.addLinuxAccount(LinuxGroup.MAILONLY, fullName, null, null, null, LinuxAccountType.EMAIL, Shell.PASSWD);
     LinuxAccount la=un.getLinuxAccount();
 
     // Find the AOServer
-    AOServer ao=conn.servers.get(server).getAOServer();
+    AOServer ao=conn.getServers().get(server).getAOServer();
 
     // Grant the new Linux account access to the server
     int lsaPKey=la.addLinuxServerAccount(ao, LinuxServerAccount.getDefaultHomeDirectory(username, Locale.getDefault()));
-    LinuxServerAccount lsa=conn.linuxServerAccounts.get(lsaPKey);
+    LinuxServerAccount lsa=conn.getLinuxServerAccounts().get(lsaPKey);
 
     // Find the EmailDomain
     EmailDomain sd=ao.getEmailDomain(domain);
 
     // Create the new email address
     int eaPKey=sd.addEmailAddress(address);
-    EmailAddress ea=conn.emailAddresses.get(eaPKey);
+    EmailAddress ea=conn.getEmailAddresses().get(eaPKey);
 
     // Attach the email address to the new inbox
     lsa.addEmailAddress(ea);

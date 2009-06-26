@@ -5,12 +5,14 @@ package com.aoindustries.aoserv.examples.mysql;
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
+import com.aoindustries.aoserv.client.AOServConnector;
+import com.aoindustries.aoserv.client.AOServer;
+import com.aoindustries.aoserv.client.MySQLDatabase;
+import com.aoindustries.aoserv.client.MySQLServer;
 import com.aoindustries.aoserv.client.Package;
-import com.aoindustries.aoserv.client.*;
-import com.aoindustries.io.*;
-import com.aoindustries.sql.*;
-import java.io.*;
-import java.sql.*;
+import com.aoindustries.aoserv.client.SimpleAOClient;
+import java.io.IOException;
+import java.sql.SQLException;
 
 /**
  * Adds a new <code>MySQLDatabase</code> to the system.
@@ -60,17 +62,17 @@ public static MySQLDatabase addMySQLDatabase(
 ) throws IOException, SQLException {
 
     // Resolve the AOServer
-    AOServer ao=conn.aoServers.get(server);
+    AOServer ao=conn.getAoServers().get(server);
 
     // Resolve the MySQLServer
     MySQLServer ms=ao.getMySQLServer(mysqlServer);
     
     // Resolve the Package
-    Package pk=conn.packages.get(packageName);
+    Package pk=conn.getPackages().get(packageName);
 
     // Add the MySQLDatabase
     int mdPKey=ms.addMySQLDatabase(name, pk);
-    MySQLDatabase md=conn.mysqlDatabases.get(mdPKey);
+    MySQLDatabase md=conn.getMysqlDatabases().get(mdPKey);
 
     // Return the object
     return md;

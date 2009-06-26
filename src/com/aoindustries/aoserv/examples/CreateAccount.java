@@ -86,7 +86,7 @@ final public class CreateAccount {
 	SimpleAOClient client=new SimpleAOClient(conn);
 
         // Resolve the parent business
-        Business parent=conn.businesses.get(parentBusiness);
+        Business parent=conn.getBusinesses().get(parentBusiness);
         if(parent==null) throw new SQLException("Unable to find Business: "+parentBusiness);
 
         // Create the business
@@ -95,7 +95,7 @@ final public class CreateAccount {
 	if(out!=null) out.print("Business added, accounting=").println(accounting).flush();
 
         // Resolve the PackageDefinition
-        PackageCategory pc=conn.packageCategories.get(packageDefinitionCategory);
+        PackageCategory pc=conn.getPackageCategories().get(packageDefinitionCategory);
         if(pc==null) throw new SQLException("Unable to find PackageCategory: "+packageDefinitionCategory);
         PackageDefinition packageDefinition=parent.getPackageDefinition(pc, packageDefinitionName, packageDefinitionVersion);
         if(packageDefinition==null) throw new SQLException("Unable to find PackageDefinition: accounting="+parentBusiness+", category="+packageDefinitionCategory+", name="+packageDefinitionName+", version="+packageDefinitionVersion);
