@@ -21,8 +21,8 @@ import java.sql.SQLException;
  * An FTP Guest User is a restricted Linux Account.  The account is allowed to
  * transfer files via FTP only.  The account may not be used for use as an email
  * inbox.  If the user logs into the server via SSH or telnet, they are allowed
- * to change their password and then they are immediately disconnected.<BR>
- * <BR>
+ * to change their password and then they are immediately disconnected.<br />
+ * <br />
  * FTP Guest Users may only transfer files into and out of their home directories.
  * By making the home directory of the user be the <code>/www/<i>sitename</i>/webapps</code>
  * directory, the account is effectively restricted to accessing and updating the

@@ -14,8 +14,8 @@ import java.sql.*;
 
 /**
  * Before creating a new PostgreSQL database, please make sure that a <code>PostgresUser</code>
- * has been added for use as the Database Administrator (DBA).<BR>
- * <BR>
+ * has been added for use as the Database Administrator (DBA).<br />
+ * <br />
  * The possible values for <code>encoding</code> may be found in the <code>postgres_encodings</code> table.
  *
  * @see  AddPostgresUser
