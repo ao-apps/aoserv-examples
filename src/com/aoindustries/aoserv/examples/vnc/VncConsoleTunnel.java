@@ -19,6 +19,7 @@ import com.aoindustries.io.AOPool;
 import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
 import com.aoindustries.util.ErrorPrinter;
+import java.io.EOFException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -98,7 +99,7 @@ public class VncConsoleTunnel implements Runnable {
                                             AOServClientConfiguration.getSslTruststorePassword(),
                                             logger
                                         );
-                                        AOServDaemonConnection daemonConn=daemonConnector.getConnection();
+                                        final AOServDaemonConnection daemonConn=daemonConnector.getConnection();
                                         try {
                                             final CompressedDataOutputStream daemonOut = daemonConn.getOutputStream();
                                             try {
@@ -119,11 +120,15 @@ public class VncConsoleTunnel implements Runnable {
                                                                     new Runnable() {
                                                                         public void run() {
                                                                             try {
-                                                                                byte[] buff = new byte[4096];
-                                                                                int ret;
-                                                                                while((ret=socketIn.read(buff, 0, 4096))!=-1) {
-                                                                                    daemonOut.write(buff, 0, ret);
-                                                                                    daemonOut.flush();
+                                                                                try {
+                                                                                    byte[] buff = new byte[4096];
+                                                                                    int ret;
+                                                                                    while((ret=socketIn.read(buff, 0, 4096))!=-1) {
+                                                                                        daemonOut.write(buff, 0, ret);
+                                                                                        daemonOut.flush();
+                                                                                    }
+                                                                                } finally {
+                                                                                    daemonConn.close();
                                                                                 }
                                                                             } catch(ThreadDeath TD) {
                                                                                 throw TD;
@@ -134,7 +139,7 @@ public class VncConsoleTunnel implements Runnable {
                                                                     }
                                                                 );
                                                                 inThread.start();
-                                                                try {
+                                                                //try {
                                                                     // daemonIn -> socketOut in this thread
                                                                     byte[] buff = new byte[4096];
                                                                     int ret;
@@ -142,10 +147,10 @@ public class VncConsoleTunnel implements Runnable {
                                                                         socketOut.write(buff, 0, ret);
                                                                         socketOut.flush();
                                                                     }
-                                                                } finally {
+                                                                //} finally {
                                                                     // Let the in thread complete its work before closing streams
-                                                                    inThread.join();
-                                                                }
+                                                                //    inThread.join();
+                                                                //}
                                                             } finally {
                                                                 socketIn.close();
                                                             }
@@ -155,6 +160,7 @@ public class VncConsoleTunnel implements Runnable {
                                                     } else {
                                                         if (result == AOServDaemonProtocol.IO_EXCEPTION) throw new IOException(daemonIn.readUTF());
                                                         else if (result == AOServDaemonProtocol.SQL_EXCEPTION) throw new SQLException(daemonIn.readUTF());
+                                                        else if (result==-1) throw new EOFException();
                                                         else throw new IOException("Unknown result: " + result);
                                                     }
                                                 } finally {
