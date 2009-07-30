@@ -49,7 +49,7 @@ public static void addMySQLUser(
     aoClient.addMySQLServerUser(username, mysqlServer, server, MySQLServerUser.ANY_LOCAL_HOST);
 
     // Grant access to the database
-    aoClient.addMySQLDBUser(database, mysqlServer, server, username, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true);
+    aoClient.addMySQLDBUser(database, mysqlServer, server, username, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true);
 
     // Commit the changes before setting the password
     aoClient.waitForMySQLUserRebuild(server);
@@ -105,7 +105,7 @@ public static MySQLServerUser addMySQLUser(
     MySQLDatabase md=ms.getMySQLDatabase(database);
 
     // Grant access to the database
-    md.addMySQLServerUser(msu, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true);
+    md.addMySQLServerUser(msu, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true);
 
     // Commit the changes before setting the password
     ao.waitForMySQLUserRebuild();
