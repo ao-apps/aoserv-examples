@@ -13,6 +13,7 @@ import com.aoindustries.aoserv.client.Package;
 import com.aoindustries.aoserv.client.SimpleAOClient;
 import java.io.IOException;
 import java.sql.SQLException;
+import java.util.Locale;
 
 /**
  * Adds a new <code>MySQLDatabase</code> to the system.
@@ -39,7 +40,7 @@ public static void addMySQLDatabase(
     String server,
     String packageName
 ) throws IOException, SQLException {
-    aoClient.addMySQLDatabase(name, mysqlServer, server, packageName);
+    aoClient.addMySQLDatabase(Locale.getDefault(), name, mysqlServer, server, packageName);
 }
 
 /**
