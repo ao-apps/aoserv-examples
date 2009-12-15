@@ -5,11 +5,19 @@ package com.aoindustries.aoserv.examples;
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
-import com.aoindustries.aoserv.client.*;
-import com.aoindustries.io.*;
-import com.aoindustries.sql.*;
-import java.io.*;
-import java.sql.*;
+import com.aoindustries.aoserv.client.AOServConnector;
+import com.aoindustries.aoserv.client.Business;
+import com.aoindustries.aoserv.client.HttpdSite;
+import com.aoindustries.aoserv.client.LinuxAccountType;
+import com.aoindustries.aoserv.client.LinuxGroupType;
+import com.aoindustries.aoserv.client.PackageCategory;
+import com.aoindustries.aoserv.client.PackageDefinition;
+import com.aoindustries.aoserv.client.Shell;
+import com.aoindustries.aoserv.client.SimpleAOClient;
+import com.aoindustries.io.ChainWriter;
+import com.aoindustries.sql.SQLUtility;
+import java.io.IOException;
+import java.sql.SQLException;
 
 /**
  * Code to create an basic, but complete account with one web
@@ -46,13 +54,12 @@ final public class CreateAccount {
      * @param  mysqlAppPassword    the password associated with the newly created application user account
      * @param  ipAddress           the IP address the site will respond to
      * @param  ownsIPAddress       if <code>true</code>, the IP address ownership will be changed to the
-     *                             newly created <code>Package</code>
+     *                             newly created <code>Business</code>
      * @param  serverAdmin         the email address of the business_administrator who is responsible for web site maintenance
      * @param  primaryHttpHostname  the primary hostname for the HTTP server
      * @param  altHttpHostnames    the alternate hostnames for the HTTP server
      * @param  httpsHostname       the hostname for the HTTPS server
      * @param  tomcatVersion       the version of Tomcat to install
-     * @param  contentSrc          the source archive for the site, <code>null</code> will result in a default empty site
      */
     public static void createAccount(
         AOServConnector conn,
@@ -78,8 +85,7 @@ final public class CreateAccount {
         String serverAdmin,
         String primaryHttpHostname,
         String[] altHttpHostnames,
-        String tomcatVersion,
-        String contentSrc
+        String tomcatVersion
     ) throws IOException, SQLException {
     	long startTime=System.currentTimeMillis();
     	SimpleAOClient client=conn.getSimpleAOClient();
@@ -88,37 +94,28 @@ final public class CreateAccount {
         Business parent=conn.getBusinesses().get(parentBusiness);
         if(parent==null) throw new SQLException("Unable to find Business: "+parentBusiness);
 
-        // Create the business
-        String accounting=client.generateAccountingCode(accountingTemplate);
-        client.addBusiness(accounting, null, server, parentBusiness, false, false, true, true);
-        if(out!=null) out.print("Business added, accounting=").println(accounting).flush();
-
         // Resolve the PackageDefinition
         PackageCategory pc=conn.getPackageCategories().get(packageDefinitionCategory);
         if(pc==null) throw new SQLException("Unable to find PackageCategory: "+packageDefinitionCategory);
         PackageDefinition packageDefinition=parent.getPackageDefinition(pc, packageDefinitionName, packageDefinitionVersion);
         if(packageDefinition==null) throw new SQLException("Unable to find PackageDefinition: accounting="+parentBusiness+", category="+packageDefinitionCategory+", name="+packageDefinitionName+", version="+packageDefinitionVersion);
 
-        // Add a Package to the Business
-        String packageName=client.generatePackageName(accounting+'_');
-        client.addPackage(
-            packageName,
-            accounting,
-            packageDefinition.getPkey()
-        );
-        if(out!=null) out.print("Package added, name=").println(packageName).flush();
+        // Create the business
+        String accounting=client.generateAccountingCode(accountingTemplate);
+        client.addBusiness(accounting, null, server, parentBusiness, false, false, true, true, packageDefinition.getPkey());
+        if(out!=null) out.print("Business added, accounting=").println(accounting).flush();
 
         // Find the site_name that will be used
         String siteName=client.generateSiteName(siteNameTemplate);
 
         // Add the Linux group that the JVM and FTP account will use
-        client.addLinuxGroup(groupName, packageName, LinuxGroupType.USER);
+        client.addLinuxGroup(groupName, accounting, LinuxGroupType.USER);
         if(out!=null) out.print("LinuxGroup added, name=").println(groupName).flush();
         int linuxServerGroupPKey=client.addLinuxServerGroup(groupName, server);
         if(out!=null) out.print("LinuxServerGroup added, pkey=").println(linuxServerGroupPKey).flush();
 
         // Add the Linux account that the JVM will run as
-        client.addUsername(packageName, jvmUsername);
+        client.addUsername(accounting, jvmUsername);
         if(out!=null) out.print("Username added, username=").println(jvmUsername).flush();
         client.addLinuxAccount(
             jvmUsername,
@@ -135,7 +132,7 @@ final public class CreateAccount {
         if(out!=null) out.print("LinuxServerAccount added, pkey=").println(jvmLinuxServerAccountPKey).flush();
 
         // Add the Linux account that will have FTP only access
-        client.addUsername(packageName, ftpUsername);
+        client.addUsername(accounting, ftpUsername);
         if(out!=null) out.print("Username added, username=").println(ftpUsername).flush();
         client.addLinuxAccount(
             ftpUsername,
@@ -165,12 +162,12 @@ final public class CreateAccount {
 
         // Add the MySQL database
         /*String mysqlDatabaseName=client.generateMySQLDatabaseName(siteName.replace('-', '_'), "_");
-        int mysqlDatabasePKey=client.addMySQLDatabase(mysqlDatabaseName, server, packageName);
+        int mysqlDatabasePKey=client.addMySQLDatabase(mysqlDatabaseName, server, accounting);
         if(out!=null) out.print("MySQLDatabase added, pkey=").println(mysqlDatabasePKey).flush();
 
         // Create the MySQL database application user
         if(client.isUsernameAvailable(mysqlAppUsername)) {
-            client.addUsername(packageName, mysqlAppUsername);
+            client.addUsername(accounting, mysqlAppUsername);
             if(out!=null) out.print("Username added, username=").println(mysqlAppUsername).flush();
         }
         client.addMySQLUser(mysqlAppUsername);
@@ -224,15 +221,15 @@ final public class CreateAccount {
         */
         // Change the IP Address ownership if a private IP is being allotted
         if(ownsIPAddress) {
-            client.setIPAddressPackage(ipAddress, server, netDevice, packageName);
-            if(out!=null) out.print("IPAddress package set, package="+packageName).flush();
+            client.setIPAddressBusiness(ipAddress, server, netDevice, accounting);
+            if(out!=null) out.print("IPAddress business set, accounting="+accounting).flush();
         }
 
         // Create the site
         int tomcatStdSitePKey=client.addHttpdTomcatStdSite(
             server,
             siteName,
-            packageName,
+            accounting,
             jvmUsername,
             groupName,
             serverAdmin,
@@ -241,8 +238,7 @@ final public class CreateAccount {
             netDevice,
             primaryHttpHostname,
             altHttpHostnames,
-            tomcatVersion,
-            contentSrc
+            tomcatVersion
         );
         if(out!=null) out.print("HttpdTomcatStdSite added, pkey=").println(tomcatStdSitePKey).flush();
 

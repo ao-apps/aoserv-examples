@@ -5,12 +5,15 @@ package com.aoindustries.aoserv.examples.postgres;
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
-import com.aoindustries.aoserv.client.Package;
-import com.aoindustries.aoserv.client.*;
-import com.aoindustries.io.*;
-import com.aoindustries.sql.*;
-import java.io.*;
-import java.sql.*;
+import com.aoindustries.aoserv.client.AOServConnector;
+import com.aoindustries.aoserv.client.AOServer;
+import com.aoindustries.aoserv.client.PostgresDatabase;
+import com.aoindustries.aoserv.client.PostgresEncoding;
+import com.aoindustries.aoserv.client.PostgresServer;
+import com.aoindustries.aoserv.client.PostgresServerUser;
+import com.aoindustries.aoserv.client.SimpleAOClient;
+import java.io.IOException;
+import java.sql.SQLException;
 
 /**
  * Before creating a new PostgreSQL database, please make sure that a <code>PostgresUser</code>

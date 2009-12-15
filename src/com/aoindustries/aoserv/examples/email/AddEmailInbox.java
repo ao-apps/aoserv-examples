@@ -7,13 +7,13 @@ package com.aoindustries.aoserv.examples.email;
  */
 import com.aoindustries.aoserv.client.AOServConnector;
 import com.aoindustries.aoserv.client.AOServer;
+import com.aoindustries.aoserv.client.Business;
 import com.aoindustries.aoserv.client.EmailAddress;
 import com.aoindustries.aoserv.client.EmailDomain;
 import com.aoindustries.aoserv.client.LinuxAccount;
 import com.aoindustries.aoserv.client.LinuxAccountType;
 import com.aoindustries.aoserv.client.LinuxGroup;
 import com.aoindustries.aoserv.client.LinuxServerAccount;
-import com.aoindustries.aoserv.client.Package;
 import com.aoindustries.aoserv.client.Shell;
 import com.aoindustries.aoserv.client.SimpleAOClient;
 import com.aoindustries.aoserv.client.Username;
@@ -37,7 +37,7 @@ final public class AddEmailInbox {
  * Creates a new email inbox.
  *
  * @param  aoClient     the <code>SimpleAOClient</code> to use
- * @param  packageName  the name of the <code>Package</code>
+ * @param  accounting   the accounting code of the <code>Business</code>
  * @param  username     the new username to allocate
  * @param  fullName     the user's full name
  * @param  server       the hostname of the server to add the user to
@@ -46,7 +46,7 @@ final public class AddEmailInbox {
  */
 public static void addEmailInbox(
     SimpleAOClient aoClient,
-    String packageName,
+    String accounting,
     String username,
     String fullName,
     String server,
@@ -55,7 +55,7 @@ public static void addEmailInbox(
     String password
 ) throws IOException, SQLException {
     // Reserve the username
-    aoClient.addUsername(packageName, username);
+    aoClient.addUsername(accounting, username);
 
     // Indicate the username will be used for Linux accounts
     aoClient.addLinuxAccount(username, LinuxGroup.MAILONLY, fullName, null, null, null, LinuxAccountType.EMAIL, Shell.PASSWD);
@@ -77,7 +77,7 @@ public static void addEmailInbox(
  * Creates a new email inbox.
  *
  * @param  conn         the <code>AOServConnector</code> to use
- * @param  packageName  the name of the <code>Package</code>
+ * @param  accounting   the accounting code of the <code>Business</code>
  * @param  username     the new username to allocate
  * @param  fullName     the user's full name
  * @param  server       the hostname of the server to add the user to
@@ -88,7 +88,7 @@ public static void addEmailInbox(
  */
 public static LinuxServerAccount addEmailInbox(
     AOServConnector conn,
-    String packageName,
+    String accounting,
     String username,
     String fullName,
     String server,
@@ -97,10 +97,10 @@ public static LinuxServerAccount addEmailInbox(
     String password
 ) throws IOException, SQLException {
     // Resolve the Package
-    Package pk=conn.getPackages().get(packageName);
+    Business bu=conn.getBusinesses().get(accounting);
 
     // Reserve the username
-    pk.addUsername(username);
+    bu.addUsername(username);
     Username un=conn.getUsernames().get(username);
 
     // Indicate the username will be used for Linux accounts

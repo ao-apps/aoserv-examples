@@ -5,12 +5,17 @@ package com.aoindustries.aoserv.examples.mysql;
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
-import com.aoindustries.aoserv.client.Package;
-import com.aoindustries.aoserv.client.*;
-import com.aoindustries.io.*;
-import com.aoindustries.sql.*;
-import java.io.*;
-import java.sql.*;
+import com.aoindustries.aoserv.client.AOServConnector;
+import com.aoindustries.aoserv.client.AOServer;
+import com.aoindustries.aoserv.client.Business;
+import com.aoindustries.aoserv.client.MySQLDatabase;
+import com.aoindustries.aoserv.client.MySQLServer;
+import com.aoindustries.aoserv.client.MySQLServerUser;
+import com.aoindustries.aoserv.client.MySQLUser;
+import com.aoindustries.aoserv.client.SimpleAOClient;
+import com.aoindustries.aoserv.client.Username;
+import java.io.IOException;
+import java.sql.SQLException;
 
 /**
  * Adds a <code>MySQLUser</code> to the system.
@@ -23,7 +28,7 @@ final public class AddMySQLUser {
  * Adds a <code>MySQLUser</code> to the system.
  *
  * @param  aoClient     the <code>SimpleAOClient</code> to use
- * @param  packageName  the name of the <code>Package</code>
+ * @param  accounting   the accounting code of the <code>Business</code>
  * @param  username     the new username to allocate
  * @param  mysqlServer  the name of the MySQL instance
  * @param  server       the hostname of the server to add the account to
@@ -32,7 +37,7 @@ final public class AddMySQLUser {
  */
 public static void addMySQLUser(
     SimpleAOClient aoClient,
-    String packageName,
+    String accounting,
     String username,
     String mysqlServer,
     String server,
@@ -40,7 +45,7 @@ public static void addMySQLUser(
     String password
 ) throws IOException, SQLException {
     // Reserve the username
-    aoClient.addUsername(packageName, username);
+    aoClient.addUsername(accounting, username);
 
     // Indicate the username will be used for MySQL accounts
     aoClient.addMySQLUser(username);
@@ -62,7 +67,7 @@ public static void addMySQLUser(
  * Adds a <code>MySQLUser</code> to the system.
  *
  * @param  conn         the <code>AOServConnector</code> to use
- * @param  packageName  the name of the <code>Package</code>
+ * @param  accounting   the accounting code of the <code>Business</code>
  * @param  username     the new username to allocate
  * @param  mysqlServer  the name of the MySQL instance
  * @param  server       the hostname of the server to add the account to
@@ -73,7 +78,7 @@ public static void addMySQLUser(
  */
 public static MySQLServerUser addMySQLUser(
     AOServConnector conn,
-    String packageName,
+    String accounting,
     String username,
     String mysqlServer,
     String server,
@@ -81,7 +86,7 @@ public static MySQLServerUser addMySQLUser(
     String password
 ) throws IOException, SQLException {
     // Find the Package
-    Package pk=conn.getPackages().get(packageName);
+    Business bu=conn.getBusinesses().get(accounting);
 
     // Resolve the Server
     AOServer ao=conn.getAoServers().get(server);
@@ -90,7 +95,7 @@ public static MySQLServerUser addMySQLUser(
     MySQLServer ms=ao.getMySQLServer(mysqlServer);
 
     // Reserve the username
-    pk.addUsername(username);
+    bu.addUsername(username);
     Username un=conn.getUsernames().get(username);
 
     // Indicate the username will be used for MySQL accounts
