@@ -1,7 +1,7 @@
 package com.aoindustries.aoserv.examples.email;
 
 /*
- * Copyright 2001-2009 by AO Industries, Inc.,
+ * Copyright 2001-2010 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
@@ -19,7 +19,6 @@ import com.aoindustries.aoserv.client.SimpleAOClient;
 import com.aoindustries.aoserv.client.Username;
 import java.io.IOException;
 import java.sql.SQLException;
-import java.util.Locale;
 
 /**
  * An email inbox is a restricted Linux account. It can be used for sending 
@@ -111,7 +110,7 @@ public static LinuxServerAccount addEmailInbox(
     AOServer ao=conn.getServers().get(server).getAOServer();
 
     // Grant the new Linux account access to the server
-    int lsaPKey=la.addLinuxServerAccount(ao, LinuxServerAccount.getDefaultHomeDirectory(username, Locale.getDefault()));
+    int lsaPKey=la.addLinuxServerAccount(ao, LinuxServerAccount.getDefaultHomeDirectory(username));
     LinuxServerAccount lsa=conn.getLinuxServerAccounts().get(lsaPKey);
 
     // Find the EmailDomain

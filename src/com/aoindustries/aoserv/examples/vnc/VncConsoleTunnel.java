@@ -1,7 +1,7 @@
 package com.aoindustries.aoserv.examples.vnc;
 
 /*
- * Copyright 2009 by AO Industries, Inc.,
+ * Copyright 2009-2010 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
@@ -47,7 +47,6 @@ public class VncConsoleTunnel implements Runnable {
             try {
                 AOServConnector conn = AOServConnector.getConnector(logger);
                 Server server = conn.getServers().get(args[0]);
-                if(server==null) throw new SQLException("Unable to find Server: "+args[0]);
                 VirtualServer virtualServer = server.getVirtualServer();
                 if(virtualServer==null) throw new SQLException("Server is not a VirtualServer: "+args[0]);
                 new VncConsoleTunnel(

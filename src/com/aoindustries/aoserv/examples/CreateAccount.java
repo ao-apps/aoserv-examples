@@ -1,7 +1,7 @@
 package com.aoindustries.aoserv.examples;
 
 /*
- * Copyright 2001-2009 by AO Industries, Inc.,
+ * Copyright 2001-2010 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
@@ -92,13 +92,10 @@ final public class CreateAccount {
 
         // Resolve the parent business
         Business parent=conn.getBusinesses().get(parentBusiness);
-        if(parent==null) throw new SQLException("Unable to find Business: "+parentBusiness);
 
         // Resolve the PackageDefinition
         PackageCategory pc=conn.getPackageCategories().get(packageDefinitionCategory);
-        if(pc==null) throw new SQLException("Unable to find PackageCategory: "+packageDefinitionCategory);
         PackageDefinition packageDefinition=parent.getPackageDefinition(pc, packageDefinitionName, packageDefinitionVersion);
-        if(packageDefinition==null) throw new SQLException("Unable to find PackageDefinition: accounting="+parentBusiness+", category="+packageDefinitionCategory+", name="+packageDefinitionName+", version="+packageDefinitionVersion);
 
         // Create the business
         String accounting=client.generateAccountingCode(accountingTemplate);

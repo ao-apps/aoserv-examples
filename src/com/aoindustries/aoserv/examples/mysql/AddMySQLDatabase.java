@@ -1,7 +1,7 @@
 package com.aoindustries.aoserv.examples.mysql;
 
 /*
- * Copyright 2001-2009 by AO Industries, Inc.,
+ * Copyright 2001-2010 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
@@ -13,7 +13,6 @@ import com.aoindustries.aoserv.client.MySQLServer;
 import com.aoindustries.aoserv.client.SimpleAOClient;
 import java.io.IOException;
 import java.sql.SQLException;
-import java.util.Locale;
 
 /**
  * Adds a new <code>MySQLDatabase</code> to the system.
@@ -40,7 +39,7 @@ final public class AddMySQLDatabase {
         String server,
         String accounting
     ) throws IOException, SQLException {
-        aoClient.addMySQLDatabase(Locale.getDefault(), name, mysqlServer, server, accounting);
+        aoClient.addMySQLDatabase(name, mysqlServer, server, accounting);
     }
 
     /**
