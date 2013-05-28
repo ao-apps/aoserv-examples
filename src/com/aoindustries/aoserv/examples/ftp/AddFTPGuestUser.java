@@ -1,19 +1,21 @@
-package com.aoindustries.aoserv.examples.ftp;
-
 /*
- * Copyright 2001-2010 by AO Industries, Inc.,
+ * Copyright 2001-2013 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
+package com.aoindustries.aoserv.examples.ftp;
+
 import com.aoindustries.aoserv.client.AOServConnector;
 import com.aoindustries.aoserv.client.AOServer;
-import com.aoindustries.aoserv.client.Business;
 import com.aoindustries.aoserv.client.LinuxAccount;
 import com.aoindustries.aoserv.client.LinuxAccountType;
 import com.aoindustries.aoserv.client.LinuxServerAccount;
+import com.aoindustries.aoserv.client.Package;
 import com.aoindustries.aoserv.client.Shell;
 import com.aoindustries.aoserv.client.SimpleAOClient;
 import com.aoindustries.aoserv.client.Username;
+import com.aoindustries.aoserv.client.validator.DomainName;
+import com.aoindustries.aoserv.client.validator.Gecos;
 import java.io.IOException;
 import java.sql.SQLException;
 
@@ -37,7 +39,7 @@ final public class AddFTPGuestUser {
  * Adds a <code>FTPGuestUser</code> to the system.
  *
  * @param  aoClient     the <code>SimpleAOClient</code> to use
- * @param  accounting   the accounting code of the <code>Business</code> to add the account to
+ * @param  packageName  the name of the package to add the account to
  * @param  username     the username to allocate
  * @param  fullName     the full name of the user
  * @param  group        the name of the Linux group they can access
@@ -47,16 +49,16 @@ final public class AddFTPGuestUser {
  */
 public static void addFTPGuestuser(
     SimpleAOClient aoClient,
-    String accounting,
+    String packageName,
     String username,
-    String fullName,
+    Gecos fullName,
     String group,
     String server,
     String home,
     String password
 ) throws IOException, SQLException {
     // Allocate the username
-    aoClient.addUsername(accounting, username);
+    aoClient.addUsername(packageName, username);
     
     // Reserve the username for use as a Linux account
     aoClient.addLinuxAccount(username, group, fullName, null, null, null, LinuxAccountType.FTPONLY, Shell.FTPPASSWD);
@@ -78,7 +80,7 @@ public static void addFTPGuestuser(
  * Adds a <code>FTPGuestUser</code> to the system.
  *
  * @param  conn         the <code>AOServConnector</code> to use
- * @param  accounting   the accounting code of the <code>Business</code> to add the account to
+ * @param  packageName  the name of the package to add the account to
  * @param  username     the username to allocate
  * @param  fullName     the full name of the user
  * @param  group        the name of the Linux group they can access
@@ -90,23 +92,23 @@ public static void addFTPGuestuser(
  */
 public static LinuxServerAccount addFTPGuestuser(
     AOServConnector conn,
-    String accounting,
+    String packageName,
     String username,
-    String fullName,
+    Gecos fullName,
     String group,
-    String server,
+    DomainName server,
     String home,
     String password
 ) throws IOException, SQLException {
     // Resolve the Package
-    Business bu=conn.getBusinesses().get(accounting);
+    Package pk=conn.getPackages().get(packageName);
 
     // Allocate the username
-    bu.addUsername(username);
+    pk.addUsername(username);
     Username un=conn.getUsernames().get(username);
     
     // Reserve the username for use as a Linux account
-    un.addLinuxAccount(fullName, group, null, null, null, LinuxAccountType.FTPONLY, Shell.FTPPASSWD);
+    un.addLinuxAccount(group, fullName, null, null, null, LinuxAccountType.FTPONLY, Shell.FTPPASSWD);
     LinuxAccount la=un.getLinuxAccount();
 
     // Limit the FTP transfers to the users home directory

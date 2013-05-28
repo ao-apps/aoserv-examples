@@ -1,19 +1,17 @@
 package com.aoindustries.aoserv.examples.postgres;
 
 /*
- * Copyright 2001-2010 by AO Industries, Inc.,
+ * Copyright 2001-2009 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
-import com.aoindustries.aoserv.client.AOServConnector;
-import com.aoindustries.aoserv.client.AOServer;
-import com.aoindustries.aoserv.client.PostgresDatabase;
-import com.aoindustries.aoserv.client.PostgresEncoding;
-import com.aoindustries.aoserv.client.PostgresServer;
-import com.aoindustries.aoserv.client.PostgresServerUser;
-import com.aoindustries.aoserv.client.SimpleAOClient;
-import java.io.IOException;
-import java.sql.SQLException;
+import com.aoindustries.aoserv.client.Package;
+import com.aoindustries.aoserv.client.*;
+import com.aoindustries.aoserv.client.validator.DomainName;
+import com.aoindustries.io.*;
+import com.aoindustries.sql.*;
+import java.io.*;
+import java.sql.*;
 
 /**
  * Before creating a new PostgreSQL database, please make sure that a <code>PostgresUser</code>
@@ -68,7 +66,7 @@ public static PostgresDatabase addPostgresDatabase(
     AOServConnector conn,
     String name,
     String postgresServer,
-    String server,
+    DomainName server,
     String datdba,
     String encoding,
     boolean enablePostgis
