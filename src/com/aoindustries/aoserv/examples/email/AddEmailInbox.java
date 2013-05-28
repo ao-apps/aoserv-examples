@@ -1,10 +1,10 @@
-package com.aoindustries.aoserv.examples.email;
-
 /*
- * Copyright 2001-2009 by AO Industries, Inc.,
+ * Copyright 2001-2013 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
+package com.aoindustries.aoserv.examples.email;
+
 import com.aoindustries.aoserv.client.AOServConnector;
 import com.aoindustries.aoserv.client.AOServer;
 import com.aoindustries.aoserv.client.EmailAddress;
@@ -17,6 +17,8 @@ import com.aoindustries.aoserv.client.Package;
 import com.aoindustries.aoserv.client.Shell;
 import com.aoindustries.aoserv.client.SimpleAOClient;
 import com.aoindustries.aoserv.client.Username;
+import com.aoindustries.aoserv.client.validator.DomainName;
+import com.aoindustries.aoserv.client.validator.Gecos;
 import java.io.IOException;
 import java.sql.SQLException;
 
@@ -47,10 +49,10 @@ public static void addEmailInbox(
     SimpleAOClient aoClient,
     String packageName,
     String username,
-    String fullName,
+    Gecos fullName,
     String server,
     String address,
-    String domain,
+    DomainName domain,
     String password
 ) throws IOException, SQLException {
     // Reserve the username
@@ -89,10 +91,10 @@ public static LinuxServerAccount addEmailInbox(
     AOServConnector conn,
     String packageName,
     String username,
-    String fullName,
+    Gecos fullName,
     String server,
     String address,
-    String domain,
+    DomainName domain,
     String password
 ) throws IOException, SQLException {
     // Resolve the Package

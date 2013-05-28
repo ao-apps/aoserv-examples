@@ -11,6 +11,7 @@ import com.aoindustries.aoserv.client.MySQLDatabase;
 import com.aoindustries.aoserv.client.MySQLServer;
 import com.aoindustries.aoserv.client.Package;
 import com.aoindustries.aoserv.client.SimpleAOClient;
+import com.aoindustries.aoserv.client.validator.DomainName;
 import java.io.IOException;
 import java.sql.SQLException;
 
@@ -57,7 +58,7 @@ public static MySQLDatabase addMySQLDatabase(
     AOServConnector conn,
     String name,
     String mysqlServer,
-    String server,
+    DomainName server,
     String packageName
 ) throws IOException, SQLException {
 
