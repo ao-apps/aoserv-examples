@@ -1,19 +1,27 @@
-package com.aoindustries.aoserv.examples;
-
 /*
- * Copyright 2001-2009 by AO Industries, Inc.,
+ * Copyright 2001-2009, 2015 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
-import com.aoindustries.aoserv.client.*;
+package com.aoindustries.aoserv.examples;
+
+import com.aoindustries.aoserv.client.AOServConnector;
+import com.aoindustries.aoserv.client.Business;
+import com.aoindustries.aoserv.client.HttpdSite;
+import com.aoindustries.aoserv.client.LinuxAccountType;
+import com.aoindustries.aoserv.client.LinuxGroupType;
+import com.aoindustries.aoserv.client.PackageCategory;
+import com.aoindustries.aoserv.client.PackageDefinition;
+import com.aoindustries.aoserv.client.Shell;
+import com.aoindustries.aoserv.client.SimpleAOClient;
 import com.aoindustries.aoserv.client.validator.AccountingCode;
 import com.aoindustries.aoserv.client.validator.Gecos;
 import com.aoindustries.aoserv.client.validator.InetAddress;
 import com.aoindustries.aoserv.client.validator.ValidationException;
-import com.aoindustries.io.*;
-import com.aoindustries.sql.*;
-import java.io.*;
-import java.sql.*;
+import com.aoindustries.sql.SQLUtility;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.sql.SQLException;
 
 /**
  * Code to create an basic, but complete account with one web
@@ -60,7 +68,7 @@ final public class CreateAccount {
      */
     public static void createAccount(
         AOServConnector conn,
-        ChainWriter out,
+        PrintWriter out,
         AccountingCode accountingTemplate,
         String server,
         AccountingCode parentBusiness,
@@ -95,7 +103,11 @@ final public class CreateAccount {
         // Create the business
         AccountingCode accounting=client.generateAccountingCode(accountingTemplate);
         client.addBusiness(accounting, null, server, parentBusiness, false, false, true, true);
-        if(out!=null) out.print("Business added, accounting=").println(accounting).flush();
+        if(out!=null) {
+			out.print("Business added, accounting=");
+			out.println(accounting);
+			out.flush();
+		}
 
         // Resolve the PackageDefinition
         PackageCategory pc=conn.getPackageCategories().get(packageDefinitionCategory);
@@ -110,37 +122,65 @@ final public class CreateAccount {
             accounting,
             packageDefinition.getPkey()
         );
-        if(out!=null) out.print("Package added, name=").println(packageName).flush();
+        if(out!=null) {
+			out.print("Package added, name=");
+			out.println(packageName);
+			out.flush();
+		}
 
         // Find the site_name that will be used
         String siteName=client.generateSiteName(siteNameTemplate);
 
         // Add the Linux group that the JVM and FTP account will use
         client.addLinuxGroup(groupName, packageName, LinuxGroupType.USER);
-        if(out!=null) out.print("LinuxGroup added, name=").println(groupName).flush();
+        if(out!=null) {
+			out.print("LinuxGroup added, name=");
+			out.println(groupName);
+			out.flush();
+		}
         int linuxServerGroupPKey=client.addLinuxServerGroup(groupName, server);
-        if(out!=null) out.print("LinuxServerGroup added, pkey=").println(linuxServerGroupPKey).flush();
+        if(out!=null) {
+			out.print("LinuxServerGroup added, pkey=");
+			out.println(linuxServerGroupPKey);
+			out.flush();
+		}
 
         // Add the Linux account that the JVM will run as
         client.addUsername(packageName, jvmUsername);
-        if(out!=null) out.print("Username added, username=").println(jvmUsername).flush();
+        if(out!=null) {
+			out.print("Username added, username=");
+			out.println(jvmUsername);
+			out.flush();
+		}
         client.addLinuxAccount(
             jvmUsername,
             groupName,
             Gecos.valueOf(siteName+" Java VM"),
-            null,
-            null,
-            null,
+            null, // officeLocation
+            null, // officePhone
+            null, // homePhone
             LinuxAccountType.USER,
             Shell.BASH
         );
-        if(out!=null) out.print("LinuxAccount added, username=").println(jvmUsername).flush();
+        if(out!=null) {
+			out.print("LinuxAccount added, username=");
+			out.println(jvmUsername);
+			out.flush();
+		}
         int jvmLinuxServerAccountPKey=client.addLinuxServerAccount(jvmUsername, server, HttpdSite.WWW_DIRECTORY+'/'+siteName);
-        if(out!=null) out.print("LinuxServerAccount added, pkey=").println(jvmLinuxServerAccountPKey).flush();
+        if(out!=null) {
+			out.print("LinuxServerAccount added, pkey=");
+			out.println(jvmLinuxServerAccountPKey);
+			out.flush();
+		}
 
         // Add the Linux account that will have FTP only access
         client.addUsername(packageName, ftpUsername);
-        if(out!=null) out.print("Username added, username=").println(ftpUsername).flush();
+        if(out!=null) {
+			out.print("Username added, username=");
+			out.println(ftpUsername);
+			out.flush();
+		}
         client.addLinuxAccount(
             ftpUsername,
             groupName,
@@ -151,21 +191,45 @@ final public class CreateAccount {
             LinuxAccountType.FTPONLY,
             Shell.FTPPASSWD
         );
-        if(out!=null) out.print("LinuxAccount added, username=").println(ftpUsername).flush();
+        if(out!=null) {
+			out.print("LinuxAccount added, username=");
+			out.println(ftpUsername);
+			out.flush();
+		}
         client.addFTPGuestUser(ftpUsername);
-        if(out!=null) out.print("LinuxAccount flagged as FTPGuestUser, username=").println(ftpUsername).flush();
+        if(out!=null) {
+			out.print("LinuxAccount flagged as FTPGuestUser, username=");
+			out.println(ftpUsername);
+			out.flush();
+		}
         int ftpLinuxServerAccountPKey=client.addLinuxServerAccount(ftpUsername, server, HttpdSite.WWW_DIRECTORY+'/'+siteName+"/webapps");
-        if(out!=null) out.print("LinuxServerAccount added, pkey=").println(ftpLinuxServerAccountPKey).flush();
+        if(out!=null) {
+			out.print("LinuxServerAccount added, pkey=");
+			out.println(ftpLinuxServerAccountPKey);
+			out.flush();
+		}
 
         // Make sure the account rebuild is complete before continuing
-        if(out!=null) out.print("Waiting for LinuxServerAccount rebuild on ").println(server).flush();
+        if(out!=null) {
+			out.print("Waiting for LinuxServerAccount rebuild on ");
+			out.println(server);
+			out.flush();
+		}
         client.waitForLinuxAccountRebuild(server);
 
         // Set the passwords for the two new accounts
         client.setLinuxServerAccountPassword(jvmUsername, server, jvmPassword);
-        if(out!=null) out.print("Password set for LinuxServerAccount ").println(jvmUsername).flush();
+        if(out!=null) {
+			out.print("Password set for LinuxServerAccount ");
+			out.println(jvmUsername);
+			out.flush();
+		}
         client.setLinuxServerAccountPassword(ftpUsername, server, ftpPassword);
-        if(out!=null) out.print("Password set for LinuxServerAccount ").println(ftpUsername).flush();
+        if(out!=null) {
+			out.print("Password set for LinuxServerAccount ");
+			out.println(ftpUsername);
+			out.flush();
+		}
 
         // Add the MySQL database
         /*String mysqlDatabaseName=client.generateMySQLDatabaseName(siteName.replace('-', '_'), "_");
@@ -229,7 +293,11 @@ final public class CreateAccount {
         // Change the IP Address ownership if a private IP is being allotted
         if(ownsIPAddress) {
             client.setIPAddressPackage(ipAddress, server, netDevice, packageName);
-            if(out!=null) out.print("IPAddress package set, package="+packageName).flush();
+            if(out!=null) {
+				out.print("IPAddress package set, package=");
+				out.println(packageName);
+				out.flush();
+			}
         }
 
         // Create the site
@@ -248,10 +316,18 @@ final public class CreateAccount {
             tomcatVersion,
             contentSrc
         );
-        if(out!=null) out.print("HttpdTomcatStdSite added, pkey=").println(tomcatStdSitePKey).flush();
+        if(out!=null) {
+			out.print("HttpdTomcatStdSite added, pkey=");
+			out.println(tomcatStdSitePKey);
+			out.flush();
+		}
 
         // Wait for batched and processing updates to complete
-        if(out!=null) out.print("Waiting for HttpdSite rebuilds on ").println(server).flush();
+        if(out!=null) {
+			out.print("Waiting for HttpdSite rebuilds on ");
+			out.println(server);
+			out.flush();
+		}
         client.waitForHttpdSiteRebuild(server);
 
         // Set the access password for the site
@@ -260,6 +336,17 @@ final public class CreateAccount {
 
         int timeSpan=(int)(System.currentTimeMillis()-startTime);
 
-        out.print("Done in ").print(SQLUtility.getMilliDecimal(timeSpan)).print(" seconds\n").flush();
+		if(out != null) {
+			out.print("Done in ");
+			out.print(SQLUtility.getMilliDecimal(timeSpan));
+			out.println(" seconds");
+			out.flush();
+		}
     }
+
+	/**
+	 * Make no instances.
+	 */
+	private CreateAccount() {
+	}
 }
