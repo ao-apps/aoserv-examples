@@ -181,6 +181,8 @@ public class VncConsoleTunnel implements Runnable {
                     Thread.sleep(10000);
                 } catch(InterruptedException err) {
                     logger.log(Level.WARNING, null, err);
+					// Restore the interrupted status
+					Thread.currentThread().interrupt();
                 }
             }
         }
