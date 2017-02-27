@@ -1,5 +1,5 @@
 /*
- * Copyright 2001-2009, 2015 by AO Industries, Inc.,
+ * Copyright 2001-2009, 2015, 2017 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
@@ -7,7 +7,6 @@ package com.aoindustries.aoserv.examples;
 
 import com.aoindustries.aoserv.client.AOServConnector;
 import com.aoindustries.aoserv.client.Business;
-import com.aoindustries.aoserv.client.HttpdSite;
 import com.aoindustries.aoserv.client.LinuxAccountType;
 import com.aoindustries.aoserv.client.LinuxGroupType;
 import com.aoindustries.aoserv.client.PackageCategory;
@@ -15,6 +14,7 @@ import com.aoindustries.aoserv.client.PackageDefinition;
 import com.aoindustries.aoserv.client.Shell;
 import com.aoindustries.aoserv.client.SimpleAOClient;
 import com.aoindustries.aoserv.client.validator.AccountingCode;
+import com.aoindustries.aoserv.client.validator.DomainName;
 import com.aoindustries.aoserv.client.validator.Gecos;
 import com.aoindustries.aoserv.client.validator.InetAddress;
 import com.aoindustries.aoserv.client.validator.ValidationException;
@@ -167,7 +167,9 @@ final public class CreateAccount {
 			out.println(jvmUsername);
 			out.flush();
 		}
-        int jvmLinuxServerAccountPKey=client.addLinuxServerAccount(jvmUsername, server, HttpdSite.WWW_DIRECTORY+'/'+siteName);
+		// Find the directory containing the websites
+		String wwwDir = conn.getAoServers().get(DomainName.valueOf(server)).getServer().getOperatingSystemVersion().getHttpdSitesDirectory();
+		int jvmLinuxServerAccountPKey=client.addLinuxServerAccount(jvmUsername, server, wwwDir+'/'+siteName);
         if(out!=null) {
 			out.print("LinuxServerAccount added, pkey=");
 			out.println(jvmLinuxServerAccountPKey);
@@ -202,7 +204,7 @@ final public class CreateAccount {
 			out.println(ftpUsername);
 			out.flush();
 		}
-        int ftpLinuxServerAccountPKey=client.addLinuxServerAccount(ftpUsername, server, HttpdSite.WWW_DIRECTORY+'/'+siteName+"/webapps");
+        int ftpLinuxServerAccountPKey=client.addLinuxServerAccount(ftpUsername, server, wwwDir+'/'+siteName+"/webapps");
         if(out!=null) {
 			out.print("LinuxServerAccount added, pkey=");
 			out.println(ftpLinuxServerAccountPKey);
