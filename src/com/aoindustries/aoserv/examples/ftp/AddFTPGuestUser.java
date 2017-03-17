@@ -1,5 +1,5 @@
 /*
- * Copyright 2001-2013 by AO Industries, Inc.,
+ * Copyright 2001-2013, 2017 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
@@ -14,8 +14,8 @@ import com.aoindustries.aoserv.client.Package;
 import com.aoindustries.aoserv.client.Shell;
 import com.aoindustries.aoserv.client.SimpleAOClient;
 import com.aoindustries.aoserv.client.Username;
-import com.aoindustries.aoserv.client.validator.DomainName;
 import com.aoindustries.aoserv.client.validator.Gecos;
+import com.aoindustries.net.DomainName;
 import java.io.IOException;
 import java.sql.SQLException;
 
@@ -35,99 +35,99 @@ import java.sql.SQLException;
  */
 final public class AddFTPGuestUser {
 
-/**
- * Adds a <code>FTPGuestUser</code> to the system.
- *
- * @param  aoClient     the <code>SimpleAOClient</code> to use
- * @param  packageName  the name of the package to add the account to
- * @param  username     the username to allocate
- * @param  fullName     the full name of the user
- * @param  group        the name of the Linux group they can access
- * @param  server       the hostname of the server to add the database to
- * @param  home         the directory the user has access to
- * @param  password     the password for the new account
- */
-public static void addFTPGuestuser(
-    SimpleAOClient aoClient,
-    String packageName,
-    String username,
-    Gecos fullName,
-    String group,
-    String server,
-    String home,
-    String password
-) throws IOException, SQLException {
-    // Allocate the username
-    aoClient.addUsername(packageName, username);
-    
-    // Reserve the username for use as a Linux account
-    aoClient.addLinuxAccount(username, group, fullName, null, null, null, LinuxAccountType.FTPONLY, Shell.FTPPASSWD);
+	/**
+	 * Adds a <code>FTPGuestUser</code> to the system.
+	 *
+	 * @param  aoClient     the <code>SimpleAOClient</code> to use
+	 * @param  packageName  the name of the package to add the account to
+	 * @param  username     the username to allocate
+	 * @param  fullName     the full name of the user
+	 * @param  group        the name of the Linux group they can access
+	 * @param  server       the hostname of the server to add the database to
+	 * @param  home         the directory the user has access to
+	 * @param  password     the password for the new account
+	 */
+	public static void addFTPGuestuser(
+		SimpleAOClient aoClient,
+		String packageName,
+		String username,
+		Gecos fullName,
+		String group,
+		String server,
+		String home,
+		String password
+	) throws IOException, SQLException {
+		// Allocate the username
+		aoClient.addUsername(packageName, username);
 
-    // Limit the FTP transfers to the users home directory
-    aoClient.addFTPGuestUser(username);
-    
-    // Grant the user access to the server
-    aoClient.addLinuxServerAccount(username, server, home);
+		// Reserve the username for use as a Linux account
+		aoClient.addLinuxAccount(username, group, fullName, null, null, null, LinuxAccountType.FTPONLY, Shell.FTPPASSWD);
 
-    // Wait for rebuild
-    aoClient.waitForLinuxAccountRebuild(server);
+		// Limit the FTP transfers to the users home directory
+		aoClient.addFTPGuestUser(username);
 
-    // Set the password
-    aoClient.setLinuxServerAccountPassword(username, server, password);
-}
+		// Grant the user access to the server
+		aoClient.addLinuxServerAccount(username, server, home);
 
-/**
- * Adds a <code>FTPGuestUser</code> to the system.
- *
- * @param  conn         the <code>AOServConnector</code> to use
- * @param  packageName  the name of the package to add the account to
- * @param  username     the username to allocate
- * @param  fullName     the full name of the user
- * @param  group        the name of the Linux group they can access
- * @param  server       the hostname of the server to add the database to
- * @param  home         the directory the user has access to
- * @param  password     the password for the new account
- *
- * @return  the new <code>LinuxServerAccount</code>
- */
-public static LinuxServerAccount addFTPGuestuser(
-    AOServConnector conn,
-    String packageName,
-    String username,
-    Gecos fullName,
-    String group,
-    DomainName server,
-    String home,
-    String password
-) throws IOException, SQLException {
-    // Resolve the Package
-    Package pk=conn.getPackages().get(packageName);
+		// Wait for rebuild
+		aoClient.waitForLinuxAccountRebuild(server);
 
-    // Allocate the username
-    pk.addUsername(username);
-    Username un=conn.getUsernames().get(username);
-    
-    // Reserve the username for use as a Linux account
-    un.addLinuxAccount(group, fullName, null, null, null, LinuxAccountType.FTPONLY, Shell.FTPPASSWD);
-    LinuxAccount la=un.getLinuxAccount();
+		// Set the password
+		aoClient.setLinuxServerAccountPassword(username, server, password);
+	}
 
-    // Limit the FTP transfers to the users home directory
-    la.addFTPGuestUser();
+	/**
+	 * Adds a <code>FTPGuestUser</code> to the system.
+	 *
+	 * @param  conn         the <code>AOServConnector</code> to use
+	 * @param  packageName  the name of the package to add the account to
+	 * @param  username     the username to allocate
+	 * @param  fullName     the full name of the user
+	 * @param  group        the name of the Linux group they can access
+	 * @param  server       the hostname of the server to add the database to
+	 * @param  home         the directory the user has access to
+	 * @param  password     the password for the new account
+	 *
+	 * @return  the new <code>LinuxServerAccount</code>
+	 */
+	public static LinuxServerAccount addFTPGuestuser(
+		AOServConnector conn,
+		String packageName,
+		String username,
+		Gecos fullName,
+		String group,
+		DomainName server,
+		String home,
+		String password
+	) throws IOException, SQLException {
+		// Resolve the Package
+		Package pk=conn.getPackages().get(packageName);
 
-    // Find the server
-    AOServer ao=conn.getAoServers().get(server);
+		// Allocate the username
+		pk.addUsername(username);
+		Username un=conn.getUsernames().get(username);
 
-    // Grant the user access to the server
-    int lsaPKey=la.addLinuxServerAccount(ao, home);
-    LinuxServerAccount lsa=conn.getLinuxServerAccounts().get(lsaPKey);
+		// Reserve the username for use as a Linux account
+		un.addLinuxAccount(group, fullName, null, null, null, LinuxAccountType.FTPONLY, Shell.FTPPASSWD);
+		LinuxAccount la=un.getLinuxAccount();
 
-    // Wait for rebuild
-    ao.waitForLinuxAccountRebuild();
+		// Limit the FTP transfers to the users home directory
+		la.addFTPGuestUser();
 
-    // Set the password
-    lsa.setPassword(password);
-    
-    // Return the new object
-    return lsa;
-}
+		// Find the server
+		AOServer ao=conn.getAoServers().get(server);
+
+		// Grant the user access to the server
+		int lsaPKey=la.addLinuxServerAccount(ao, home);
+		LinuxServerAccount lsa=conn.getLinuxServerAccounts().get(lsaPKey);
+
+		// Wait for rebuild
+		ao.waitForLinuxAccountRebuild();
+
+		// Set the password
+		lsa.setPassword(password);
+
+		// Return the new object
+		return lsa;
+	}
 }

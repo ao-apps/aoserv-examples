@@ -1,5 +1,5 @@
 /*
- * Copyright 2001-2013 by AO Industries, Inc.,
+ * Copyright 2001-2013, 2017 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
@@ -17,8 +17,8 @@ import com.aoindustries.aoserv.client.Package;
 import com.aoindustries.aoserv.client.Shell;
 import com.aoindustries.aoserv.client.SimpleAOClient;
 import com.aoindustries.aoserv.client.Username;
-import com.aoindustries.aoserv.client.validator.DomainName;
 import com.aoindustries.aoserv.client.validator.Gecos;
+import com.aoindustries.net.DomainName;
 import java.io.IOException;
 import java.sql.SQLException;
 
@@ -34,104 +34,104 @@ import java.sql.SQLException;
  */
 final public class AddEmailInbox {
 
-/**
- * Creates a new email inbox.
- *
- * @param  aoClient     the <code>SimpleAOClient</code> to use
- * @param  packageName  the name of the <code>Package</code>
- * @param  username     the new username to allocate
- * @param  fullName     the user's full name
- * @param  server       the hostname of the server to add the user to
- * @param  address      the part of the email address before the <code>@</code>
- * @param  password     the password for the new user
- */
-public static void addEmailInbox(
-    SimpleAOClient aoClient,
-    String packageName,
-    String username,
-    Gecos fullName,
-    String server,
-    String address,
-    DomainName domain,
-    String password
-) throws IOException, SQLException {
-    // Reserve the username
-    aoClient.addUsername(packageName, username);
+	/**
+	 * Creates a new email inbox.
+	 *
+	 * @param  aoClient     the <code>SimpleAOClient</code> to use
+	 * @param  packageName  the name of the <code>Package</code>
+	 * @param  username     the new username to allocate
+	 * @param  fullName     the user's full name
+	 * @param  server       the hostname of the server to add the user to
+	 * @param  address      the part of the email address before the <code>@</code>
+	 * @param  password     the password for the new user
+	 */
+	public static void addEmailInbox(
+		SimpleAOClient aoClient,
+		String packageName,
+		String username,
+		Gecos fullName,
+		String server,
+		String address,
+		DomainName domain,
+		String password
+	) throws IOException, SQLException {
+		// Reserve the username
+		aoClient.addUsername(packageName, username);
 
-    // Indicate the username will be used for Linux accounts
-    aoClient.addLinuxAccount(username, LinuxGroup.MAILONLY, fullName, null, null, null, LinuxAccountType.EMAIL, Shell.PASSWD);
+		// Indicate the username will be used for Linux accounts
+		aoClient.addLinuxAccount(username, LinuxGroup.MAILONLY, fullName, null, null, null, LinuxAccountType.EMAIL, Shell.PASSWD);
 
-    // Grant the new Linux account access to the server
-    aoClient.addLinuxServerAccount(username, server, null);
+		// Grant the new Linux account access to the server
+		aoClient.addLinuxServerAccount(username, server, null);
 
-    // Attach the email address to the new inbox
-    aoClient.addLinuxAccAddress(address, domain, server, username);
-    
-    // Wait for rebuild
-    aoClient.waitForLinuxAccountRebuild(server);
+		// Attach the email address to the new inbox
+		aoClient.addLinuxAccAddress(address, domain, server, username);
 
-    // Set the password
-    aoClient.setLinuxServerAccountPassword(username, server, password);
-}
+		// Wait for rebuild
+		aoClient.waitForLinuxAccountRebuild(server);
 
-/**
- * Creates a new email inbox.
- *
- * @param  conn         the <code>AOServConnector</code> to use
- * @param  packageName  the name of the <code>Package</code>
- * @param  username     the new username to allocate
- * @param  fullName     the user's full name
- * @param  server       the hostname of the server to add the user to
- * @param  address      the part of the email address before the <code>@</code>
- * @param  password     the password for the new account
- *
- * @return  the new <code>LinuxServerAccount</code>
- */
-public static LinuxServerAccount addEmailInbox(
-    AOServConnector conn,
-    String packageName,
-    String username,
-    Gecos fullName,
-    String server,
-    String address,
-    DomainName domain,
-    String password
-) throws IOException, SQLException {
-    // Resolve the Package
-    Package pk=conn.getPackages().get(packageName);
+		// Set the password
+		aoClient.setLinuxServerAccountPassword(username, server, password);
+	}
 
-    // Reserve the username
-    pk.addUsername(username);
-    Username un=conn.getUsernames().get(username);
+	/**
+	 * Creates a new email inbox.
+	 *
+	 * @param  conn         the <code>AOServConnector</code> to use
+	 * @param  packageName  the name of the <code>Package</code>
+	 * @param  username     the new username to allocate
+	 * @param  fullName     the user's full name
+	 * @param  server       the hostname of the server to add the user to
+	 * @param  address      the part of the email address before the <code>@</code>
+	 * @param  password     the password for the new account
+	 *
+	 * @return  the new <code>LinuxServerAccount</code>
+	 */
+	public static LinuxServerAccount addEmailInbox(
+		AOServConnector conn,
+		String packageName,
+		String username,
+		Gecos fullName,
+		String server,
+		String address,
+		DomainName domain,
+		String password
+	) throws IOException, SQLException {
+		// Resolve the Package
+		Package pk=conn.getPackages().get(packageName);
 
-    // Indicate the username will be used for Linux accounts
-    un.addLinuxAccount(LinuxGroup.MAILONLY, fullName, null, null, null, LinuxAccountType.EMAIL, Shell.PASSWD);
-    LinuxAccount la=un.getLinuxAccount();
+		// Reserve the username
+		pk.addUsername(username);
+		Username un=conn.getUsernames().get(username);
 
-    // Find the AOServer
-    AOServer ao=conn.getServers().get(server).getAOServer();
+		// Indicate the username will be used for Linux accounts
+		un.addLinuxAccount(LinuxGroup.MAILONLY, fullName, null, null, null, LinuxAccountType.EMAIL, Shell.PASSWD);
+		LinuxAccount la=un.getLinuxAccount();
 
-    // Grant the new Linux account access to the server
-    int lsaPKey=la.addLinuxServerAccount(ao, LinuxServerAccount.getDefaultHomeDirectory(username));
-    LinuxServerAccount lsa=conn.getLinuxServerAccounts().get(lsaPKey);
+		// Find the AOServer
+		AOServer ao=conn.getServers().get(server).getAOServer();
 
-    // Find the EmailDomain
-    EmailDomain sd=ao.getEmailDomain(domain);
+		// Grant the new Linux account access to the server
+		int lsaPKey=la.addLinuxServerAccount(ao, LinuxServerAccount.getDefaultHomeDirectory(username));
+		LinuxServerAccount lsa=conn.getLinuxServerAccounts().get(lsaPKey);
 
-    // Create the new email address
-    int eaPKey=sd.addEmailAddress(address);
-    EmailAddress ea=conn.getEmailAddresses().get(eaPKey);
+		// Find the EmailDomain
+		EmailDomain sd=ao.getEmailDomain(domain);
 
-    // Attach the email address to the new inbox
-    lsa.addEmailAddress(ea);
+		// Create the new email address
+		int eaPKey=sd.addEmailAddress(address);
+		EmailAddress ea=conn.getEmailAddresses().get(eaPKey);
 
-    // Wait for rebuild
-    ao.waitForLinuxAccountRebuild();
+		// Attach the email address to the new inbox
+		lsa.addEmailAddress(ea);
 
-    // Set the password
-    lsa.setPassword(password);
-    
-    // Return the new object
-    return lsa;
-}
+		// Wait for rebuild
+		ao.waitForLinuxAccountRebuild();
+
+		// Set the password
+		lsa.setPassword(password);
+
+		// Return the new object
+		return lsa;
+	}
 }
