@@ -16,6 +16,8 @@ import com.aoindustries.aoserv.daemon.client.AOServDaemonProtocol;
 import com.aoindustries.io.AOPool;
 import com.aoindustries.io.CompressedDataInputStream;
 import com.aoindustries.io.CompressedDataOutputStream;
+import com.aoindustries.net.Port;
+import com.aoindustries.net.Protocol;
 import com.aoindustries.util.ErrorPrinter;
 import java.io.EOFException;
 import java.io.IOException;
@@ -86,7 +88,10 @@ public class VncConsoleTunnel implements Runnable {
 										AOServDaemonConnector daemonConnector=AOServDaemonConnector.getConnector(
 											daemonAccess.getHost(),
 											com.aoindustries.net.InetAddress.UNSPECIFIED,
-											daemonAccess.getPort(),
+											Port.valueOf(
+												daemonAccess.getPort(),
+												Protocol.TCP
+											),
 											daemonAccess.getProtocol(),
 											null,
 											100,

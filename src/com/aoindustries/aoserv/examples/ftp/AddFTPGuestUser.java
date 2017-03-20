@@ -14,7 +14,11 @@ import com.aoindustries.aoserv.client.Package;
 import com.aoindustries.aoserv.client.Shell;
 import com.aoindustries.aoserv.client.SimpleAOClient;
 import com.aoindustries.aoserv.client.Username;
+import com.aoindustries.aoserv.client.validator.AccountingCode;
 import com.aoindustries.aoserv.client.validator.Gecos;
+import com.aoindustries.aoserv.client.validator.GroupId;
+import com.aoindustries.aoserv.client.validator.UnixPath;
+import com.aoindustries.aoserv.client.validator.UserId;
 import com.aoindustries.net.DomainName;
 import java.io.IOException;
 import java.sql.SQLException;
@@ -49,12 +53,12 @@ final public class AddFTPGuestUser {
 	 */
 	public static void addFTPGuestuser(
 		SimpleAOClient aoClient,
-		String packageName,
-		String username,
+		AccountingCode packageName,
+		UserId username,
 		Gecos fullName,
-		String group,
+		GroupId group,
 		String server,
-		String home,
+		UnixPath home,
 		String password
 	) throws IOException, SQLException {
 		// Allocate the username
@@ -92,12 +96,12 @@ final public class AddFTPGuestUser {
 	 */
 	public static LinuxServerAccount addFTPGuestuser(
 		AOServConnector conn,
-		String packageName,
-		String username,
+		AccountingCode packageName,
+		UserId username,
 		Gecos fullName,
-		String group,
+		GroupId group,
 		DomainName server,
-		String home,
+		UnixPath home,
 		String password
 	) throws IOException, SQLException {
 		// Resolve the Package
@@ -130,4 +134,6 @@ final public class AddFTPGuestUser {
 		// Return the new object
 		return lsa;
 	}
+
+	private AddFTPGuestUser() {}
 }

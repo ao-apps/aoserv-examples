@@ -17,7 +17,9 @@ import com.aoindustries.aoserv.client.Package;
 import com.aoindustries.aoserv.client.Shell;
 import com.aoindustries.aoserv.client.SimpleAOClient;
 import com.aoindustries.aoserv.client.Username;
+import com.aoindustries.aoserv.client.validator.AccountingCode;
 import com.aoindustries.aoserv.client.validator.Gecos;
+import com.aoindustries.aoserv.client.validator.UserId;
 import com.aoindustries.net.DomainName;
 import java.io.IOException;
 import java.sql.SQLException;
@@ -47,8 +49,8 @@ final public class AddEmailInbox {
 	 */
 	public static void addEmailInbox(
 		SimpleAOClient aoClient,
-		String packageName,
-		String username,
+		AccountingCode packageName,
+		UserId username,
 		Gecos fullName,
 		String server,
 		String address,
@@ -89,8 +91,8 @@ final public class AddEmailInbox {
 	 */
 	public static LinuxServerAccount addEmailInbox(
 		AOServConnector conn,
-		String packageName,
-		String username,
+		AccountingCode packageName,
+		UserId username,
 		Gecos fullName,
 		String server,
 		String address,
@@ -134,4 +136,6 @@ final public class AddEmailInbox {
 		// Return the new object
 		return lsa;
 	}
+
+	private AddEmailInbox() {}
 }

@@ -121,7 +121,7 @@ final public class CreateAccount {
 		if(packageDefinition==null) throw new SQLException("Unable to find PackageDefinition: accounting="+parentBusiness+", category="+packageDefinitionCategory+", name="+packageDefinitionName+", version="+packageDefinitionVersion);
 
 		// Add a Package to the Business
-		AccountingCode packageName=client.generatePackageName(accounting.toString()+'_');
+		AccountingCode packageName=client.generatePackageName(AccountingCode.valueOf(accounting.toString()+'_'));
 		client.addPackage(
 			packageName,
 			accounting,

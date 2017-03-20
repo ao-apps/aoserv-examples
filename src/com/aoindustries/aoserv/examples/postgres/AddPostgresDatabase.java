@@ -12,6 +12,9 @@ import com.aoindustries.aoserv.client.PostgresEncoding;
 import com.aoindustries.aoserv.client.PostgresServer;
 import com.aoindustries.aoserv.client.PostgresServerUser;
 import com.aoindustries.aoserv.client.SimpleAOClient;
+import com.aoindustries.aoserv.client.validator.PostgresDatabaseName;
+import com.aoindustries.aoserv.client.validator.PostgresServerName;
+import com.aoindustries.aoserv.client.validator.PostgresUserId;
 import com.aoindustries.net.DomainName;
 import java.io.IOException;
 import java.sql.SQLException;
@@ -42,10 +45,10 @@ final public class AddPostgresDatabase {
 	 */
 	public static void addPostgresDatabase(
 		SimpleAOClient aoClient,
-		String name,
-		String postgresServer,
+		PostgresDatabaseName name,
+		PostgresServerName postgresServer,
 		String server,
-		String datdba,
+		PostgresUserId datdba,
 		String encoding,
 		boolean enablePostgis
 	) throws IOException, SQLException {
@@ -67,10 +70,10 @@ final public class AddPostgresDatabase {
 	 */
 	public static PostgresDatabase addPostgresDatabase(
 		AOServConnector conn,
-		String name,
-		String postgresServer,
+		PostgresDatabaseName name,
+		PostgresServerName postgresServer,
 		DomainName server,
-		String datdba,
+		PostgresUserId datdba,
 		String encoding,
 		boolean enablePostgis
 	) throws IOException, SQLException {
@@ -93,4 +96,6 @@ final public class AddPostgresDatabase {
 		// Return the object
 		return conn.getPostgresDatabases().get(pdPKey);
 	}
+
+	private AddPostgresDatabase() {}
 }

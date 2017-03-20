@@ -14,6 +14,10 @@ import com.aoindustries.aoserv.client.MySQLUser;
 import com.aoindustries.aoserv.client.Package;
 import com.aoindustries.aoserv.client.SimpleAOClient;
 import com.aoindustries.aoserv.client.Username;
+import com.aoindustries.aoserv.client.validator.AccountingCode;
+import com.aoindustries.aoserv.client.validator.MySQLDatabaseName;
+import com.aoindustries.aoserv.client.validator.MySQLServerName;
+import com.aoindustries.aoserv.client.validator.MySQLUserId;
 import com.aoindustries.net.DomainName;
 import java.io.IOException;
 import java.sql.SQLException;
@@ -38,15 +42,15 @@ final public class AddMySQLUser {
 	 */
 	public static void addMySQLUser(
 		SimpleAOClient aoClient,
-		String packageName,
-		String username,
-		String mysqlServer,
+		AccountingCode packageName,
+		MySQLUserId username,
+		MySQLServerName mysqlServer,
 		String server,
-		String database,
+		MySQLDatabaseName database,
 		String password
 	) throws IOException, SQLException {
 		// Reserve the username
-		aoClient.addUsername(packageName, username);
+		aoClient.addUsername(packageName, username.getUserId());
 
 		// Indicate the username will be used for MySQL accounts
 		aoClient.addMySQLUser(username);
@@ -79,11 +83,11 @@ final public class AddMySQLUser {
 	 */
 	public static MySQLServerUser addMySQLUser(
 		AOServConnector conn,
-		String packageName,
-		String username,
-		String mysqlServer,
+		AccountingCode packageName,
+		MySQLUserId username,
+		MySQLServerName mysqlServer,
 		DomainName server,
-		String database,
+		MySQLDatabaseName database,
 		String password
 	) throws IOException, SQLException {
 		// Find the Package
@@ -96,8 +100,8 @@ final public class AddMySQLUser {
 		MySQLServer ms=ao.getMySQLServer(mysqlServer);
 
 		// Reserve the username
-		pk.addUsername(username);
-		Username un=conn.getUsernames().get(username);
+		pk.addUsername(username.getUserId());
+		Username un=conn.getUsernames().get(username.getUserId());
 
 		// Indicate the username will be used for MySQL accounts
 		un.addMySQLUser();
@@ -122,4 +126,6 @@ final public class AddMySQLUser {
 		// Return the object
 		return msu;
 	}
+
+	private AddMySQLUser() {}
 }
