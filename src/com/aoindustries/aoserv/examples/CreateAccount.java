@@ -15,7 +15,12 @@ import com.aoindustries.aoserv.client.Shell;
 import com.aoindustries.aoserv.client.SimpleAOClient;
 import com.aoindustries.aoserv.client.validator.AccountingCode;
 import com.aoindustries.aoserv.client.validator.Gecos;
+import com.aoindustries.aoserv.client.validator.GroupId;
+import com.aoindustries.aoserv.client.validator.MySQLUserId;
+import com.aoindustries.aoserv.client.validator.UnixPath;
+import com.aoindustries.aoserv.client.validator.UserId;
 import com.aoindustries.net.DomainName;
+import com.aoindustries.net.Email;
 import com.aoindustries.net.InetAddress;
 import com.aoindustries.sql.SQLUtility;
 import com.aoindustries.validation.ValidationException;
@@ -75,23 +80,23 @@ final public class CreateAccount {
 		String packageDefinitionCategory,
 		String packageDefinitionName,
 		String packageDefinitionVersion,
-		String jvmUsername,
+		UserId jvmUsername,
 		String jvmPassword,
-		String ftpUsername,
+		UserId ftpUsername,
 		String ftpPassword,
-		String groupName,
+		GroupId groupName,
 		String siteNameTemplate,
-		String mysqlAdminUsername,
-		String mysqlAppUsername,
+		MySQLUserId mysqlAdminUsername,
+		MySQLUserId mysqlAppUsername,
 		String mysqlAppPassword,
 		InetAddress ipAddress,
 		String netDevice,
 		boolean ownsIPAddress,
-		String serverAdmin,
-		String primaryHttpHostname,
-		String[] altHttpHostnames,
+		Email serverAdmin,
+		DomainName primaryHttpHostname,
+		DomainName[] altHttpHostnames,
 		String tomcatVersion,
-		String contentSrc
+		UnixPath contentSrc
 	) throws IOException, SQLException, ValidationException {
 		long startTime=System.currentTimeMillis();
 		SimpleAOClient client=conn.getSimpleAOClient();
@@ -116,7 +121,7 @@ final public class CreateAccount {
 		if(packageDefinition==null) throw new SQLException("Unable to find PackageDefinition: accounting="+parentBusiness+", category="+packageDefinitionCategory+", name="+packageDefinitionName+", version="+packageDefinitionVersion);
 
 		// Add a Package to the Business
-		String packageName=client.generatePackageName(accounting.toString()+'_');
+		AccountingCode packageName=client.generatePackageName(accounting.toString()+'_');
 		client.addPackage(
 			packageName,
 			accounting,
@@ -168,8 +173,14 @@ final public class CreateAccount {
 			out.flush();
 		}
 		// Find the directory containing the websites
-		String wwwDir = conn.getAoServers().get(DomainName.valueOf(server)).getServer().getOperatingSystemVersion().getHttpdSitesDirectory();
-		int jvmLinuxServerAccountPKey=client.addLinuxServerAccount(jvmUsername, server, wwwDir+'/'+siteName);
+		UnixPath wwwDir = conn.getAoServers().get(
+			DomainName.valueOf(server)
+		).getServer().getOperatingSystemVersion().getHttpdSitesDirectory();
+		int jvmLinuxServerAccountPKey=client.addLinuxServerAccount(
+			jvmUsername,
+			server,
+			UnixPath.valueOf(wwwDir.toString()+'/'+siteName)
+		);
 		if(out!=null) {
 			out.print("LinuxServerAccount added, pkey=");
 			out.println(jvmLinuxServerAccountPKey);
@@ -204,7 +215,11 @@ final public class CreateAccount {
 			out.println(ftpUsername);
 			out.flush();
 		}
-		int ftpLinuxServerAccountPKey=client.addLinuxServerAccount(ftpUsername, server, wwwDir+'/'+siteName+"/webapps");
+		int ftpLinuxServerAccountPKey=client.addLinuxServerAccount(
+			ftpUsername,
+			server,
+			UnixPath.valueOf(wwwDir.toString()+'/'+siteName+"/webapps")
+		);
 		if(out!=null) {
 			out.print("LinuxServerAccount added, pkey=");
 			out.println(ftpLinuxServerAccountPKey);
