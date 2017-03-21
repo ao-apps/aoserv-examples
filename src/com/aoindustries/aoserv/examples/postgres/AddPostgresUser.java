@@ -45,7 +45,7 @@ final public class AddPostgresUser {
 		String password
 	) throws IOException, SQLException {
 		// Reserve the username
-		aoClient.addUsername(packageName, username.getUserId());
+		aoClient.addUsername(packageName, username);
 
 		// Indicate the username will be used for PostgreSQL accounts
 		aoClient.addPostgresUser(username);
@@ -84,8 +84,8 @@ final public class AddPostgresUser {
 		Package pk=conn.getPackages().get(packageName);
 
 		// Reserve the username
-		pk.addUsername(username.getUserId());
-		Username un=conn.getUsernames().get(username.getUserId());
+		pk.addUsername(username);
+		Username un=conn.getUsernames().get(username);
 
 		// Indicate the username will be used for PostgreSQL accounts
 		un.addPostgresUser();

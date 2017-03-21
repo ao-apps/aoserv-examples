@@ -50,7 +50,7 @@ final public class AddMySQLUser {
 		String password
 	) throws IOException, SQLException {
 		// Reserve the username
-		aoClient.addUsername(packageName, username.getUserId());
+		aoClient.addUsername(packageName, username);
 
 		// Indicate the username will be used for MySQL accounts
 		aoClient.addMySQLUser(username);
@@ -100,8 +100,8 @@ final public class AddMySQLUser {
 		MySQLServer ms=ao.getMySQLServer(mysqlServer);
 
 		// Reserve the username
-		pk.addUsername(username.getUserId());
-		Username un=conn.getUsernames().get(username.getUserId());
+		pk.addUsername(username);
+		Username un=conn.getUsernames().get(username);
 
 		// Indicate the username will be used for MySQL accounts
 		un.addMySQLUser();
