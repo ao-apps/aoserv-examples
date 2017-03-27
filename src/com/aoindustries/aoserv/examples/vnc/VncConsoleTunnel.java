@@ -85,7 +85,7 @@ public class VncConsoleTunnel implements Runnable {
 										AOServer.DaemonAccess daemonAccess = virtualServer.requestVncConsoleAccess();
 										AOServDaemonConnector daemonConnector=AOServDaemonConnector.getConnector(
 											daemonAccess.getHost(),
-											com.aoindustries.net.InetAddress.UNSPECIFIED,
+											com.aoindustries.net.InetAddress.UNSPECIFIED_IPV4,
 											daemonAccess.getPort(),
 											daemonAccess.getProtocol(),
 											null,
