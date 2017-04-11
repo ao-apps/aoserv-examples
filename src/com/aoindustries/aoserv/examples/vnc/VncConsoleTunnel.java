@@ -97,11 +97,11 @@ public class VncConsoleTunnel implements Runnable {
 										);
 										final AOServDaemonConnection daemonConn=daemonConnector.getConnection();
 										try {
-											final CompressedDataOutputStream daemonOut = daemonConn.getOutputStream(AOServDaemonProtocol.VNC_CONSOLE);
+											final CompressedDataOutputStream daemonOut = daemonConn.getRequestOut(AOServDaemonProtocol.VNC_CONSOLE);
 											daemonOut.writeLong(daemonAccess.getKey());
 											daemonOut.flush();
 
-											final CompressedDataInputStream daemonIn = daemonConn.getInputStream();
+											final CompressedDataInputStream daemonIn = daemonConn.getResponseIn();
 											int result=daemonIn.read();
 											if(result==AOServDaemonProtocol.NEXT) {
 												final OutputStream socketOut = socket.getOutputStream();
