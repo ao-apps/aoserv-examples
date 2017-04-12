@@ -318,7 +318,7 @@ final public class CreateAccount {
 		}
 
 		// Create the site
-		int tomcatStdSitePKey=client.addHttpdTomcatStdSite(
+		int tomcatStdSitePKey = client.addHttpdTomcatStdSite(
 			server,
 			siteName,
 			packageName,
@@ -331,7 +331,13 @@ final public class CreateAccount {
 			primaryHttpHostname,
 			altHttpHostnames,
 			tomcatVersion,
-			contentSrc
+			contentSrc,
+			null,
+			false, // enableCgi
+			false, // enableSsi
+			false, // enableHtaccess
+			false, // enableIndexes
+			false  // enableFollowSymlinks
 		);
 		if(out!=null) {
 			out.print("HttpdTomcatStdSite added, pkey=");
