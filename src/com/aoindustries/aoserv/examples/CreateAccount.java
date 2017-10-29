@@ -331,13 +331,7 @@ final public class CreateAccount {
 			primaryHttpHostname,
 			altHttpHostnames,
 			tomcatVersion,
-			contentSrc,
-			null,
-			false, // enableCgi
-			false, // enableSsi
-			false, // enableHtaccess
-			false, // enableIndexes
-			false  // enableFollowSymlinks
+			contentSrc
 		);
 		if(out!=null) {
 			out.print("HttpdTomcatStdSite added, pkey=");
