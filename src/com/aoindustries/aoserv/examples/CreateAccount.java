@@ -1,5 +1,5 @@
 /*
- * Copyright 2001-2009, 2015, 2017 by AO Industries, Inc.,
+ * Copyright 2001-2009, 2015, 2017, 2018 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
@@ -69,7 +69,6 @@ final public class CreateAccount {
 	 * @param  altHttpHostnames    the alternate hostnames for the HTTP server
 	 * @param  httpsHostname       the hostname for the HTTPS server
 	 * @param  tomcatVersion       the version of Tomcat to install
-	 * @param  contentSrc          the source archive for the site, <code>null</code> will result in a default empty site
 	 */
 	public static void createAccount(
 		AOServConnector conn,
@@ -95,8 +94,7 @@ final public class CreateAccount {
 		Email serverAdmin,
 		DomainName primaryHttpHostname,
 		DomainName[] altHttpHostnames,
-		String tomcatVersion,
-		UnixPath contentSrc
+		String tomcatVersion
 	) throws IOException, SQLException, ValidationException {
 		long startTime=System.currentTimeMillis();
 		SimpleAOClient client=conn.getSimpleAOClient();
@@ -330,8 +328,7 @@ final public class CreateAccount {
 			netDevice,
 			primaryHttpHostname,
 			altHttpHostnames,
-			tomcatVersion,
-			contentSrc
+			tomcatVersion
 		);
 		if(out!=null) {
 			out.print("HttpdTomcatStdSite added, pkey=");
