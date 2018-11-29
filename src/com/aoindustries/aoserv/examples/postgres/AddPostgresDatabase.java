@@ -1,5 +1,5 @@
 /*
- * Copyright 2001-2013, 2017 by AO Industries, Inc.,
+ * Copyright 2001-2013, 2017, 2018 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
@@ -88,7 +88,7 @@ final public class AddPostgresDatabase {
 		PostgresServerUser psu=ps.getPostgresServerUser(datdba);
 
 		// Resolve the PostgresEncoding
-		PostgresEncoding pe=ps.getPostgresVersion().getPostgresEncoding(conn, encoding);
+		PostgresEncoding pe=ps.getVersion().getPostgresEncoding(conn, encoding);
 
 		// Add the PostgresDatabase
 		int pdPKey=ps.addPostgresDatabase(name, psu, pe, enablePostgis);
