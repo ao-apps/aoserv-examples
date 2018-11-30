@@ -1,18 +1,18 @@
 /*
- * Copyright 2001-2013, 2017 by AO Industries, Inc.,
+ * Copyright 2001-2013, 2017, 2018 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
 package com.aoindustries.aoserv.examples.postgres;
 
 import com.aoindustries.aoserv.client.AOServConnector;
-import com.aoindustries.aoserv.client.AOServer;
-import com.aoindustries.aoserv.client.Package;
-import com.aoindustries.aoserv.client.PostgresServer;
-import com.aoindustries.aoserv.client.PostgresServerUser;
-import com.aoindustries.aoserv.client.PostgresUser;
 import com.aoindustries.aoserv.client.SimpleAOClient;
-import com.aoindustries.aoserv.client.Username;
+import com.aoindustries.aoserv.client.account.Username;
+import com.aoindustries.aoserv.client.billing.Package;
+import com.aoindustries.aoserv.client.linux.AOServer;
+import com.aoindustries.aoserv.client.postgresql.PostgresServer;
+import com.aoindustries.aoserv.client.postgresql.PostgresServerUser;
+import com.aoindustries.aoserv.client.postgresql.PostgresUser;
 import com.aoindustries.aoserv.client.validator.AccountingCode;
 import com.aoindustries.aoserv.client.validator.PostgresServerName;
 import com.aoindustries.aoserv.client.validator.PostgresUserId;

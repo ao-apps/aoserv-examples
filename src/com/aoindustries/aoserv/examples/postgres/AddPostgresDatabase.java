@@ -6,12 +6,12 @@
 package com.aoindustries.aoserv.examples.postgres;
 
 import com.aoindustries.aoserv.client.AOServConnector;
-import com.aoindustries.aoserv.client.AOServer;
-import com.aoindustries.aoserv.client.PostgresDatabase;
-import com.aoindustries.aoserv.client.PostgresEncoding;
-import com.aoindustries.aoserv.client.PostgresServer;
-import com.aoindustries.aoserv.client.PostgresServerUser;
 import com.aoindustries.aoserv.client.SimpleAOClient;
+import com.aoindustries.aoserv.client.linux.AOServer;
+import com.aoindustries.aoserv.client.postgresql.PostgresDatabase;
+import com.aoindustries.aoserv.client.postgresql.PostgresEncoding;
+import com.aoindustries.aoserv.client.postgresql.PostgresServer;
+import com.aoindustries.aoserv.client.postgresql.PostgresServerUser;
 import com.aoindustries.aoserv.client.validator.PostgresDatabaseName;
 import com.aoindustries.aoserv.client.validator.PostgresServerName;
 import com.aoindustries.aoserv.client.validator.PostgresUserId;

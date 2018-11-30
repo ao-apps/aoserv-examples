@@ -1,19 +1,18 @@
 /*
- * Copyright 2001-2013, 2017 by AO Industries, Inc.,
+ * Copyright 2001-2013, 2017, 2018 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
 package com.aoindustries.aoserv.examples.ftp;
 
 import com.aoindustries.aoserv.client.AOServConnector;
-import com.aoindustries.aoserv.client.AOServer;
-import com.aoindustries.aoserv.client.LinuxAccount;
-import com.aoindustries.aoserv.client.LinuxAccountType;
-import com.aoindustries.aoserv.client.LinuxServerAccount;
-import com.aoindustries.aoserv.client.Package;
-import com.aoindustries.aoserv.client.Shell;
 import com.aoindustries.aoserv.client.SimpleAOClient;
-import com.aoindustries.aoserv.client.Username;
+import com.aoindustries.aoserv.client.account.Username;
+import com.aoindustries.aoserv.client.linux.AOServer;
+import com.aoindustries.aoserv.client.linux.LinuxAccount;
+import com.aoindustries.aoserv.client.linux.LinuxAccountType;
+import com.aoindustries.aoserv.client.linux.LinuxServerAccount;
+import com.aoindustries.aoserv.client.linux.Shell;
 import com.aoindustries.aoserv.client.validator.AccountingCode;
 import com.aoindustries.aoserv.client.validator.Gecos;
 import com.aoindustries.aoserv.client.validator.GroupId;
@@ -105,7 +104,7 @@ final public class AddFTPGuestUser {
 		String password
 	) throws IOException, SQLException {
 		// Resolve the Package
-		Package pk=conn.getPackages().get(packageName);
+		com.aoindustries.aoserv.client.billing.Package pk=conn.getPackages().get(packageName);
 
 		// Allocate the username
 		pk.addUsername(username);

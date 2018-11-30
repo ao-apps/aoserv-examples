@@ -6,13 +6,13 @@
 package com.aoindustries.aoserv.examples;
 
 import com.aoindustries.aoserv.client.AOServConnector;
-import com.aoindustries.aoserv.client.Business;
-import com.aoindustries.aoserv.client.LinuxAccountType;
-import com.aoindustries.aoserv.client.LinuxGroupType;
-import com.aoindustries.aoserv.client.PackageCategory;
-import com.aoindustries.aoserv.client.PackageDefinition;
-import com.aoindustries.aoserv.client.Shell;
 import com.aoindustries.aoserv.client.SimpleAOClient;
+import com.aoindustries.aoserv.client.account.Business;
+import com.aoindustries.aoserv.client.billing.PackageCategory;
+import com.aoindustries.aoserv.client.billing.PackageDefinition;
+import com.aoindustries.aoserv.client.linux.LinuxAccountType;
+import com.aoindustries.aoserv.client.linux.LinuxGroupType;
+import com.aoindustries.aoserv.client.linux.Shell;
 import com.aoindustries.aoserv.client.validator.AccountingCode;
 import com.aoindustries.aoserv.client.validator.Gecos;
 import com.aoindustries.aoserv.client.validator.GroupId;
