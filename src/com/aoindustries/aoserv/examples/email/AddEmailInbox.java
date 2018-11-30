@@ -8,14 +8,14 @@ package com.aoindustries.aoserv.examples.email;
 import com.aoindustries.aoserv.client.AOServConnector;
 import com.aoindustries.aoserv.client.SimpleAOClient;
 import com.aoindustries.aoserv.client.account.Username;
-import com.aoindustries.aoserv.client.email.EmailAddress;
-import com.aoindustries.aoserv.client.email.EmailDomain;
-import com.aoindustries.aoserv.client.linux.AOServer;
-import com.aoindustries.aoserv.client.linux.LinuxAccount;
-import com.aoindustries.aoserv.client.linux.LinuxAccountType;
-import com.aoindustries.aoserv.client.linux.LinuxGroup;
-import com.aoindustries.aoserv.client.linux.LinuxServerAccount;
+import com.aoindustries.aoserv.client.email.Address;
+import com.aoindustries.aoserv.client.email.Domain;
+import com.aoindustries.aoserv.client.linux.Group;
+import com.aoindustries.aoserv.client.linux.Server;
 import com.aoindustries.aoserv.client.linux.Shell;
+import com.aoindustries.aoserv.client.linux.User;
+import com.aoindustries.aoserv.client.linux.UserServer;
+import com.aoindustries.aoserv.client.linux.UserType;
 import com.aoindustries.aoserv.client.validator.AccountingCode;
 import com.aoindustries.aoserv.client.validator.Gecos;
 import com.aoindustries.aoserv.client.validator.UserId;
@@ -60,7 +60,7 @@ final public class AddEmailInbox {
 		aoClient.addUsername(packageName, username);
 
 		// Indicate the username will be used for Linux accounts
-		aoClient.addLinuxAccount(username, LinuxGroup.MAILONLY, fullName, null, null, null, LinuxAccountType.EMAIL, Shell.PASSWD);
+		aoClient.addLinuxAccount(username, Group.MAILONLY, fullName, null, null, null, UserType.EMAIL, Shell.PASSWD);
 
 		// Grant the new Linux account access to the server
 		aoClient.addLinuxServerAccount(username, server, null);
@@ -86,9 +86,9 @@ final public class AddEmailInbox {
 	 * @param  address      the part of the email address before the <code>@</code>
 	 * @param  password     the password for the new account
 	 *
-	 * @return  the new <code>LinuxServerAccount</code>
+	 * @return  the new <code>UserServer</code>
 	 */
-	public static LinuxServerAccount addEmailInbox(
+	public static UserServer addEmailInbox(
 		AOServConnector conn,
 		AccountingCode packageName,
 		UserId username,
@@ -106,22 +106,22 @@ final public class AddEmailInbox {
 		Username un=conn.getUsernames().get(username);
 
 		// Indicate the username will be used for Linux accounts
-		un.addLinuxAccount(LinuxGroup.MAILONLY, fullName, null, null, null, LinuxAccountType.EMAIL, Shell.PASSWD);
-		LinuxAccount la=un.getLinuxAccount();
+		un.addLinuxAccount(Group.MAILONLY, fullName, null, null, null, UserType.EMAIL, Shell.PASSWD);
+		User la=un.getLinuxAccount();
 
-		// Find the AOServer
-		AOServer ao=conn.getServers().get(server).getAOServer();
+		// Find the Server
+		Server ao=conn.getServers().get(server).getAOServer();
 
 		// Grant the new Linux account access to the server
-		int lsaPKey=la.addLinuxServerAccount(ao, LinuxServerAccount.getDefaultHomeDirectory(username));
-		LinuxServerAccount lsa=conn.getLinuxServerAccounts().get(lsaPKey);
+		int lsaPKey=la.addLinuxServerAccount(ao, UserServer.getDefaultHomeDirectory(username));
+		UserServer lsa=conn.getLinuxServerAccounts().get(lsaPKey);
 
-		// Find the EmailDomain
-		EmailDomain sd=ao.getEmailDomain(domain);
+		// Find the Domain
+		Domain sd=ao.getEmailDomain(domain);
 
 		// Create the new email address
 		int eaPKey=sd.addEmailAddress(address);
-		EmailAddress ea=conn.getEmailAddresses().get(eaPKey);
+		Address ea=conn.getEmailAddresses().get(eaPKey);
 
 		// Attach the email address to the new inbox
 		lsa.addEmailAddress(ea);

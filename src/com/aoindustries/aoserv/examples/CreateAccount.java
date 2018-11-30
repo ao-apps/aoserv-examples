@@ -7,12 +7,12 @@ package com.aoindustries.aoserv.examples;
 
 import com.aoindustries.aoserv.client.AOServConnector;
 import com.aoindustries.aoserv.client.SimpleAOClient;
-import com.aoindustries.aoserv.client.account.Business;
+import com.aoindustries.aoserv.client.account.Account;
 import com.aoindustries.aoserv.client.billing.PackageCategory;
 import com.aoindustries.aoserv.client.billing.PackageDefinition;
-import com.aoindustries.aoserv.client.linux.LinuxAccountType;
-import com.aoindustries.aoserv.client.linux.LinuxGroupType;
+import com.aoindustries.aoserv.client.linux.GroupType;
 import com.aoindustries.aoserv.client.linux.Shell;
+import com.aoindustries.aoserv.client.linux.UserType;
 import com.aoindustries.aoserv.client.validator.AccountingCode;
 import com.aoindustries.aoserv.client.validator.Gecos;
 import com.aoindustries.aoserv.client.validator.GroupId;
@@ -58,7 +58,7 @@ final public class CreateAccount {
 	 * @param  ftpPassword         the password for the FTP access
 	 * @param  groupName           the name of the Linux group that the JVM and FTP accounts share
 	 * @param  siteNameTemplate    the template used for site name creation
-	 * @param  mysqlAdminUsername  the username of the existing MySQLUser that is allowed to admin the new DB
+	 * @param  mysqlAdminUsername  the username of the existing User that is allowed to admin the new DB
 	 * @param  mysqlAppUsername    the username that will have limited access to the database
 	 * @param  mysqlAppPassword    the password associated with the newly created application user account
 	 * @param  ipAddress           the IP address the site will respond to
@@ -100,7 +100,7 @@ final public class CreateAccount {
 		SimpleAOClient client=conn.getSimpleAOClient();
 
 		// Resolve the parent business
-		Business parent=conn.getBusinesses().get(parentBusiness);
+		Account parent=conn.getBusinesses().get(parentBusiness);
 		if(parent==null) throw new SQLException("Unable to find Business: "+parentBusiness);
 
 		// Create the business
@@ -135,9 +135,9 @@ final public class CreateAccount {
 		String siteName=client.generateSiteName(siteNameTemplate);
 
 		// Add the Linux group that the JVM and FTP account will use
-		client.addLinuxGroup(groupName, packageName, LinuxGroupType.USER);
+		client.addLinuxGroup(groupName, packageName, GroupType.USER);
 		if(out!=null) {
-			out.print("LinuxGroup added, name=");
+			out.print("Group added, name=");
 			out.println(groupName);
 			out.flush();
 		}
@@ -162,11 +162,11 @@ final public class CreateAccount {
 			null, // officeLocation
 			null, // officePhone
 			null, // homePhone
-			LinuxAccountType.USER,
+			UserType.USER,
 			Shell.BASH
 		);
 		if(out!=null) {
-			out.print("LinuxAccount added, username=");
+			out.print("User added, username=");
 			out.println(jvmUsername);
 			out.flush();
 		}
@@ -180,7 +180,7 @@ final public class CreateAccount {
 			UnixPath.valueOf(wwwDir.toString()+'/'+siteName)
 		);
 		if(out!=null) {
-			out.print("LinuxServerAccount added, pkey=");
+			out.print("UserServer added, pkey=");
 			out.println(jvmLinuxServerAccountPKey);
 			out.flush();
 		}
@@ -199,17 +199,17 @@ final public class CreateAccount {
 			null,
 			null,
 			null,
-			LinuxAccountType.FTPONLY,
+			UserType.FTPONLY,
 			Shell.FTPPASSWD
 		);
 		if(out!=null) {
-			out.print("LinuxAccount added, username=");
+			out.print("User added, username=");
 			out.println(ftpUsername);
 			out.flush();
 		}
 		client.addFTPGuestUser(ftpUsername);
 		if(out!=null) {
-			out.print("LinuxAccount flagged as FTPGuestUser, username=");
+			out.print("User flagged as FTPGuestUser, username=");
 			out.println(ftpUsername);
 			out.flush();
 		}
@@ -219,14 +219,14 @@ final public class CreateAccount {
 			UnixPath.valueOf(wwwDir.toString()+'/'+siteName+"/webapps")
 		);
 		if(out!=null) {
-			out.print("LinuxServerAccount added, pkey=");
+			out.print("UserServer added, pkey=");
 			out.println(ftpLinuxServerAccountPKey);
 			out.flush();
 		}
 
 		// Make sure the account rebuild is complete before continuing
 		if(out!=null) {
-			out.print("Waiting for LinuxServerAccount rebuild on ");
+			out.print("Waiting for UserServer rebuild on ");
 			out.println(server);
 			out.flush();
 		}
@@ -235,13 +235,13 @@ final public class CreateAccount {
 		// Set the passwords for the two new accounts
 		client.setLinuxServerAccountPassword(jvmUsername, server, jvmPassword);
 		if(out!=null) {
-			out.print("Password set for LinuxServerAccount ");
+			out.print("Password set for UserServer ");
 			out.println(jvmUsername);
 			out.flush();
 		}
 		client.setLinuxServerAccountPassword(ftpUsername, server, ftpPassword);
 		if(out!=null) {
-			out.print("Password set for LinuxServerAccount ");
+			out.print("Password set for UserServer ");
 			out.println(ftpUsername);
 			out.flush();
 		}
@@ -249,7 +249,7 @@ final public class CreateAccount {
 		// Add the MySQL database
 		/*String mysqlDatabaseName=client.generateMySQLDatabaseName(siteName.replace('-', '_'), "_");
 		int mysqlDatabasePKey=client.addMySQLDatabase(mysqlDatabaseName, server, packageName);
-		if(out!=null) out.print("MySQLDatabase added, pkey=").println(mysqlDatabasePKey).flush();
+		if(out!=null) out.print("Database added, pkey=").println(mysqlDatabasePKey).flush();
 
 		// Create the MySQL database application user
 		if(client.isUsernameAvailable(mysqlAppUsername)) {
@@ -257,9 +257,9 @@ final public class CreateAccount {
 			if(out!=null) out.print("Username added, username=").println(mysqlAppUsername).flush();
 		}
 		client.addMySQLUser(mysqlAppUsername);
-		if(out!=null) out.print("MySQLUser added, username=").println(mysqlAppUsername).flush();
+		if(out!=null) out.print("User added, username=").println(mysqlAppUsername).flush();
 		int mysqlServerUserPKey=client.addMySQLServerUser(mysqlAppUsername, server, MySQLHost.ANY_LOCAL_HOST);
-		if(out!=null) out.print("MySQLServerUser added, pkey=").println(mysqlServerUserPKey).flush();
+		if(out!=null) out.print("UserServer added, pkey=").println(mysqlServerUserPKey).flush();
 
 		// Grant permissions to the administrative MySQL user
 		client.addMySQLDBUser(
@@ -298,12 +298,12 @@ final public class CreateAccount {
 		if(out!=null) out.print("Granted insert, update, select, delete, create, alter privileges to ").println(mysqlAppUsername).flush();
 
 		// Make sure the MySQL system updates are complete before continuing
-		if(out!=null) out.print("Waiting for MySQLServerUser rebuilds on ").println(server).flush();
+		if(out!=null) out.print("Waiting for UserServer rebuilds on ").println(server).flush();
 		client.waitForMySQLUserRebuild(server);
 
 		// Set the password for the application MySQL user
 		client.setMySQLServerUserPassword(mysqlAppUsername, server, mysqlAppPassword);
-		if(out!=null) out.print("Password set for MySQLServerUser ").println(mysqlAppUsername).flush();
+		if(out!=null) out.print("Password set for UserServer ").println(mysqlAppUsername).flush();
 		*/
 		// Change the IP Address ownership if a private IP is being allotted
 		if(ownsIPAddress) {

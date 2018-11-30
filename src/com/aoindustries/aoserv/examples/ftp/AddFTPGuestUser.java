@@ -8,11 +8,11 @@ package com.aoindustries.aoserv.examples.ftp;
 import com.aoindustries.aoserv.client.AOServConnector;
 import com.aoindustries.aoserv.client.SimpleAOClient;
 import com.aoindustries.aoserv.client.account.Username;
-import com.aoindustries.aoserv.client.linux.AOServer;
-import com.aoindustries.aoserv.client.linux.LinuxAccount;
-import com.aoindustries.aoserv.client.linux.LinuxAccountType;
-import com.aoindustries.aoserv.client.linux.LinuxServerAccount;
+import com.aoindustries.aoserv.client.linux.Server;
 import com.aoindustries.aoserv.client.linux.Shell;
+import com.aoindustries.aoserv.client.linux.User;
+import com.aoindustries.aoserv.client.linux.UserServer;
+import com.aoindustries.aoserv.client.linux.UserType;
 import com.aoindustries.aoserv.client.validator.AccountingCode;
 import com.aoindustries.aoserv.client.validator.Gecos;
 import com.aoindustries.aoserv.client.validator.GroupId;
@@ -64,7 +64,7 @@ final public class AddFTPGuestUser {
 		aoClient.addUsername(packageName, username);
 
 		// Reserve the username for use as a Linux account
-		aoClient.addLinuxAccount(username, group, fullName, null, null, null, LinuxAccountType.FTPONLY, Shell.FTPPASSWD);
+		aoClient.addLinuxAccount(username, group, fullName, null, null, null, UserType.FTPONLY, Shell.FTPPASSWD);
 
 		// Limit the FTP transfers to the users home directory
 		aoClient.addFTPGuestUser(username);
@@ -91,9 +91,9 @@ final public class AddFTPGuestUser {
 	 * @param  home         the directory the user has access to
 	 * @param  password     the password for the new account
 	 *
-	 * @return  the new <code>LinuxServerAccount</code>
+	 * @return  the new <code>UserServer</code>
 	 */
-	public static LinuxServerAccount addFTPGuestuser(
+	public static UserServer addFTPGuestuser(
 		AOServConnector conn,
 		AccountingCode packageName,
 		UserId username,
@@ -111,18 +111,18 @@ final public class AddFTPGuestUser {
 		Username un=conn.getUsernames().get(username);
 
 		// Reserve the username for use as a Linux account
-		un.addLinuxAccount(group, fullName, null, null, null, LinuxAccountType.FTPONLY, Shell.FTPPASSWD);
-		LinuxAccount la=un.getLinuxAccount();
+		un.addLinuxAccount(group, fullName, null, null, null, UserType.FTPONLY, Shell.FTPPASSWD);
+		User la=un.getLinuxAccount();
 
 		// Limit the FTP transfers to the users home directory
 		la.addFTPGuestUser();
 
 		// Find the server
-		AOServer ao=conn.getAoServers().get(server);
+		Server ao=conn.getAoServers().get(server);
 
 		// Grant the user access to the server
 		int lsaPKey=la.addLinuxServerAccount(ao, home);
-		LinuxServerAccount lsa=conn.getLinuxServerAccounts().get(lsaPKey);
+		UserServer lsa=conn.getLinuxServerAccounts().get(lsaPKey);
 
 		// Wait for rebuild
 		ao.waitForLinuxAccountRebuild();

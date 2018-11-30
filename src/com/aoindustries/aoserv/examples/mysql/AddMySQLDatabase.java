@@ -8,9 +8,8 @@ package com.aoindustries.aoserv.examples.mysql;
 import com.aoindustries.aoserv.client.AOServConnector;
 import com.aoindustries.aoserv.client.SimpleAOClient;
 import com.aoindustries.aoserv.client.billing.Package;
-import com.aoindustries.aoserv.client.linux.AOServer;
-import com.aoindustries.aoserv.client.mysql.MySQLDatabase;
-import com.aoindustries.aoserv.client.mysql.MySQLServer;
+import com.aoindustries.aoserv.client.mysql.Database;
+import com.aoindustries.aoserv.client.mysql.Server;
 import com.aoindustries.aoserv.client.validator.AccountingCode;
 import com.aoindustries.aoserv.client.validator.MySQLDatabaseName;
 import com.aoindustries.aoserv.client.validator.MySQLServerName;
@@ -19,7 +18,7 @@ import java.io.IOException;
 import java.sql.SQLException;
 
 /**
- * Adds a new <code>MySQLDatabase</code> to the system.
+ * Adds a new <code>Database</code> to the system.
  *
  * @see  AddMySQLUser
  *
@@ -28,7 +27,7 @@ import java.sql.SQLException;
 final public class AddMySQLDatabase {
 
 	/**
-	 * Adds a <code>MySQLDatabase</code> to a <code>Server</code>
+	 * Adds a <code>Database</code> to a <code>Host</code>
 	 *
 	 * @param  aoClient     the <code>SimpleAOClient</code> to use
 	 * @param  name         the name of the database to add
@@ -47,7 +46,7 @@ final public class AddMySQLDatabase {
 	}
 
 	/**
-	 * Adds a <code>MySQLDatabase</code> to a <code>Server</code>
+	 * Adds a <code>Database</code> to a <code>Host</code>
 	 *
 	 * @param  conn  the <code>AOServConnector</code> to use
 	 * @param  name  the name of the database to add
@@ -55,9 +54,9 @@ final public class AddMySQLDatabase {
 	 * @param  server  the hostname of the server to add the database to
 	 * @param  packageName  the name of the <code>Package</code> that owns the new database
 	 *
-	 * @return  the new <code>MySQLDatabase</code>
+	 * @return  the new <code>Database</code>
 	 */
-	public static MySQLDatabase addMySQLDatabase(
+	public static Database addMySQLDatabase(
 		AOServConnector conn,
 		MySQLDatabaseName name,
 		MySQLServerName mysqlServer,
@@ -65,18 +64,18 @@ final public class AddMySQLDatabase {
 		AccountingCode packageName
 	) throws IOException, SQLException {
 
-		// Resolve the AOServer
-		AOServer ao=conn.getAoServers().get(server);
+		// Resolve the Server
+		com.aoindustries.aoserv.client.linux.Server ao=conn.getAoServers().get(server);
 
-		// Resolve the MySQLServer
-		MySQLServer ms=ao.getMySQLServer(mysqlServer);
+		// Resolve the Server
+		Server ms=ao.getMySQLServer(mysqlServer);
 
 		// Resolve the Package
 		Package pk=conn.getPackages().get(packageName);
 
-		// Add the MySQLDatabase
+		// Add the Database
 		int mdPKey=ms.addMySQLDatabase(name, pk);
-		MySQLDatabase md=conn.getMysqlDatabases().get(mdPKey);
+		Database md=conn.getMysqlDatabases().get(mdPKey);
 
 		// Return the object
 		return md;

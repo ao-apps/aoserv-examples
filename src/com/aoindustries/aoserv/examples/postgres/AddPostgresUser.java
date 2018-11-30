@@ -9,10 +9,9 @@ import com.aoindustries.aoserv.client.AOServConnector;
 import com.aoindustries.aoserv.client.SimpleAOClient;
 import com.aoindustries.aoserv.client.account.Username;
 import com.aoindustries.aoserv.client.billing.Package;
-import com.aoindustries.aoserv.client.linux.AOServer;
-import com.aoindustries.aoserv.client.postgresql.PostgresServer;
-import com.aoindustries.aoserv.client.postgresql.PostgresServerUser;
-import com.aoindustries.aoserv.client.postgresql.PostgresUser;
+import com.aoindustries.aoserv.client.postgresql.Server;
+import com.aoindustries.aoserv.client.postgresql.User;
+import com.aoindustries.aoserv.client.postgresql.UserServer;
 import com.aoindustries.aoserv.client.validator.AccountingCode;
 import com.aoindustries.aoserv.client.validator.PostgresServerName;
 import com.aoindustries.aoserv.client.validator.PostgresUserId;
@@ -20,14 +19,14 @@ import java.io.IOException;
 import java.sql.SQLException;
 
 /**
- * Adds a <code>PostgresUser</code> to the system.
+ * Adds a <code>User</code> to the system.
  *
  * @author  AO Industries, Inc.
  */
 final public class AddPostgresUser {
 
 	/**
-	 * Adds a <code>PostgresUser</code> to the system.
+	 * Adds a <code>User</code> to the system.
 	 *
 	 * @param  aoClient        the <code>SimpleAOClient</code> to use
 	 * @param  packageName     the name of the <code>Package</code>
@@ -61,7 +60,7 @@ final public class AddPostgresUser {
 	}
 
 	/**
-	 * Adds a <code>PostgresUser</code> to the system.
+	 * Adds a <code>User</code> to the system.
 	 *
 	 * @param  conn            the <code>AOServConnector</code> to use
 	 * @param  packageName     the name of the <code>Package</code>
@@ -70,9 +69,9 @@ final public class AddPostgresUser {
 	 * @param  server          the hostname of the server to add the account to
 	 * @param  password        the password for the new account
 	 *
-	 * @return  the new <code>PostgresServerUser</code>
+	 * @return  the new <code>UserServer</code>
 	 */
-	public static PostgresServerUser addPostgresUser(
+	public static UserServer addPostgresUser(
 		AOServConnector conn,
 		AccountingCode packageName,
 		PostgresUserId username,
@@ -89,17 +88,17 @@ final public class AddPostgresUser {
 
 		// Indicate the username will be used for PostgreSQL accounts
 		un.addPostgresUser();
-		PostgresUser pu=un.getPostgresUser();
+		User pu=un.getPostgresUser();
+
+		// Resolve the Host
+		com.aoindustries.aoserv.client.linux.Server ao=conn.getServers().get(server).getAOServer();
 
 		// Resolve the Server
-		AOServer ao=conn.getServers().get(server).getAOServer();
-
-		// Resolve the PostgresServer
-		PostgresServer ps=ao.getPostgresServer(postgresServer);
+		Server ps=ao.getPostgresServer(postgresServer);
 
 		// Grant access to the server
 		int psuPKey=pu.addPostgresServerUser(ps);
-		PostgresServerUser psu=conn.getPostgresServerUsers().get(psuPKey);
+		UserServer psu=conn.getPostgresServerUsers().get(psuPKey);
 
 		// Commit the changes before setting the password
 		ao.waitForPostgresUserRebuild();

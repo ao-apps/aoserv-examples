@@ -8,8 +8,8 @@ package com.aoindustries.aoserv.examples.vnc;
 import com.aoindustries.aoserv.client.AOServClientConfiguration;
 import com.aoindustries.aoserv.client.AOServConnector;
 import com.aoindustries.aoserv.client.infrastructure.VirtualServer;
-import com.aoindustries.aoserv.client.linux.AOServer;
-import com.aoindustries.aoserv.client.net.Server;
+import com.aoindustries.aoserv.client.linux.Server;
+import com.aoindustries.aoserv.client.net.Host;
 import com.aoindustries.aoserv.daemon.client.AOServDaemonConnection;
 import com.aoindustries.aoserv.daemon.client.AOServDaemonConnector;
 import com.aoindustries.aoserv.daemon.client.AOServDaemonProtocol;
@@ -45,10 +45,10 @@ public class VncConsoleTunnel implements Runnable {
 		} else {
 			try {
 				AOServConnector conn = AOServConnector.getConnector(logger);
-				Server server = conn.getServers().get(args[0]);
-				if(server==null) throw new SQLException("Unable to find Server: "+args[0]);
+				Host server = conn.getServers().get(args[0]);
+				if(server==null) throw new SQLException("Unable to find Host: "+args[0]);
 				VirtualServer virtualServer = server.getVirtualServer();
-				if(virtualServer==null) throw new SQLException("Server is not a VirtualServer: "+args[0]);
+				if(virtualServer==null) throw new SQLException("Host is not a VirtualServer: "+args[0]);
 				new VncConsoleTunnel(
 					virtualServer,
 					InetAddress.getByName(args[1]),
@@ -82,7 +82,7 @@ public class VncConsoleTunnel implements Runnable {
 							new Runnable() {
 								public void run() {
 									try {
-										AOServer.DaemonAccess daemonAccess = virtualServer.requestVncConsoleAccess();
+										Server.DaemonAccess daemonAccess = virtualServer.requestVncConsoleAccess();
 										AOServDaemonConnector daemonConnector=AOServDaemonConnector.getConnector(
 											daemonAccess.getHost(),
 											com.aoindustries.net.InetAddress.UNSPECIFIED_IPV4,
