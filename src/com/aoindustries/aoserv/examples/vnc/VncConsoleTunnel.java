@@ -45,7 +45,7 @@ public class VncConsoleTunnel implements Runnable {
 		} else {
 			try {
 				AOServConnector conn = AOServConnector.getConnector(logger);
-				Host server = conn.getServers().get(args[0]);
+				Host server = conn.getNet().getServers().get(args[0]);
 				if(server==null) throw new SQLException("Unable to find Host: "+args[0]);
 				VirtualServer virtualServer = server.getVirtualServer();
 				if(virtualServer==null) throw new SQLException("Host is not a VirtualServer: "+args[0]);

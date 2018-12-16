@@ -99,29 +99,29 @@ final public class AddEmailInbox {
 		String password
 	) throws IOException, SQLException {
 		// Resolve the Package
-		com.aoindustries.aoserv.client.billing.Package pk=conn.getPackages().get(packageName);
+		com.aoindustries.aoserv.client.billing.Package pk=conn.getBilling().getPackages().get(packageName);
 
 		// Reserve the username
 		pk.addUsername(username);
-		Username un=conn.getUsernames().get(username);
+		Username un=conn.getAccount().getUsernames().get(username);
 
 		// Indicate the username will be used for Linux accounts
 		un.addLinuxAccount(Group.MAILONLY, fullName, null, null, null, UserType.EMAIL, Shell.PASSWD);
 		User la=un.getLinuxAccount();
 
 		// Find the Server
-		Server ao=conn.getServers().get(server).getAOServer();
+		Server ao=conn.getNet().getServers().get(server).getAOServer();
 
 		// Grant the new Linux account access to the server
 		int lsaPKey=la.addLinuxServerAccount(ao, UserServer.getDefaultHomeDirectory(username));
-		UserServer lsa=conn.getLinuxServerAccounts().get(lsaPKey);
+		UserServer lsa=conn.getLinux().getLinuxServerAccounts().get(lsaPKey);
 
 		// Find the Domain
 		Domain sd=ao.getEmailDomain(domain);
 
 		// Create the new email address
 		int eaPKey=sd.addEmailAddress(address);
-		Address ea=conn.getEmailAddresses().get(eaPKey);
+		Address ea=conn.getEmail().getEmailAddresses().get(eaPKey);
 
 		// Attach the email address to the new inbox
 		lsa.addEmailAddress(ea);

@@ -90,17 +90,17 @@ final public class AddMySQLUser {
 		String password
 	) throws IOException, SQLException {
 		// Find the Package
-		Package pk=conn.getPackages().get(packageName);
+		Package pk=conn.getBilling().getPackages().get(packageName);
 
 		// Resolve the Host
-		com.aoindustries.aoserv.client.linux.Server ao=conn.getAoServers().get(server);
+		com.aoindustries.aoserv.client.linux.Server ao=conn.getLinux().getAoServers().get(server);
 
 		// Resolve the Server
 		Server ms=ao.getMySQLServer(mysqlServer);
 
 		// Reserve the username
 		pk.addUsername(username);
-		Username un=conn.getUsernames().get(username);
+		Username un=conn.getAccount().getUsernames().get(username);
 
 		// Indicate the username will be used for MySQL accounts
 		un.addMySQLUser();
@@ -108,7 +108,7 @@ final public class AddMySQLUser {
 
 		// Grant access to the server
 		int msuPKey=mu.addMySQLServerUser(ms, UserServer.ANY_LOCAL_HOST);
-		UserServer msu=conn.getMysqlServerUsers().get(msuPKey);
+		UserServer msu=conn.getMysql().getMysqlServerUsers().get(msuPKey);
 
 		// Find the Database
 		Database md=ms.getMySQLDatabase(database);

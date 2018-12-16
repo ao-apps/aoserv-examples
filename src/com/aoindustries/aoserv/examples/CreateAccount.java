@@ -100,7 +100,7 @@ final public class CreateAccount {
 		SimpleAOClient client=conn.getSimpleAOClient();
 
 		// Resolve the parent business
-		Account parent=conn.getBusinesses().get(parentBusiness);
+		Account parent=conn.getAccount().getBusinesses().get(parentBusiness);
 		if(parent==null) throw new SQLException("Unable to find Business: "+parentBusiness);
 
 		// Create the business
@@ -113,7 +113,7 @@ final public class CreateAccount {
 		}
 
 		// Resolve the PackageDefinition
-		PackageCategory pc=conn.getPackageCategories().get(packageDefinitionCategory);
+		PackageCategory pc=conn.getBilling().getPackageCategories().get(packageDefinitionCategory);
 		if(pc==null) throw new SQLException("Unable to find PackageCategory: "+packageDefinitionCategory);
 		PackageDefinition packageDefinition=parent.getPackageDefinition(pc, packageDefinitionName, packageDefinitionVersion);
 		if(packageDefinition==null) throw new SQLException("Unable to find PackageDefinition: accounting="+parentBusiness+", category="+packageDefinitionCategory+", name="+packageDefinitionName+", version="+packageDefinitionVersion);
@@ -171,7 +171,7 @@ final public class CreateAccount {
 			out.flush();
 		}
 		// Find the directory containing the websites
-		UnixPath wwwDir = conn.getAoServers().get(
+		UnixPath wwwDir = conn.getLinux().getAoServers().get(
 			DomainName.valueOf(server)
 		).getServer().getOperatingSystemVersion().getHttpdSitesDirectory();
 		int jvmLinuxServerAccountPKey=client.addLinuxServerAccount(

@@ -104,11 +104,11 @@ final public class AddFTPGuestUser {
 		String password
 	) throws IOException, SQLException {
 		// Resolve the Package
-		com.aoindustries.aoserv.client.billing.Package pk=conn.getPackages().get(packageName);
+		com.aoindustries.aoserv.client.billing.Package pk=conn.getBilling().getPackages().get(packageName);
 
 		// Allocate the username
 		pk.addUsername(username);
-		Username un=conn.getUsernames().get(username);
+		Username un=conn.getAccount().getUsernames().get(username);
 
 		// Reserve the username for use as a Linux account
 		un.addLinuxAccount(group, fullName, null, null, null, UserType.FTPONLY, Shell.FTPPASSWD);
@@ -118,11 +118,11 @@ final public class AddFTPGuestUser {
 		la.addFTPGuestUser();
 
 		// Find the server
-		Server ao=conn.getAoServers().get(server);
+		Server ao=conn.getLinux().getAoServers().get(server);
 
 		// Grant the user access to the server
 		int lsaPKey=la.addLinuxServerAccount(ao, home);
-		UserServer lsa=conn.getLinuxServerAccounts().get(lsaPKey);
+		UserServer lsa=conn.getLinux().getLinuxServerAccounts().get(lsaPKey);
 
 		// Wait for rebuild
 		ao.waitForLinuxAccountRebuild();
