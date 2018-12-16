@@ -80,25 +80,25 @@ final public class AddPostgresUser {
 		String password
 	) throws IOException, SQLException {
 		// Find the Package
-		Package pk=conn.getBilling().getPackages().get(packageName);
+		Package pk=conn.getBilling().getPackage().get(packageName);
 
 		// Reserve the username
 		pk.addUsername(username);
-		Username un=conn.getAccount().getUsernames().get(username);
+		Username un=conn.getAccount().getUsername().get(username);
 
 		// Indicate the username will be used for PostgreSQL accounts
 		un.addPostgresUser();
 		User pu=un.getPostgresUser();
 
 		// Resolve the Host
-		com.aoindustries.aoserv.client.linux.Server ao=conn.getNet().getServers().get(server).getAOServer();
+		com.aoindustries.aoserv.client.linux.Server ao=conn.getNet().getHost().get(server).getAOServer();
 
 		// Resolve the Server
 		Server ps=ao.getPostgresServer(postgresServer);
 
 		// Grant access to the server
 		int psuPKey=pu.addPostgresServerUser(ps);
-		UserServer psu=conn.getPostgresql().getPostgresServerUsers().get(psuPKey);
+		UserServer psu=conn.getPostgresql().getUserServer().get(psuPKey);
 
 		// Commit the changes before setting the password
 		ao.waitForPostgresUserRebuild();

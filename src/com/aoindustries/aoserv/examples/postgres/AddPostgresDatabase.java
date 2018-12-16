@@ -78,7 +78,7 @@ final public class AddPostgresDatabase {
 	) throws IOException, SQLException {
 
 		// Resolve the Host
-		com.aoindustries.aoserv.client.linux.Server ao=conn.getLinux().getAoServers().get(server);
+		com.aoindustries.aoserv.client.linux.Server ao=conn.getLinux().getServer().get(server);
 
 		// Resolve the Server
 		Server ps=ao.getPostgresServer(postgresServer);
@@ -93,7 +93,7 @@ final public class AddPostgresDatabase {
 		int pdPKey=ps.addPostgresDatabase(name, psu, pe, enablePostgis);
 
 		// Return the object
-		return conn.getPostgresql().getPostgresDatabases().get(pdPKey);
+		return conn.getPostgresql().getDatabase().get(pdPKey);
 	}
 
 	private AddPostgresDatabase() {}

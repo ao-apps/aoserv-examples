@@ -45,7 +45,7 @@ final public class CreateAccount {
 	 * @param  out                 if provided, verbose output is displayed during account creation
 	 * @param  accountingTemplate  the beginning part of the accounting code
 	 * @param  server              the hostname of the server to set up the account on
-	 * @param  parentBusiness      the accounting code of the parent business
+	 * @param  parentAccount      the accounting code of the parent business
 	 * @param  packageDefinitionCategory  the category for the <code>PackageDefinition</code>
 	 * @param  packageDefinitionName  the name of the <code>PackageDefinition</code>
 	 * @param  packageDefinitionVersion  the version of the <code>PackageDefinition</code>.  Please note
@@ -75,7 +75,7 @@ final public class CreateAccount {
 		PrintWriter out,
 		AccountingCode accountingTemplate,
 		String server,
-		AccountingCode parentBusiness,
+		AccountingCode parentAccount,
 		String packageDefinitionCategory,
 		String packageDefinitionName,
 		String packageDefinitionVersion,
@@ -99,26 +99,26 @@ final public class CreateAccount {
 		long startTime=System.currentTimeMillis();
 		SimpleAOClient client=conn.getSimpleAOClient();
 
-		// Resolve the parent business
-		Account parent=conn.getAccount().getBusinesses().get(parentBusiness);
-		if(parent==null) throw new SQLException("Unable to find Business: "+parentBusiness);
+		// Resolve the parent account
+		Account parent = conn.getAccount().getAccount().get(parentAccount);
+		if(parent == null) throw new SQLException("Unable to find Account: " + parentAccount);
 
-		// Create the business
-		AccountingCode accounting=client.generateAccountingCode(accountingTemplate);
-		client.addBusiness(accounting, null, server, parentBusiness, false, false, true, true);
+		// Create the account
+		AccountingCode accounting = client.generateAccountingCode(accountingTemplate);
+		client.addBusiness(accounting, null, server, parentAccount, false, false, true, true);
 		if(out!=null) {
-			out.print("Business added, accounting=");
+			out.print("Account added, accounting=");
 			out.println(accounting);
 			out.flush();
 		}
 
 		// Resolve the PackageDefinition
-		PackageCategory pc=conn.getBilling().getPackageCategories().get(packageDefinitionCategory);
-		if(pc==null) throw new SQLException("Unable to find PackageCategory: "+packageDefinitionCategory);
+		PackageCategory pc = conn.getBilling().getPackageCategory().get(packageDefinitionCategory);
+		if(pc == null) throw new SQLException("Unable to find PackageCategory: " + packageDefinitionCategory);
 		PackageDefinition packageDefinition=parent.getPackageDefinition(pc, packageDefinitionName, packageDefinitionVersion);
-		if(packageDefinition==null) throw new SQLException("Unable to find PackageDefinition: accounting="+parentBusiness+", category="+packageDefinitionCategory+", name="+packageDefinitionName+", version="+packageDefinitionVersion);
+		if(packageDefinition==null) throw new SQLException("Unable to find PackageDefinition: accounting="+parentAccount+", category="+packageDefinitionCategory+", name="+packageDefinitionName+", version="+packageDefinitionVersion);
 
-		// Add a Package to the Business
+		// Add a Package to the Account
 		AccountingCode packageName=client.generatePackageName(AccountingCode.valueOf(accounting.toString()+'_'));
 		client.addPackage(
 			packageName,
@@ -171,7 +171,7 @@ final public class CreateAccount {
 			out.flush();
 		}
 		// Find the directory containing the websites
-		UnixPath wwwDir = conn.getLinux().getAoServers().get(
+		UnixPath wwwDir = conn.getLinux().getServer().get(
 			DomainName.valueOf(server)
 		).getServer().getOperatingSystemVersion().getHttpdSitesDirectory();
 		int jvmLinuxServerAccountPKey=client.addLinuxServerAccount(

@@ -65,17 +65,17 @@ final public class AddMySQLDatabase {
 	) throws IOException, SQLException {
 
 		// Resolve the Server
-		com.aoindustries.aoserv.client.linux.Server ao=conn.getLinux().getAoServers().get(server);
+		com.aoindustries.aoserv.client.linux.Server ao=conn.getLinux().getServer().get(server);
 
 		// Resolve the Server
 		Server ms=ao.getMySQLServer(mysqlServer);
 
 		// Resolve the Package
-		Package pk=conn.getBilling().getPackages().get(packageName);
+		Package pk=conn.getBilling().getPackage().get(packageName);
 
 		// Add the Database
 		int mdPKey=ms.addMySQLDatabase(name, pk);
-		Database md=conn.getMysql().getMysqlDatabases().get(mdPKey);
+		Database md=conn.getMysql().getDatabase().get(mdPKey);
 
 		// Return the object
 		return md;
