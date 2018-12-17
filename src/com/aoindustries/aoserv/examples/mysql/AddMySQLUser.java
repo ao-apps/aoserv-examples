@@ -7,16 +7,12 @@ package com.aoindustries.aoserv.examples.mysql;
 
 import com.aoindustries.aoserv.client.AOServConnector;
 import com.aoindustries.aoserv.client.SimpleAOClient;
-import com.aoindustries.aoserv.client.account.Username;
+import com.aoindustries.aoserv.client.account.Account;
 import com.aoindustries.aoserv.client.billing.Package;
 import com.aoindustries.aoserv.client.mysql.Database;
 import com.aoindustries.aoserv.client.mysql.Server;
 import com.aoindustries.aoserv.client.mysql.User;
 import com.aoindustries.aoserv.client.mysql.UserServer;
-import com.aoindustries.aoserv.client.validator.AccountingCode;
-import com.aoindustries.aoserv.client.validator.MySQLDatabaseName;
-import com.aoindustries.aoserv.client.validator.MySQLServerName;
-import com.aoindustries.aoserv.client.validator.MySQLUserId;
 import com.aoindustries.net.DomainName;
 import java.io.IOException;
 import java.sql.SQLException;
@@ -41,11 +37,11 @@ final public class AddMySQLUser {
 	 */
 	public static void addMySQLUser(
 		SimpleAOClient aoClient,
-		AccountingCode packageName,
-		MySQLUserId username,
-		MySQLServerName mysqlServer,
+		Account.Name packageName,
+		User.Name username,
+		Server.Name mysqlServer,
 		String server,
-		MySQLDatabaseName database,
+		Database.Name database,
 		String password
 	) throws IOException, SQLException {
 		// Reserve the username
@@ -82,11 +78,11 @@ final public class AddMySQLUser {
 	 */
 	public static UserServer addMySQLUser(
 		AOServConnector conn,
-		AccountingCode packageName,
-		MySQLUserId username,
-		MySQLServerName mysqlServer,
+		Account.Name packageName,
+		User.Name username,
+		Server.Name mysqlServer,
 		DomainName server,
-		MySQLDatabaseName database,
+		Database.Name database,
 		String password
 	) throws IOException, SQLException {
 		// Find the Package
@@ -100,7 +96,7 @@ final public class AddMySQLUser {
 
 		// Reserve the username
 		pk.addUsername(username);
-		Username un=conn.getAccount().getUsername().get(username);
+		com.aoindustries.aoserv.client.account.User un=conn.getAccount().getUser().get(username);
 
 		// Indicate the username will be used for MySQL accounts
 		un.addMySQLUser();

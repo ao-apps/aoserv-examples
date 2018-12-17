@@ -7,14 +7,11 @@ package com.aoindustries.aoserv.examples.postgres;
 
 import com.aoindustries.aoserv.client.AOServConnector;
 import com.aoindustries.aoserv.client.SimpleAOClient;
-import com.aoindustries.aoserv.client.account.Username;
+import com.aoindustries.aoserv.client.account.Account;
 import com.aoindustries.aoserv.client.billing.Package;
 import com.aoindustries.aoserv.client.postgresql.Server;
 import com.aoindustries.aoserv.client.postgresql.User;
 import com.aoindustries.aoserv.client.postgresql.UserServer;
-import com.aoindustries.aoserv.client.validator.AccountingCode;
-import com.aoindustries.aoserv.client.validator.PostgresServerName;
-import com.aoindustries.aoserv.client.validator.PostgresUserId;
 import java.io.IOException;
 import java.sql.SQLException;
 
@@ -37,9 +34,9 @@ final public class AddPostgresUser {
 	 */
 	public static void addPostgresUser(
 		SimpleAOClient aoClient,
-		AccountingCode packageName,
-		PostgresUserId username,
-		PostgresServerName postgresServer,
+		Account.Name packageName,
+		User.Name username,
+		Server.Name postgresServer,
 		String server,
 		String password
 	) throws IOException, SQLException {
@@ -73,9 +70,9 @@ final public class AddPostgresUser {
 	 */
 	public static UserServer addPostgresUser(
 		AOServConnector conn,
-		AccountingCode packageName,
-		PostgresUserId username,
-		PostgresServerName postgresServer,
+		Account.Name packageName,
+		User.Name username,
+		Server.Name postgresServer,
 		String server,
 		String password
 	) throws IOException, SQLException {
@@ -84,7 +81,7 @@ final public class AddPostgresUser {
 
 		// Reserve the username
 		pk.addUsername(username);
-		Username un=conn.getAccount().getUsername().get(username);
+		com.aoindustries.aoserv.client.account.User un=conn.getAccount().getUser().get(username);
 
 		// Indicate the username will be used for PostgreSQL accounts
 		un.addPostgresUser();

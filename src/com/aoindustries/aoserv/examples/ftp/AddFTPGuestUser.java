@@ -7,17 +7,15 @@ package com.aoindustries.aoserv.examples.ftp;
 
 import com.aoindustries.aoserv.client.AOServConnector;
 import com.aoindustries.aoserv.client.SimpleAOClient;
-import com.aoindustries.aoserv.client.account.Username;
+import com.aoindustries.aoserv.client.account.Account;
+import com.aoindustries.aoserv.client.linux.Group;
+import com.aoindustries.aoserv.client.linux.PosixPath;
 import com.aoindustries.aoserv.client.linux.Server;
 import com.aoindustries.aoserv.client.linux.Shell;
 import com.aoindustries.aoserv.client.linux.User;
+import com.aoindustries.aoserv.client.linux.User.Gecos;
 import com.aoindustries.aoserv.client.linux.UserServer;
 import com.aoindustries.aoserv.client.linux.UserType;
-import com.aoindustries.aoserv.client.validator.AccountingCode;
-import com.aoindustries.aoserv.client.validator.Gecos;
-import com.aoindustries.aoserv.client.validator.GroupId;
-import com.aoindustries.aoserv.client.validator.UnixPath;
-import com.aoindustries.aoserv.client.validator.UserId;
 import com.aoindustries.net.DomainName;
 import java.io.IOException;
 import java.sql.SQLException;
@@ -52,12 +50,12 @@ final public class AddFTPGuestUser {
 	 */
 	public static void addFTPGuestuser(
 		SimpleAOClient aoClient,
-		AccountingCode packageName,
-		UserId username,
+		Account.Name packageName,
+		User.Name username,
 		Gecos fullName,
-		GroupId group,
+		Group.Name group,
 		String server,
-		UnixPath home,
+		PosixPath home,
 		String password
 	) throws IOException, SQLException {
 		// Allocate the username
@@ -95,12 +93,12 @@ final public class AddFTPGuestUser {
 	 */
 	public static UserServer addFTPGuestuser(
 		AOServConnector conn,
-		AccountingCode packageName,
-		UserId username,
+		Account.Name packageName,
+		User.Name username,
 		Gecos fullName,
-		GroupId group,
+		Group.Name group,
 		DomainName server,
-		UnixPath home,
+		PosixPath home,
 		String password
 	) throws IOException, SQLException {
 		// Resolve the Package
@@ -108,7 +106,7 @@ final public class AddFTPGuestUser {
 
 		// Allocate the username
 		pk.addUsername(username);
-		Username un=conn.getAccount().getUsername().get(username);
+		com.aoindustries.aoserv.client.account.User un = conn.getAccount().getUser().get(username);
 
 		// Reserve the username for use as a Linux account
 		un.addLinuxAccount(group, fullName, null, null, null, UserType.FTPONLY, Shell.FTPPASSWD);

@@ -10,10 +10,8 @@ import com.aoindustries.aoserv.client.SimpleAOClient;
 import com.aoindustries.aoserv.client.postgresql.Database;
 import com.aoindustries.aoserv.client.postgresql.Encoding;
 import com.aoindustries.aoserv.client.postgresql.Server;
+import com.aoindustries.aoserv.client.postgresql.User;
 import com.aoindustries.aoserv.client.postgresql.UserServer;
-import com.aoindustries.aoserv.client.validator.PostgresDatabaseName;
-import com.aoindustries.aoserv.client.validator.PostgresServerName;
-import com.aoindustries.aoserv.client.validator.PostgresUserId;
 import com.aoindustries.net.DomainName;
 import java.io.IOException;
 import java.sql.SQLException;
@@ -44,10 +42,10 @@ final public class AddPostgresDatabase {
 	 */
 	public static void addPostgresDatabase(
 		SimpleAOClient aoClient,
-		PostgresDatabaseName name,
-		PostgresServerName postgresServer,
+		Database.Name name,
+		Server.Name postgresServer,
 		String server,
-		PostgresUserId datdba,
+		User.Name datdba,
 		String encoding,
 		boolean enablePostgis
 	) throws IOException, SQLException {
@@ -69,10 +67,10 @@ final public class AddPostgresDatabase {
 	 */
 	public static Database addPostgresDatabase(
 		AOServConnector conn,
-		PostgresDatabaseName name,
-		PostgresServerName postgresServer,
+		Database.Name name,
+		Server.Name postgresServer,
 		DomainName server,
-		PostgresUserId datdba,
+		User.Name datdba,
 		String encoding,
 		boolean enablePostgis
 	) throws IOException, SQLException {

@@ -7,18 +7,16 @@ package com.aoindustries.aoserv.examples.email;
 
 import com.aoindustries.aoserv.client.AOServConnector;
 import com.aoindustries.aoserv.client.SimpleAOClient;
-import com.aoindustries.aoserv.client.account.Username;
+import com.aoindustries.aoserv.client.account.Account;
 import com.aoindustries.aoserv.client.email.Address;
 import com.aoindustries.aoserv.client.email.Domain;
 import com.aoindustries.aoserv.client.linux.Group;
 import com.aoindustries.aoserv.client.linux.Server;
 import com.aoindustries.aoserv.client.linux.Shell;
 import com.aoindustries.aoserv.client.linux.User;
+import com.aoindustries.aoserv.client.linux.User.Gecos;
 import com.aoindustries.aoserv.client.linux.UserServer;
 import com.aoindustries.aoserv.client.linux.UserType;
-import com.aoindustries.aoserv.client.validator.AccountingCode;
-import com.aoindustries.aoserv.client.validator.Gecos;
-import com.aoindustries.aoserv.client.validator.UserId;
 import com.aoindustries.net.DomainName;
 import java.io.IOException;
 import java.sql.SQLException;
@@ -48,8 +46,8 @@ final public class AddEmailInbox {
 	 */
 	public static void addEmailInbox(
 		SimpleAOClient aoClient,
-		AccountingCode packageName,
-		UserId username,
+		Account.Name packageName,
+		User.Name username,
 		Gecos fullName,
 		String server,
 		String address,
@@ -90,8 +88,8 @@ final public class AddEmailInbox {
 	 */
 	public static UserServer addEmailInbox(
 		AOServConnector conn,
-		AccountingCode packageName,
-		UserId username,
+		Account.Name packageName,
+		User.Name username,
 		Gecos fullName,
 		String server,
 		String address,
@@ -103,7 +101,7 @@ final public class AddEmailInbox {
 
 		// Reserve the username
 		pk.addUsername(username);
-		Username un=conn.getAccount().getUsername().get(username);
+		com.aoindustries.aoserv.client.account.User un = conn.getAccount().getUser().get(username);
 
 		// Indicate the username will be used for Linux accounts
 		un.addLinuxAccount(Group.MAILONLY, fullName, null, null, null, UserType.EMAIL, Shell.PASSWD);

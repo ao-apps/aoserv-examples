@@ -7,12 +7,10 @@ package com.aoindustries.aoserv.examples.mysql;
 
 import com.aoindustries.aoserv.client.AOServConnector;
 import com.aoindustries.aoserv.client.SimpleAOClient;
+import com.aoindustries.aoserv.client.account.Account;
 import com.aoindustries.aoserv.client.billing.Package;
 import com.aoindustries.aoserv.client.mysql.Database;
 import com.aoindustries.aoserv.client.mysql.Server;
-import com.aoindustries.aoserv.client.validator.AccountingCode;
-import com.aoindustries.aoserv.client.validator.MySQLDatabaseName;
-import com.aoindustries.aoserv.client.validator.MySQLServerName;
 import com.aoindustries.net.DomainName;
 import java.io.IOException;
 import java.sql.SQLException;
@@ -37,10 +35,10 @@ final public class AddMySQLDatabase {
 	 */
 	public static void addMySQLDatabase(
 		SimpleAOClient aoClient,
-		MySQLDatabaseName name,
-		MySQLServerName mysqlServer,
+		Database.Name name,
+		Server.Name mysqlServer,
 		String server,
-		AccountingCode packageName
+		Account.Name packageName
 	) throws IOException, SQLException {
 		aoClient.addMySQLDatabase(name, mysqlServer, server, packageName);
 	}
@@ -58,10 +56,10 @@ final public class AddMySQLDatabase {
 	 */
 	public static Database addMySQLDatabase(
 		AOServConnector conn,
-		MySQLDatabaseName name,
-		MySQLServerName mysqlServer,
+		Database.Name name,
+		Server.Name mysqlServer,
 		DomainName server,
-		AccountingCode packageName
+		Account.Name packageName
 	) throws IOException, SQLException {
 
 		// Resolve the Server

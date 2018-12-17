@@ -10,15 +10,13 @@ import com.aoindustries.aoserv.client.SimpleAOClient;
 import com.aoindustries.aoserv.client.account.Account;
 import com.aoindustries.aoserv.client.billing.PackageCategory;
 import com.aoindustries.aoserv.client.billing.PackageDefinition;
+import com.aoindustries.aoserv.client.linux.Group;
 import com.aoindustries.aoserv.client.linux.GroupType;
+import com.aoindustries.aoserv.client.linux.PosixPath;
 import com.aoindustries.aoserv.client.linux.Shell;
+import com.aoindustries.aoserv.client.linux.User;
+import com.aoindustries.aoserv.client.linux.User.Gecos;
 import com.aoindustries.aoserv.client.linux.UserType;
-import com.aoindustries.aoserv.client.validator.AccountingCode;
-import com.aoindustries.aoserv.client.validator.Gecos;
-import com.aoindustries.aoserv.client.validator.GroupId;
-import com.aoindustries.aoserv.client.validator.MySQLUserId;
-import com.aoindustries.aoserv.client.validator.UnixPath;
-import com.aoindustries.aoserv.client.validator.UserId;
 import com.aoindustries.net.DomainName;
 import com.aoindustries.net.Email;
 import com.aoindustries.net.InetAddress;
@@ -73,20 +71,20 @@ final public class CreateAccount {
 	public static void createAccount(
 		AOServConnector conn,
 		PrintWriter out,
-		AccountingCode accountingTemplate,
+		Account.Name accountingTemplate,
 		String server,
-		AccountingCode parentAccount,
+		Account.Name parentAccount,
 		String packageDefinitionCategory,
 		String packageDefinitionName,
 		String packageDefinitionVersion,
-		UserId jvmUsername,
+		User.Name jvmUsername,
 		String jvmPassword,
-		UserId ftpUsername,
+		User.Name ftpUsername,
 		String ftpPassword,
-		GroupId groupName,
+		Group.Name groupName,
 		String siteNameTemplate,
-		MySQLUserId mysqlAdminUsername,
-		MySQLUserId mysqlAppUsername,
+		com.aoindustries.aoserv.client.mysql.User.Name mysqlAdminUsername,
+		com.aoindustries.aoserv.client.mysql.User.Name mysqlAppUsername,
 		String mysqlAppPassword,
 		InetAddress ipAddress,
 		String netDevice,
@@ -104,7 +102,7 @@ final public class CreateAccount {
 		if(parent == null) throw new SQLException("Unable to find Account: " + parentAccount);
 
 		// Create the account
-		AccountingCode accounting = client.generateAccountingCode(accountingTemplate);
+		Account.Name accounting = client.generateAccountingCode(accountingTemplate);
 		client.addBusiness(accounting, null, server, parentAccount, false, false, true, true);
 		if(out!=null) {
 			out.print("Account added, accounting=");
@@ -119,7 +117,7 @@ final public class CreateAccount {
 		if(packageDefinition==null) throw new SQLException("Unable to find PackageDefinition: accounting="+parentAccount+", category="+packageDefinitionCategory+", name="+packageDefinitionName+", version="+packageDefinitionVersion);
 
 		// Add a Package to the Account
-		AccountingCode packageName=client.generatePackageName(AccountingCode.valueOf(accounting.toString()+'_'));
+		Account.Name packageName=client.generatePackageName(Account.Name.valueOf(accounting.toString()+'_'));
 		client.addPackage(
 			packageName,
 			accounting,
@@ -171,13 +169,13 @@ final public class CreateAccount {
 			out.flush();
 		}
 		// Find the directory containing the websites
-		UnixPath wwwDir = conn.getLinux().getServer().get(
+		PosixPath wwwDir = conn.getLinux().getServer().get(
 			DomainName.valueOf(server)
 		).getServer().getOperatingSystemVersion().getHttpdSitesDirectory();
 		int jvmLinuxServerAccountPKey=client.addLinuxServerAccount(
 			jvmUsername,
 			server,
-			UnixPath.valueOf(wwwDir.toString()+'/'+siteName)
+			PosixPath.valueOf(wwwDir.toString()+'/'+siteName)
 		);
 		if(out!=null) {
 			out.print("UserServer added, pkey=");
@@ -216,7 +214,7 @@ final public class CreateAccount {
 		int ftpLinuxServerAccountPKey=client.addLinuxServerAccount(
 			ftpUsername,
 			server,
-			UnixPath.valueOf(wwwDir.toString()+'/'+siteName+"/webapps")
+			PosixPath.valueOf(wwwDir.toString()+'/'+siteName+"/webapps")
 		);
 		if(out!=null) {
 			out.print("UserServer added, pkey=");
