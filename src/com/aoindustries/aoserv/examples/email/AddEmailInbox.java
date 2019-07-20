@@ -1,5 +1,5 @@
 /*
- * Copyright 2001-2013, 2017, 2018 by AO Industries, Inc.,
+ * Copyright 2001-2013, 2017, 2018, 2019 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
@@ -97,7 +97,7 @@ final public class AddEmailInbox {
 		String password
 	) throws IOException, SQLException {
 		// Resolve the Package
-		com.aoindustries.aoserv.client.billing.Package pk=conn.getBilling().getPackage().get(packageName);
+		com.aoindustries.aoserv.client.billing.Package pk = conn.getBilling().getPackage().get(packageName);
 
 		// Reserve the username
 		pk.addUsername(username);
@@ -105,27 +105,27 @@ final public class AddEmailInbox {
 
 		// Indicate the username will be used for Linux accounts
 		un.addLinuxAccount(Group.MAILONLY, fullName, null, null, null, UserType.EMAIL, Shell.PASSWD);
-		User la=un.getLinuxAccount();
+		User la = un.getLinuxAccount();
 
 		// Find the Server
-		Server ao=conn.getNet().getHost().get(server).getAOServer();
+		Server linuxServer = conn.getNet().getHost().get(server).getLinuxServer();
 
 		// Grant the new Linux account access to the server
-		int lsaPKey=la.addLinuxServerAccount(ao, UserServer.getDefaultHomeDirectory(username));
-		UserServer lsa=conn.getLinux().getUserServer().get(lsaPKey);
+		int lsaPKey = la.addLinuxServerAccount(linuxServer, UserServer.getDefaultHomeDirectory(username));
+		UserServer lsa = conn.getLinux().getUserServer().get(lsaPKey);
 
 		// Find the Domain
-		Domain sd=ao.getEmailDomain(domain);
+		Domain sd = linuxServer.getEmailDomain(domain);
 
 		// Create the new email address
-		int eaPKey=sd.addEmailAddress(address);
-		Address ea=conn.getEmail().getAddress().get(eaPKey);
+		int eaPKey = sd.addEmailAddress(address);
+		Address ea = conn.getEmail().getAddress().get(eaPKey);
 
 		// Attach the email address to the new inbox
 		lsa.addEmailAddress(ea);
 
 		// Wait for rebuild
-		ao.waitForLinuxAccountRebuild();
+		linuxServer.waitForLinuxAccountRebuild();
 
 		// Set the password
 		lsa.setPassword(password);

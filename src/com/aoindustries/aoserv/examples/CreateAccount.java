@@ -1,5 +1,5 @@
 /*
- * Copyright 2001-2009, 2015, 2017, 2018 by AO Industries, Inc.,
+ * Copyright 2001-2009, 2015, 2017, 2018, 2019 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
@@ -103,7 +103,7 @@ final public class CreateAccount {
 
 		// Create the account
 		Account.Name accounting = client.generateAccountingCode(accountingTemplate);
-		client.addBusiness(accounting, null, server, parentAccount, false, false, true, true);
+		client.addAccount(accounting, null, server, parentAccount, false, false, true, true);
 		if(out!=null) {
 			out.print("Account added, accounting=");
 			out.println(accounting);
@@ -171,7 +171,7 @@ final public class CreateAccount {
 		// Find the directory containing the websites
 		PosixPath wwwDir = conn.getLinux().getServer().get(
 			DomainName.valueOf(server)
-		).getServer().getOperatingSystemVersion().getHttpdSitesDirectory();
+		).getHost().getOperatingSystemVersion().getHttpdSitesDirectory();
 		int jvmLinuxServerAccountPKey=client.addLinuxServerAccount(
 			jvmUsername,
 			server,

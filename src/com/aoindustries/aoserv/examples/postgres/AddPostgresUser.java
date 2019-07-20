@@ -1,5 +1,5 @@
 /*
- * Copyright 2001-2013, 2017, 2018 by AO Industries, Inc.,
+ * Copyright 2001-2013, 2017, 2018, 2019 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
@@ -77,28 +77,28 @@ final public class AddPostgresUser {
 		String password
 	) throws IOException, SQLException {
 		// Find the Package
-		Package pk=conn.getBilling().getPackage().get(packageName);
+		Package pk = conn.getBilling().getPackage().get(packageName);
 
 		// Reserve the username
 		pk.addUsername(username);
-		com.aoindustries.aoserv.client.account.User un=conn.getAccount().getUser().get(username);
+		com.aoindustries.aoserv.client.account.User un = conn.getAccount().getUser().get(username);
 
 		// Indicate the username will be used for PostgreSQL accounts
 		un.addPostgresUser();
-		User pu=un.getPostgresUser();
+		User pu = un.getPostgresUser();
 
 		// Resolve the Host
-		com.aoindustries.aoserv.client.linux.Server ao=conn.getNet().getHost().get(server).getAOServer();
+		com.aoindustries.aoserv.client.linux.Server linuxServer = conn.getNet().getHost().get(server).getLinuxServer();
 
 		// Resolve the Server
-		Server ps=ao.getPostgresServer(postgresServer);
+		Server ps = linuxServer.getPostgresServer(postgresServer);
 
 		// Grant access to the server
-		int psuPKey=pu.addPostgresServerUser(ps);
-		UserServer psu=conn.getPostgresql().getUserServer().get(psuPKey);
+		int psuPKey = pu.addPostgresServerUser(ps);
+		UserServer psu = conn.getPostgresql().getUserServer().get(psuPKey);
 
 		// Commit the changes before setting the password
-		ao.waitForPostgresUserRebuild();
+		linuxServer.waitForPostgresUserRebuild();
 
 		// Set the password
 		psu.setPassword(password);
