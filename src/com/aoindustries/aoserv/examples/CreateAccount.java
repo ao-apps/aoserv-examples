@@ -346,11 +346,11 @@ final public class CreateAccount {
 		//client.initializeHttpdSitePasswdFile(siteName, server, jvmUsername, jvmPassword);
 		//if(out!=null) out.println("Initialized passwd file").flush();
 
-		int timeSpan=(int)(System.currentTimeMillis()-startTime);
+		long timeSpan = System.currentTimeMillis() - startTime;
 
 		if(out != null) {
 			out.print("Done in ");
-			out.print(SQLUtility.getMilliDecimal(timeSpan));
+			out.print(SQLUtility.formatDecimal3(timeSpan));
 			out.println(" seconds");
 			out.flush();
 		}
