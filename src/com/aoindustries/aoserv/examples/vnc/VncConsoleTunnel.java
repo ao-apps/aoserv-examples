@@ -1,5 +1,5 @@
 /*
- * Copyright 2009-2013, 2017, 2018 by AO Industries, Inc.,
+ * Copyright 2009-2013, 2017, 2018, 2019 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
@@ -14,8 +14,8 @@ import com.aoindustries.aoserv.daemon.client.AOServDaemonConnection;
 import com.aoindustries.aoserv.daemon.client.AOServDaemonConnector;
 import com.aoindustries.aoserv.daemon.client.AOServDaemonProtocol;
 import com.aoindustries.io.AOPool;
-import com.aoindustries.io.CompressedDataInputStream;
-import com.aoindustries.io.CompressedDataOutputStream;
+import com.aoindustries.io.stream.StreamableInput;
+import com.aoindustries.io.stream.StreamableOutput;
 import com.aoindustries.util.ErrorPrinter;
 import java.io.EOFException;
 import java.io.IOException;
@@ -54,7 +54,7 @@ public class VncConsoleTunnel implements Runnable {
 					InetAddress.getByName(args[1]),
 					Integer.parseInt(args[2])
 				).run();
-			} catch(Exception err) {
+			} catch(IOException | NumberFormatException | SQLException err) {
 				ErrorPrinter.printStackTraces(err);
 				System.exit(2);
 			}
@@ -71,15 +71,16 @@ public class VncConsoleTunnel implements Runnable {
 		this.listenPort = listenPort;
 	}
 
+	@Override
 	public void run() {
 		while(true) {
 			try {
-				ServerSocket serverSocket = new ServerSocket(listenPort, 50, listenAddress);
-				try {
+				try (ServerSocket serverSocket = new ServerSocket(listenPort, 50, listenAddress)) {
 					while(true) {
 						final Socket socket = serverSocket.accept();
 						new Thread(
 							new Runnable() {
+								@Override
 								public void run() {
 									try {
 										Server.DaemonAccess daemonAccess = virtualServer.requestVncConsoleAccess();
@@ -97,11 +98,11 @@ public class VncConsoleTunnel implements Runnable {
 										);
 										final AOServDaemonConnection daemonConn=daemonConnector.getConnection();
 										try {
-											final CompressedDataOutputStream daemonOut = daemonConn.getRequestOut(AOServDaemonProtocol.VNC_CONSOLE);
+											final StreamableOutput daemonOut = daemonConn.getRequestOut(AOServDaemonProtocol.VNC_CONSOLE);
 											daemonOut.writeLong(daemonAccess.getKey());
 											daemonOut.flush();
 
-											final CompressedDataInputStream daemonIn = daemonConn.getResponseIn();
+											final StreamableInput daemonIn = daemonConn.getResponseIn();
 											int result=daemonIn.read();
 											if(result==AOServDaemonProtocol.NEXT) {
 												final OutputStream socketOut = socket.getOutputStream();
@@ -109,6 +110,7 @@ public class VncConsoleTunnel implements Runnable {
 												// socketIn -> daemonOut in another thread
 												Thread inThread = new Thread(
 													new Runnable() {
+														@Override
 														public void run() {
 															try {
 																try {
@@ -123,7 +125,7 @@ public class VncConsoleTunnel implements Runnable {
 																}
 															} catch(ThreadDeath TD) {
 																throw TD;
-															} catch(Throwable T) {
+															} catch(RuntimeException | IOException T) {
 																logger.log(Level.SEVERE, null, T);
 															}
 														}
@@ -154,14 +156,14 @@ public class VncConsoleTunnel implements Runnable {
 										}
 									} catch(ThreadDeath TD) {
 										throw TD;
-									} catch(Throwable T) {
+									} catch(RuntimeException | IOException | SQLException T) {
 										logger.log(Level.SEVERE, null, T);
 									} finally {
 										try {
 											socket.close();
 										} catch(ThreadDeath TD) {
 											throw TD;
-										} catch(Throwable T) {
+										} catch(RuntimeException | IOException T) {
 											logger.log(Level.SEVERE, null, T);
 										}
 									}
@@ -169,12 +171,10 @@ public class VncConsoleTunnel implements Runnable {
 							}
 						).start();
 					}
-				} finally {
-					serverSocket.close();
 				}
 			} catch(ThreadDeath TD) {
 				throw TD;
-			} catch(Throwable T) {
+			} catch(RuntimeException | IOException T) {
 				logger.log(Level.SEVERE, null, T);
 				try {
 					Thread.sleep(10000);
