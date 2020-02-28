@@ -1,5 +1,5 @@
 /*
- * Copyright 2009-2013, 2017, 2018, 2019 by AO Industries, Inc.,
+ * Copyright 2009-2013, 2017, 2018, 2019, 2020 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
@@ -44,7 +44,7 @@ public class VncConsoleTunnel implements Runnable {
 			System.exit(1);
 		} else {
 			try {
-				AOServConnector conn = AOServConnector.getConnector(logger);
+				AOServConnector conn = AOServConnector.getConnector();
 				Host host = conn.getNet().getHost().get(args[0]);
 				if(host == null) throw new SQLException("Unable to find Host: " + args[0]);
 				VirtualServer virtualServer = host.getVirtualServer();
@@ -93,8 +93,7 @@ public class VncConsoleTunnel implements Runnable {
 											100,
 											AOPool.DEFAULT_MAX_CONNECTION_AGE,
 											AOServClientConfiguration.getSslTruststorePath(),
-											AOServClientConfiguration.getSslTruststorePassword(),
-											logger
+											AOServClientConfiguration.getSslTruststorePassword()
 										);
 										final AOServDaemonConnection daemonConn=daemonConnector.getConnection();
 										try {
