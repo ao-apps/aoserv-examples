@@ -1,5 +1,5 @@
 /*
- * Copyright 2001-2013, 2017, 2018 by AO Industries, Inc.,
+ * Copyright 2001-2013, 2017, 2018, 2020 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
@@ -110,7 +110,7 @@ final public class AddMySQLUser {
 		Database md=ms.getMySQLDatabase(database);
 
 		// Grant access to the database
-		md.addMySQLServerUser(msu, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true);
+		conn.getMysql().getDatabaseUser().addMySQLDBUser(md, msu, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true);
 
 		// Commit the changes before setting the password
 		ao.waitForMySQLUserRebuild();
