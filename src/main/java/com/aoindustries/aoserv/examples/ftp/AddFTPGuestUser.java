@@ -1,5 +1,5 @@
 /*
- * Copyright 2001-2013, 2017, 2018 by AO Industries, Inc.,
+ * Copyright 2001-2013, 2017, 2018, 2020 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
@@ -21,16 +21,19 @@ import java.io.IOException;
 import java.sql.SQLException;
 
 /**
+ * <p>
  * An FTP Guest User is a restricted Linux Account.  The account is allowed to
  * transfer files via FTP only.  The account may not be used for use as an email
  * inbox.  If the user logs into the server via SSH or telnet, they are allowed
- * to change their password and then they are immediately disconnected.<br />
- * <br />
+ * to change their password and then they are immediately disconnected.
+ * </p>
+ * <p>
  * FTP Guest Users may only transfer files into and out of their home directories.
  * By making the home directory of the user be the <code>/www/<i>sitename</i>/webapps</code>
  * directory, the account is effectively restricted to accessing and updating the
  * content of a single web site.  Keep in mind, however, that the user may still upload
  * code that can access files outside the site.
+ * </p>
  *
  * @author  AO Industries, Inc.
  */

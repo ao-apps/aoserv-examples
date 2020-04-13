@@ -1,5 +1,5 @@
 /*
- * Copyright 2001-2013, 2017, 2018 by AO Industries, Inc.,
+ * Copyright 2001-2013, 2017, 2018, 2020 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
@@ -17,13 +17,16 @@ import java.io.IOException;
 import java.sql.SQLException;
 
 /**
+ * <p>
  * Before creating a new PostgreSQL database, please make sure that a <code>User</code>
- * has been added for use as the Database Administrator (DBA).<br />
- * <br />
+ * has been added for use as the Database Administrator (DBA).
+ * </p>
+ * <p>
  * The possible values for <code>encoding</code> may be found in the <code>postgres_encodings</code> table.
+ * </p>
  *
  * @see  AddPostgresUser
- * @see  com.aoindustries.aoserv.client.Encoding
+ * @see  com.aoindustries.aoserv.client.postgresql.Encoding
  *
  * @author  AO Industries, Inc.
  */

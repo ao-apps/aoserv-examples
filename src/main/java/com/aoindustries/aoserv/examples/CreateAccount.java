@@ -1,5 +1,5 @@
 /*
- * Copyright 2001-2009, 2015, 2017, 2018, 2019 by AO Industries, Inc.,
+ * Copyright 2001-2009, 2015, 2017, 2018, 2019, 2020 by AO Industries, Inc.,
  * 7262 Bull Pen Cir, Mobile, Alabama, 36695, U.S.A.
  * All rights reserved.
  */
@@ -65,7 +65,6 @@ final public class CreateAccount {
 	 * @param  serverAdmin         the email address of the business_administrator who is responsible for web site maintenance
 	 * @param  primaryHttpHostname  the primary hostname for the HTTP server
 	 * @param  altHttpHostnames    the alternate hostnames for the HTTP server
-	 * @param  httpsHostname       the hostname for the HTTPS server
 	 * @param  tomcatVersion       the version of Tomcat to install
 	 */
 	public static void createAccount(
