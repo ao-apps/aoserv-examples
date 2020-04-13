@@ -79,92 +79,86 @@ public class VncConsoleTunnel implements Runnable {
 					while(true) {
 						final Socket socket = serverSocket.accept();
 						new Thread(
-							new Runnable() {
-								@Override
-								public void run() {
+							() -> {
+								try {
+									Server.DaemonAccess daemonAccess = virtualServer.requestVncConsoleAccess();
+									AOServDaemonConnector daemonConnector=AOServDaemonConnector.getConnector(
+										daemonAccess.getHost(),
+										com.aoindustries.net.InetAddress.UNSPECIFIED_IPV4,
+										daemonAccess.getPort(),
+										daemonAccess.getProtocol(),
+										null,
+										100,
+										AOPool.DEFAULT_MAX_CONNECTION_AGE,
+										AOServClientConfiguration.getSslTruststorePath(),
+										AOServClientConfiguration.getSslTruststorePassword()
+									);
+									final AOServDaemonConnection daemonConn=daemonConnector.getConnection();
 									try {
-										Server.DaemonAccess daemonAccess = virtualServer.requestVncConsoleAccess();
-										AOServDaemonConnector daemonConnector=AOServDaemonConnector.getConnector(
-											daemonAccess.getHost(),
-											com.aoindustries.net.InetAddress.UNSPECIFIED_IPV4,
-											daemonAccess.getPort(),
-											daemonAccess.getProtocol(),
-											null,
-											100,
-											AOPool.DEFAULT_MAX_CONNECTION_AGE,
-											AOServClientConfiguration.getSslTruststorePath(),
-											AOServClientConfiguration.getSslTruststorePassword()
-										);
-										final AOServDaemonConnection daemonConn=daemonConnector.getConnection();
-										try {
-											final StreamableOutput daemonOut = daemonConn.getRequestOut(AOServDaemonProtocol.VNC_CONSOLE);
-											daemonOut.writeLong(daemonAccess.getKey());
-											daemonOut.flush();
+										final StreamableOutput daemonOut = daemonConn.getRequestOut(AOServDaemonProtocol.VNC_CONSOLE);
+										daemonOut.writeLong(daemonAccess.getKey());
+										daemonOut.flush();
 
-											final StreamableInput daemonIn = daemonConn.getResponseIn();
-											int result=daemonIn.read();
-											if(result==AOServDaemonProtocol.NEXT) {
-												final OutputStream socketOut = socket.getOutputStream();
-												final InputStream socketIn = socket.getInputStream();
-												// socketIn -> daemonOut in another thread
-												Thread inThread = new Thread(
-													new Runnable() {
-														@Override
-														public void run() {
-															try {
-																try {
-																	byte[] buff = new byte[4096];
-																	int ret;
-																	while((ret=socketIn.read(buff, 0, 4096))!=-1) {
-																		daemonOut.write(buff, 0, ret);
-																		daemonOut.flush();
-																	}
-																} finally {
-																	daemonConn.close();
-																}
-															} catch(ThreadDeath TD) {
-																throw TD;
-															} catch(RuntimeException | IOException T) {
-																logger.log(Level.SEVERE, null, T);
+										final StreamableInput daemonIn = daemonConn.getResponseIn();
+										int result=daemonIn.read();
+										if(result==AOServDaemonProtocol.NEXT) {
+											final OutputStream socketOut = socket.getOutputStream();
+											final InputStream socketIn = socket.getInputStream();
+											// socketIn -> daemonOut in another thread
+											Thread inThread = new Thread(
+												() -> {
+													try {
+														try {
+															byte[] buff = new byte[4096];
+															int ret;
+															while((ret=socketIn.read(buff, 0, 4096))!=-1) {
+																daemonOut.write(buff, 0, ret);
+																daemonOut.flush();
 															}
+														} finally {
+															daemonConn.close();
 														}
+													} catch(ThreadDeath TD) {
+														throw TD;
+													} catch(RuntimeException | IOException T) {
+														logger.log(Level.SEVERE, null, T);
 													}
-												);
-												inThread.start();
-												//try {
-													// daemonIn -> socketOut in this thread
-													byte[] buff = new byte[4096];
-													int ret;
-													while((ret=daemonIn.read(buff, 0, 4096))!=-1) {
-														socketOut.write(buff, 0, ret);
-														socketOut.flush();
-													}
-												//} finally {
-													// Let the in thread complete its work before closing streams
-												//    inThread.join();
-												//}
-											} else {
-												if (result == AOServDaemonProtocol.IO_EXCEPTION) throw new IOException(daemonIn.readUTF());
-												else if (result == AOServDaemonProtocol.SQL_EXCEPTION) throw new SQLException(daemonIn.readUTF());
-												else if (result==-1) throw new EOFException();
-												else throw new IOException("Unknown result: " + result);
-											}
-										} finally {
-											daemonConn.close(); // Always close after VNC tunnel
-											daemonConnector.releaseConnection(daemonConn);
+												}
+											);
+											inThread.start();
+											//try {
+												// daemonIn -> socketOut in this thread
+												byte[] buff = new byte[4096];
+												int ret;
+												while((ret=daemonIn.read(buff, 0, 4096))!=-1) {
+													socketOut.write(buff, 0, ret);
+													socketOut.flush();
+												}
+											//} finally {
+												// Let the in thread complete its work before closing streams
+											//    inThread.join();
+											//}
+										} else {
+											if (result == AOServDaemonProtocol.IO_EXCEPTION) throw new IOException(daemonIn.readUTF());
+											else if (result == AOServDaemonProtocol.SQL_EXCEPTION) throw new SQLException(daemonIn.readUTF());
+											else if (result==-1) throw new EOFException();
+											else throw new IOException("Unknown result: " + result);
 										}
+									} finally {
+										daemonConn.close(); // Always close after VNC tunnel
+										daemonConnector.releaseConnection(daemonConn);
+									}
+								} catch(ThreadDeath TD) {
+									throw TD;
+								} catch(RuntimeException | IOException | SQLException T) {
+									logger.log(Level.SEVERE, null, T);
+								} finally {
+									try {
+										socket.close();
 									} catch(ThreadDeath TD) {
 										throw TD;
-									} catch(RuntimeException | IOException | SQLException T) {
+									} catch(RuntimeException | IOException T) {
 										logger.log(Level.SEVERE, null, T);
-									} finally {
-										try {
-											socket.close();
-										} catch(ThreadDeath TD) {
-											throw TD;
-										} catch(RuntimeException | IOException T) {
-											logger.log(Level.SEVERE, null, T);
-										}
 									}
 								}
 							}
