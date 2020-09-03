@@ -55,6 +55,7 @@ public class VncConsoleTunnel implements Runnable {
 
 	private static final Logger logger = Logger.getLogger(VncConsoleTunnel.class.getName());
 
+	@SuppressWarnings("UseOfSystemOutOrSystemErr")
 	public static void main(String[] args) {
 		if(args.length!=3) {
 			System.err.println("usage: "+VncConsoleTunnel.class.getName()+" virtual_server listen_address listen_port");
@@ -89,6 +90,7 @@ public class VncConsoleTunnel implements Runnable {
 	}
 
 	@Override
+	@SuppressWarnings("SleepWhileInLoop")
 	public void run() {
 		while(true) {
 			try {
