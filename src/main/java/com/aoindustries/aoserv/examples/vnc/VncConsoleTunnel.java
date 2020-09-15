@@ -51,6 +51,7 @@ import java.util.logging.Logger;
  *
  * @author  AO Industries, Inc.
  */
+// Matches VncConsoleProxySocketHandler
 public class VncConsoleTunnel implements Runnable {
 
 	private static final Logger logger = Logger.getLogger(VncConsoleTunnel.class.getName());
@@ -73,7 +74,7 @@ public class VncConsoleTunnel implements Runnable {
 					Integer.parseInt(args[2])
 				).run();
 			} catch(IOException | NumberFormatException | SQLException err) {
-				ErrorPrinter.printStackTraces(err);
+				ErrorPrinter.printStackTraces(err, System.err);
 				System.exit(2);
 			}
 		}
@@ -90,7 +91,7 @@ public class VncConsoleTunnel implements Runnable {
 	}
 
 	@Override
-	@SuppressWarnings("SleepWhileInLoop")
+	@SuppressWarnings({"UseSpecificCatch", "TooBroadCatch", "SleepWhileInLoop"})
 	public void run() {
 		while(true) {
 			try {
@@ -101,7 +102,7 @@ public class VncConsoleTunnel implements Runnable {
 							() -> {
 								try {
 									Server.DaemonAccess daemonAccess = virtualServer.requestVncConsoleAccess();
-									AOServDaemonConnector daemonConnector=AOServDaemonConnector.getConnector(
+									AOServDaemonConnector daemonConnector = AOServDaemonConnector.getConnector(
 										daemonAccess.getHost(),
 										com.aoindustries.net.InetAddress.UNSPECIFIED_IPV4,
 										daemonAccess.getPort(),
@@ -112,82 +113,84 @@ public class VncConsoleTunnel implements Runnable {
 										AOServClientConfiguration.getSslTruststorePath(),
 										AOServClientConfiguration.getSslTruststorePassword()
 									);
-									final AOServDaemonConnection daemonConn=daemonConnector.getConnection();
-									try {
-										final StreamableOutput daemonOut = daemonConn.getRequestOut(AOServDaemonProtocol.VNC_CONSOLE);
-										daemonOut.writeLong(daemonAccess.getKey());
-										daemonOut.flush();
+									try (AOServDaemonConnection daemonConn = daemonConnector.getConnection()) {
+										try {
+											final StreamableOutput daemonOut = daemonConn.getRequestOut(AOServDaemonProtocol.VNC_CONSOLE);
+											daemonOut.writeLong(daemonAccess.getKey());
+											daemonOut.flush();
 
-										final StreamableInput daemonIn = daemonConn.getResponseIn();
-										int result=daemonIn.read();
-										if(result==AOServDaemonProtocol.NEXT) {
-											final OutputStream socketOut = socket.getOutputStream();
-											final InputStream socketIn = socket.getInputStream();
-											// socketIn -> daemonOut in another thread
-											Thread inThread = new Thread(
-												() -> {
-													try {
+											final StreamableInput daemonIn = daemonConn.getResponseIn();
+											int result=daemonIn.read();
+											if(result==AOServDaemonProtocol.NEXT) {
+												final OutputStream socketOut = socket.getOutputStream();
+												final InputStream socketIn = socket.getInputStream();
+												// socketIn -> daemonOut in another thread
+												Thread inThread = new Thread(
+													() -> {
 														try {
-															byte[] buff = new byte[4096];
-															int ret;
-															while((ret=socketIn.read(buff, 0, 4096))!=-1) {
-																daemonOut.write(buff, 0, ret);
-																daemonOut.flush();
+															try {
+																byte[] buff = new byte[4096];
+																int ret;
+																while((ret=socketIn.read(buff, 0, 4096))!=-1) {
+																	daemonOut.write(buff, 0, ret);
+																	daemonOut.flush();
+																}
+															} finally {
+																// Always close after VNC tunnel since this is a connection-terminal command
+																daemonConn.abort();
 															}
-														} finally {
-															daemonConn.close();
+														} catch(ThreadDeath td) {
+															throw td;
+														} catch(Throwable t) {
+															logger.log(Level.SEVERE, null, t);
 														}
-													} catch(ThreadDeath TD) {
-														throw TD;
-													} catch(RuntimeException | IOException T) {
-														logger.log(Level.SEVERE, null, T);
 													}
-												}
-											);
-											inThread.start();
-											//try {
-												// daemonIn -> socketOut in this thread
-												byte[] buff = new byte[4096];
-												int ret;
-												while((ret=daemonIn.read(buff, 0, 4096))!=-1) {
-													socketOut.write(buff, 0, ret);
-													socketOut.flush();
-												}
-											//} finally {
-												// Let the in thread complete its work before closing streams
-											//    inThread.join();
-											//}
-										} else {
-											if (result == AOServDaemonProtocol.IO_EXCEPTION) throw new IOException(daemonIn.readUTF());
-											else if (result == AOServDaemonProtocol.SQL_EXCEPTION) throw new SQLException(daemonIn.readUTF());
-											else if (result==-1) throw new EOFException();
-											else throw new IOException("Unknown result: " + result);
+												);
+												inThread.start();
+												//try {
+													// daemonIn -> socketOut in this thread
+													byte[] buff = new byte[4096];
+													int ret;
+													while((ret=daemonIn.read(buff, 0, 4096))!=-1) {
+														socketOut.write(buff, 0, ret);
+														socketOut.flush();
+													}
+												//} finally {
+													// Let the in thread complete its work before closing streams
+												//    inThread.join();
+												//}
+											} else {
+												if (result == AOServDaemonProtocol.IO_EXCEPTION) throw new IOException(daemonIn.readUTF());
+												else if (result == AOServDaemonProtocol.SQL_EXCEPTION) throw new SQLException(daemonIn.readUTF());
+												else if (result==-1) throw new EOFException();
+												else throw new IOException("Unknown result: " + result);
+											}
+										} finally {
+											// Always close after VNC tunnel since this is a connection-terminal command
+											daemonConn.abort();
 										}
-									} finally {
-										daemonConn.close(); // Always close after VNC tunnel
-										daemonConnector.releaseConnection(daemonConn);
 									}
-								} catch(ThreadDeath TD) {
-									throw TD;
-								} catch(RuntimeException | IOException | SQLException T) {
-									logger.log(Level.SEVERE, null, T);
+								} catch(ThreadDeath td) {
+									throw td;
+								} catch(Throwable t) {
+									logger.log(Level.SEVERE, null, t);
 								} finally {
 									try {
 										socket.close();
-									} catch(ThreadDeath TD) {
-										throw TD;
-									} catch(RuntimeException | IOException T) {
-										logger.log(Level.SEVERE, null, T);
+									} catch(ThreadDeath td) {
+										throw td;
+									} catch(Throwable t) {
+										logger.log(Level.SEVERE, null, t);
 									}
 								}
 							}
 						).start();
 					}
 				}
-			} catch(ThreadDeath TD) {
-				throw TD;
-			} catch(RuntimeException | IOException T) {
-				logger.log(Level.SEVERE, null, T);
+			} catch(ThreadDeath td) {
+				throw td;
+			} catch(Throwable t) {
+				logger.log(Level.SEVERE, null, t);
 				try {
 					Thread.sleep(10000);
 				} catch(InterruptedException err) {
