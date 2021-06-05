@@ -1,6 +1,6 @@
 /*
  * aoserv-examples - Automation examples for the AOServ Platform.
- * Copyright (C) 2009-2013, 2017, 2018, 2019, 2020  AO Industries, Inc.
+ * Copyright (C) 2009-2013, 2017, 2018, 2019, 2020, 2021  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -22,6 +22,10 @@
  */
 package com.aoindustries.aoserv.examples.vnc;
 
+import com.aoapps.hodgepodge.io.AOPool;
+import com.aoapps.hodgepodge.io.stream.StreamableInput;
+import com.aoapps.hodgepodge.io.stream.StreamableOutput;
+import com.aoapps.lang.util.ErrorPrinter;
 import com.aoindustries.aoserv.client.AOServClientConfiguration;
 import com.aoindustries.aoserv.client.AOServConnector;
 import com.aoindustries.aoserv.client.infrastructure.VirtualServer;
@@ -30,10 +34,6 @@ import com.aoindustries.aoserv.client.net.Host;
 import com.aoindustries.aoserv.daemon.client.AOServDaemonConnection;
 import com.aoindustries.aoserv.daemon.client.AOServDaemonConnector;
 import com.aoindustries.aoserv.daemon.client.AOServDaemonProtocol;
-import com.aoindustries.io.AOPool;
-import com.aoindustries.io.stream.StreamableInput;
-import com.aoindustries.io.stream.StreamableOutput;
-import com.aoindustries.util.ErrorPrinter;
 import java.io.EOFException;
 import java.io.IOException;
 import java.io.InputStream;
@@ -104,7 +104,7 @@ public class VncConsoleTunnel implements Runnable {
 									Server.DaemonAccess daemonAccess = virtualServer.requestVncConsoleAccess();
 									AOServDaemonConnector daemonConnector = AOServDaemonConnector.getConnector(
 										daemonAccess.getHost(),
-										com.aoindustries.net.InetAddress.UNSPECIFIED_IPV4,
+										com.aoapps.net.InetAddress.UNSPECIFIED_IPV4,
 										daemonAccess.getPort(),
 										daemonAccess.getProtocol(),
 										null,

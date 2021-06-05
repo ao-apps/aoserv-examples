@@ -1,6 +1,6 @@
 /*
  * aoserv-examples - Automation examples for the AOServ Platform.
- * Copyright (C) 2001-2013, 2017, 2018, 2020  AO Industries, Inc.
+ * Copyright (C) 2001-2013, 2017, 2018, 2020, 2021  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -22,6 +22,7 @@
  */
 package com.aoindustries.aoserv.examples.postgres;
 
+import com.aoapps.net.DomainName;
 import com.aoindustries.aoserv.client.AOServConnector;
 import com.aoindustries.aoserv.client.SimpleAOClient;
 import com.aoindustries.aoserv.client.postgresql.Database;
@@ -29,7 +30,6 @@ import com.aoindustries.aoserv.client.postgresql.Encoding;
 import com.aoindustries.aoserv.client.postgresql.Server;
 import com.aoindustries.aoserv.client.postgresql.User;
 import com.aoindustries.aoserv.client.postgresql.UserServer;
-import com.aoindustries.net.DomainName;
 import java.io.IOException;
 import java.sql.SQLException;
 
