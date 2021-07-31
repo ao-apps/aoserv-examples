@@ -158,7 +158,7 @@ along with aoserv-examples.  If not, see <http://www.gnu.org/licenses />.
 					<plugin>
 						<groupId>org.apache.maven.plugins</groupId><artifactId>maven-javadoc-plugin</artifactId>
 						<configuration>
-							<offlineLinks>
+							<offlineLinks combine.children="append">
 								<!-- Direct -->
 								<offlineLink>
 									<url>https://oss.aoapps.com/hodgepodge/apidocs/</url>
@@ -183,11 +183,6 @@ along with aoserv-examples.  If not, see <http://www.gnu.org/licenses />.
 								<offlineLink>
 									<url>https://aoindustries.com/aoserv/daemon/client/apidocs/</url>
 									<location>${project.build.directory}/offlineLinks/com.aoindustries/aoserv-daemon-client</location>
-								</offlineLink>
-								<!-- Java SE -->
-								<offlineLink>
-									<url>${javadoc.link.javase}</url>
-									<location>${project.build.directory}/offlineLinks/com/aoapps/javadoc/offline/javase/${javase.release}</location>
 								</offlineLink>
 							</offlineLinks>
 						</configuration>
