@@ -50,7 +50,7 @@ import java.sql.SQLException;
  *
  * @author  AO Industries, Inc.
  */
-final public class CreateAccount {
+public final class CreateAccount {
 
 	/**
 	 * Creates an account, automatically allocating as many resources as possible.

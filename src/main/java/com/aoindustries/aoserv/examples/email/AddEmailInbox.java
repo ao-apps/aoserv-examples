@@ -48,7 +48,7 @@ import java.sql.SQLException;
  *
  * @author  AO Industries, Inc.
  */
-final public class AddEmailInbox {
+public final class AddEmailInbox {
 
 	/**
 	 * Creates a new email inbox.

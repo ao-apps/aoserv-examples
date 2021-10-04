@@ -39,7 +39,7 @@ import java.sql.SQLException;
  *
  * @author  AO Industries, Inc.
  */
-final public class AddMySQLDatabase {
+public final class AddMySQLDatabase {
 
 	/**
 	 * Adds a <code>Database</code> to a <code>Host</code>

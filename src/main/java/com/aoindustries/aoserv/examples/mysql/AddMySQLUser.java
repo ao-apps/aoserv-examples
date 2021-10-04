@@ -39,7 +39,7 @@ import java.sql.SQLException;
  *
  * @author  AO Industries, Inc.
  */
-final public class AddMySQLUser {
+public final class AddMySQLUser {
 
 	/**
 	 * Adds a <code>User</code> to the system.

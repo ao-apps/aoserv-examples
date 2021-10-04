@@ -54,7 +54,7 @@ import java.sql.SQLException;
  *
  * @author  AO Industries, Inc.
  */
-final public class AddFTPGuestUser {
+public final class AddFTPGuestUser {
 
 	/**
 	 * Adds a <code>FTPGuestUser</code> to the system.

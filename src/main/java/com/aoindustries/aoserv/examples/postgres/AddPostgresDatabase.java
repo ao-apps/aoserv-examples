@@ -47,7 +47,7 @@ import java.sql.SQLException;
  *
  * @author  AO Industries, Inc.
  */
-final public class AddPostgresDatabase {
+public final class AddPostgresDatabase {
 
 	/**
 	 * Adds a <code>Database</code> to a <code>Host</code>
