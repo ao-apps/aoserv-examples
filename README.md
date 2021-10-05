@@ -1,4 +1,4 @@
-# [<img src="ao-logo.png" alt="AO Logo" width="35" height="40">](https://github.com/aoindustries) [AOServ](https://aoindustries.com/aoserv/) / [Examples](https://github.com/aoindustries/aoserv-examples)
+# [<img src="ao-logo.png" alt="AO Logo" width="35" height="40">](https://github.com/ao-apps) [AOServ](https://aoindustries.com/aoserv/) / [Examples](https://github.com/ao-apps/aoserv-examples)
 
 [![project: current stable](https://aoindustries.com/ao-badges/project-current-stable.svg)](https://aoindustries.com/life-cycle#project-current-stable)
 [![management: production](https://aoindustries.com/ao-badges/management-production.svg)](https://aoindustries.com/life-cycle#management-production)
@@ -6,7 +6,7 @@
 [![java: &gt;= 11](https://aoindustries.com/ao-badges/java-11.svg)](https://docs.oracle.com/en/java/javase/11/docs/api/)
 [![license: LGPL v3](https://aoindustries.com/ao-badges/license-lgpl-3.0.svg)](https://www.gnu.org/licenses/lgpl-3.0)
 
-[![Build](https://github.com/aoindustries/aoserv-examples/workflows/Build/badge.svg?branch=master)](https://github.com/aoindustries/aoserv-examples/actions?query=workflow%3ABuild)
+[![Build](https://github.com/ao-apps/aoserv-examples/workflows/Build/badge.svg?branch=master)](https://github.com/ao-apps/aoserv-examples/actions?query=workflow%3ABuild)
 [![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.aoindustries/aoserv-examples/badge.svg)](https://maven-badges.herokuapp.com/maven-central/com.aoindustries/aoserv-examples)
 [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?branch=master&project=com.aoapps.platform%3Aaoapps-examples&metric=alert_status)](https://sonarcloud.io/dashboard?branch=master&id=com.aoapps.platform%3Aaoapps-examples)
 [![Lines of Code](https://sonarcloud.io/api/project_badges/measure?branch=master&project=com.aoapps.platform%3Aaoapps-examples&metric=ncloc)](https://sonarcloud.io/component_measures?branch=master&id=com.aoapps.platform%3Aaoapps-examples&metric=ncloc)  
@@ -22,7 +22,7 @@ Automation examples for the [AOServ Platform](https://aoindustries.com/aoserv/).
 * [Changelog](https://aoindustries.com/aoserv/examples/changelog)
 * [API Docs](https://aoindustries.com/aoserv/examples/apidocs/)
 * [Maven Central Repository](https://search.maven.org/artifact/com.aoindustries/aoserv-examples)
-* [GitHub](https://github.com/aoindustries/aoserv-examples)
+* [GitHub](https://github.com/ao-apps/aoserv-examples)
 
 ## Contact Us
 For questions or support, please [contact us](https://aoindustries.com/contact):
