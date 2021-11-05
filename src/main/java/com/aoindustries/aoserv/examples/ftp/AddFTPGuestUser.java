@@ -54,7 +54,10 @@ import java.sql.SQLException;
  *
  * @author  AO Industries, Inc.
  */
-public final class AddFTPGuestUser {
+public abstract class AddFTPGuestUser {
+
+	/** Make no instances. */
+	private AddFTPGuestUser() {throw new AssertionError();}
 
 	/**
 	 * Adds a <code>FTPGuestUser</code> to the system.
@@ -151,6 +154,4 @@ public final class AddFTPGuestUser {
 		// Return the new object
 		return lsa;
 	}
-
-	private AddFTPGuestUser() {}
 }

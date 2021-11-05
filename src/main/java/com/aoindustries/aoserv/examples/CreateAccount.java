@@ -50,7 +50,10 @@ import java.sql.SQLException;
  *
  * @author  AO Industries, Inc.
  */
-public final class CreateAccount {
+public abstract class CreateAccount {
+
+	/** Make no instances. */
+	private CreateAccount() {throw new AssertionError();}
 
 	/**
 	 * Creates an account, automatically allocating as many resources as possible.
@@ -370,11 +373,5 @@ public final class CreateAccount {
 			out.println(" seconds");
 			out.flush();
 		}
-	}
-
-	/**
-	 * Make no instances.
-	 */
-	private CreateAccount() {
 	}
 }

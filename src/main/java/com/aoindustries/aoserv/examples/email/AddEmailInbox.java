@@ -39,16 +39,19 @@ import java.io.IOException;
 import java.sql.SQLException;
 
 /**
- * An email inbox is a restricted Linux account. It can be used for sending 
- * and receiving email using the <code>POP2</code>, <code>POP3</code>, 
- * <code>IMAP</code>, <code>SPOP3</code>, <code>SIMAP</code>, and <code>SMTP</code> 
- * protocols. If a shell connection is established, either via SSH or Telnet, the 
- * user is prompted to change their password. All other protocols are refused, 
+ * An email inbox is a restricted Linux account. It can be used for sending
+ * and receiving email using the <code>POP2</code>, <code>POP3</code>,
+ * <code>IMAP</code>, <code>SPOP3</code>, <code>SIMAP</code>, and <code>SMTP</code>
+ * protocols. If a shell connection is established, either via SSH or Telnet, the
+ * user is prompted to change their password. All other protocols are refused,
  * including <code>FTP</code>.
  *
  * @author  AO Industries, Inc.
  */
-public final class AddEmailInbox {
+public abstract class AddEmailInbox {
+
+	/** Make no instances. */
+	private AddEmailInbox() {throw new AssertionError();}
 
 	/**
 	 * Creates a new email inbox.
@@ -150,6 +153,4 @@ public final class AddEmailInbox {
 		// Return the new object
 		return lsa;
 	}
-
-	private AddEmailInbox() {}
 }

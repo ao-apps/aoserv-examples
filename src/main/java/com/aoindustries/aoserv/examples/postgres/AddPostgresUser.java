@@ -37,7 +37,10 @@ import java.sql.SQLException;
  *
  * @author  AO Industries, Inc.
  */
-public final class AddPostgresUser {
+public abstract class AddPostgresUser {
+
+	/** Make no instances. */
+	private AddPostgresUser() {throw new AssertionError();}
 
 	/**
 	 * Adds a <code>User</code> to the system.
@@ -123,6 +126,4 @@ public final class AddPostgresUser {
 		// Return the object
 		return psu;
 	}
-
-	private AddPostgresUser() {}
 }

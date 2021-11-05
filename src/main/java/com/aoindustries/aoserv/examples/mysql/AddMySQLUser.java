@@ -39,7 +39,10 @@ import java.sql.SQLException;
  *
  * @author  AO Industries, Inc.
  */
-public final class AddMySQLUser {
+public abstract class AddMySQLUser {
+
+	/** Make no instances. */
+	private AddMySQLUser() {throw new AssertionError();}
 
 	/**
 	 * Adds a <code>User</code> to the system.
@@ -138,6 +141,4 @@ public final class AddMySQLUser {
 		// Return the object
 		return msu;
 	}
-
-	private AddMySQLUser() {}
 }
