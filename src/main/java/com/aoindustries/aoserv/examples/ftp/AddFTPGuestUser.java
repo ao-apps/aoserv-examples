@@ -1,6 +1,6 @@
 /*
  * aoserv-examples - Automation examples for the AOServ Platform.
- * Copyright (C) 2001-2013, 2017, 2018, 2020, 2021  AO Industries, Inc.
+ * Copyright (C) 2001-2013, 2017, 2018, 2020, 2021, 2022  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -54,7 +54,7 @@ import java.sql.SQLException;
  *
  * @author  AO Industries, Inc.
  */
-public abstract class AddFTPGuestUser {
+public final class AddFTPGuestUser {
 
 	/** Make no instances. */
 	private AddFTPGuestUser() {throw new AssertionError();}
