@@ -20,6 +20,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with aoserv-examples.  If not, see <https://www.gnu.org/licenses/>.
  */
+
 package com.aoindustries.aoserv.examples;
 
 import com.aoapps.lang.validation.ValidationException;
