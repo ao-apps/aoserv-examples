@@ -42,104 +42,106 @@ import java.sql.SQLException;
  */
 public final class AddMySQLUser {
 
-	/** Make no instances. */
-	private AddMySQLUser() {throw new AssertionError();}
+  /** Make no instances. */
+  private AddMySQLUser() {
+    throw new AssertionError();
+  }
 
-	/**
-	 * Adds a <code>User</code> to the system.
-	 *
-	 * @param  aoClient     the <code>SimpleAOClient</code> to use
-	 * @param  packageName  the name of the <code>Package</code>
-	 * @param  username     the new username to allocate
-	 * @param  mysqlServer  the name of the MySQL instance
-	 * @param  server       the hostname of the server to add the account to
-	 * @param  database     the new user will be granted access to this database
-	 * @param  password     the password for the new account
-	 */
-	public static void addMySQLUser(
-		SimpleAOClient aoClient,
-		Account.Name packageName,
-		User.Name username,
-		Server.Name mysqlServer,
-		String server,
-		Database.Name database,
-		String password
-	) throws IOException, SQLException {
-		// Reserve the username
-		aoClient.addUsername(packageName, username);
+  /**
+   * Adds a <code>User</code> to the system.
+   *
+   * @param  aoClient     the <code>SimpleAOClient</code> to use
+   * @param  packageName  the name of the <code>Package</code>
+   * @param  username     the new username to allocate
+   * @param  mysqlServer  the name of the MySQL instance
+   * @param  server       the hostname of the server to add the account to
+   * @param  database     the new user will be granted access to this database
+   * @param  password     the password for the new account
+   */
+  public static void addMySQLUser(
+    SimpleAOClient aoClient,
+    Account.Name packageName,
+    User.Name username,
+    Server.Name mysqlServer,
+    String server,
+    Database.Name database,
+    String password
+  ) throws IOException, SQLException {
+    // Reserve the username
+    aoClient.addUsername(packageName, username);
 
-		// Indicate the username will be used for MySQL accounts
-		aoClient.addMySQLUser(username);
+    // Indicate the username will be used for MySQL accounts
+    aoClient.addMySQLUser(username);
 
-		// Grant access to the server
-		aoClient.addMySQLServerUser(username, mysqlServer, server, UserServer.ANY_LOCAL_HOST);
+    // Grant access to the server
+    aoClient.addMySQLServerUser(username, mysqlServer, server, UserServer.ANY_LOCAL_HOST);
 
-		// Grant access to the database
-		aoClient.addMySQLDBUser(database, mysqlServer, server, username, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true);
+    // Grant access to the database
+    aoClient.addMySQLDBUser(database, mysqlServer, server, username, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true);
 
-		// Commit the changes before setting the password
-		aoClient.waitForMySQLUserRebuild(server);
+    // Commit the changes before setting the password
+    aoClient.waitForMySQLUserRebuild(server);
 
-		// Set the password
-		aoClient.setMySQLServerUserPassword(username, mysqlServer, server, password);
-	}
+    // Set the password
+    aoClient.setMySQLServerUserPassword(username, mysqlServer, server, password);
+  }
 
-	/**
-	 * Adds a <code>User</code> to the system.
-	 *
-	 * @param  conn         the <code>AOServConnector</code> to use
-	 * @param  packageName  the name of the <code>Package</code>
-	 * @param  username     the new username to allocate
-	 * @param  mysqlServer  the name of the MySQL instance
-	 * @param  server       the hostname of the server to add the account to
-	 * @param  database     the new user will be granted access to this database
-	 * @param  password     the password for the new account
-	 *
-	 * @return  the new <code>UserServer</code>
-	 */
-	public static UserServer addMySQLUser(
-		AOServConnector conn,
-		Account.Name packageName,
-		User.Name username,
-		Server.Name mysqlServer,
-		DomainName server,
-		Database.Name database,
-		String password
-	) throws IOException, SQLException {
-		// Find the Package
-		Package pk=conn.getBilling().getPackage().get(packageName);
+  /**
+   * Adds a <code>User</code> to the system.
+   *
+   * @param  conn         the <code>AOServConnector</code> to use
+   * @param  packageName  the name of the <code>Package</code>
+   * @param  username     the new username to allocate
+   * @param  mysqlServer  the name of the MySQL instance
+   * @param  server       the hostname of the server to add the account to
+   * @param  database     the new user will be granted access to this database
+   * @param  password     the password for the new account
+   *
+   * @return  the new <code>UserServer</code>
+   */
+  public static UserServer addMySQLUser(
+    AOServConnector conn,
+    Account.Name packageName,
+    User.Name username,
+    Server.Name mysqlServer,
+    DomainName server,
+    Database.Name database,
+    String password
+  ) throws IOException, SQLException {
+    // Find the Package
+    Package pk=conn.getBilling().getPackage().get(packageName);
 
-		// Resolve the Host
-		com.aoindustries.aoserv.client.linux.Server ao=conn.getLinux().getServer().get(server);
+    // Resolve the Host
+    com.aoindustries.aoserv.client.linux.Server ao=conn.getLinux().getServer().get(server);
 
-		// Resolve the Server
-		Server ms=ao.getMySQLServer(mysqlServer);
+    // Resolve the Server
+    Server ms=ao.getMySQLServer(mysqlServer);
 
-		// Reserve the username
-		pk.addUsername(username);
-		com.aoindustries.aoserv.client.account.User un=conn.getAccount().getUser().get(username);
+    // Reserve the username
+    pk.addUsername(username);
+    com.aoindustries.aoserv.client.account.User un=conn.getAccount().getUser().get(username);
 
-		// Indicate the username will be used for MySQL accounts
-		un.addMySQLUser();
-		User mu=un.getMySQLUser();
+    // Indicate the username will be used for MySQL accounts
+    un.addMySQLUser();
+    User mu=un.getMySQLUser();
 
-		// Grant access to the server
-		int msuPKey=mu.addMySQLServerUser(ms, UserServer.ANY_LOCAL_HOST);
-		UserServer msu=conn.getMysql().getUserServer().get(msuPKey);
+    // Grant access to the server
+    int msuPKey=mu.addMySQLServerUser(ms, UserServer.ANY_LOCAL_HOST);
+    UserServer msu=conn.getMysql().getUserServer().get(msuPKey);
 
-		// Find the Database
-		Database md=ms.getMySQLDatabase(database);
+    // Find the Database
+    Database md=ms.getMySQLDatabase(database);
 
-		// Grant access to the database
-		conn.getMysql().getDatabaseUser().addMySQLDBUser(md, msu, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true);
+    // Grant access to the database
+    conn.getMysql().getDatabaseUser().addMySQLDBUser(md, msu, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true);
 
-		// Commit the changes before setting the password
-		ao.waitForMySQLUserRebuild();
+    // Commit the changes before setting the password
+    ao.waitForMySQLUserRebuild();
 
-		// Set the password
-		msu.setPassword(password);
+    // Set the password
+    msu.setPassword(password);
 
-		// Return the object
-		return msu;
-	}
+    // Return the object
+    return msu;
+  }
 }

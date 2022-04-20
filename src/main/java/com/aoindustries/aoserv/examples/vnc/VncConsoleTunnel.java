@@ -55,153 +55,162 @@ import java.util.logging.Logger;
 // Matches VncConsoleProxySocketHandler
 public class VncConsoleTunnel implements Runnable {
 
-	private static final Logger logger = Logger.getLogger(VncConsoleTunnel.class.getName());
+  private static final Logger logger = Logger.getLogger(VncConsoleTunnel.class.getName());
 
-	@SuppressWarnings("UseOfSystemOutOrSystemErr")
-	public static void main(String[] args) {
-		if(args.length!=3) {
-			System.err.println("usage: "+VncConsoleTunnel.class.getName()+" virtual_server listen_address listen_port");
-			System.exit(1);
-		} else {
-			try {
-				AOServConnector conn = AOServConnector.getConnector();
-				Host host = conn.getNet().getHost().get(args[0]);
-				if(host == null) throw new SQLException("Unable to find Host: " + args[0]);
-				VirtualServer virtualServer = host.getVirtualServer();
-				if(virtualServer==null) throw new SQLException("Host is not a VirtualServer: "+args[0]);
-				new VncConsoleTunnel(
-					virtualServer,
-					InetAddress.getByName(args[1]),
-					Integer.parseInt(args[2])
-				).run();
-			} catch(IOException | NumberFormatException | SQLException err) {
-				ErrorPrinter.printStackTraces(err, System.err);
-				System.exit(2);
-			}
-		}
-	}
+  @SuppressWarnings("UseOfSystemOutOrSystemErr")
+  public static void main(String[] args) {
+    if (args.length != 3) {
+      System.err.println("usage: "+VncConsoleTunnel.class.getName()+" virtual_server listen_address listen_port");
+      System.exit(1);
+    } else {
+      try {
+        AOServConnector conn = AOServConnector.getConnector();
+        Host host = conn.getNet().getHost().get(args[0]);
+        if (host == null) {
+          throw new SQLException("Unable to find Host: " + args[0]);
+        }
+        VirtualServer virtualServer = host.getVirtualServer();
+        if (virtualServer == null) {
+          throw new SQLException("Host is not a VirtualServer: "+args[0]);
+        }
+        new VncConsoleTunnel(
+          virtualServer,
+          InetAddress.getByName(args[1]),
+          Integer.parseInt(args[2])
+        ).run();
+      } catch (IOException | NumberFormatException | SQLException err) {
+        ErrorPrinter.printStackTraces(err, System.err);
+        System.exit(2);
+      }
+    }
+  }
 
-	private final VirtualServer virtualServer;
-	private final InetAddress listenAddress;
-	private final int listenPort;
+  private final VirtualServer virtualServer;
+  private final InetAddress listenAddress;
+  private final int listenPort;
 
-	public VncConsoleTunnel(VirtualServer virtualServer, InetAddress listenAddress, int listenPort) {
-		this.virtualServer = virtualServer;
-		this.listenAddress = listenAddress;
-		this.listenPort = listenPort;
-	}
+  public VncConsoleTunnel(VirtualServer virtualServer, InetAddress listenAddress, int listenPort) {
+    this.virtualServer = virtualServer;
+    this.listenAddress = listenAddress;
+    this.listenPort = listenPort;
+  }
 
-	@Override
-	@SuppressWarnings({"UseSpecificCatch", "TooBroadCatch", "SleepWhileInLoop"})
-	public void run() {
-		while(!Thread.currentThread().isInterrupted()) {
-			try {
-				try (ServerSocket serverSocket = new ServerSocket(listenPort, 50, listenAddress)) {
-					while(!Thread.currentThread().isInterrupted()) {
-						final Socket socket = serverSocket.accept();
-						new Thread(
-							() -> {
-								try {
-									Server.DaemonAccess daemonAccess = virtualServer.requestVncConsoleAccess();
-									AOServDaemonConnector daemonConnector = AOServDaemonConnector.getConnector(
-										daemonAccess.getHost(),
-										com.aoapps.net.InetAddress.UNSPECIFIED_IPV4,
-										daemonAccess.getPort(),
-										daemonAccess.getProtocol(),
-										null,
-										100,
-										AOPool.DEFAULT_MAX_CONNECTION_AGE,
-										AOServClientConfiguration.getSslTruststorePath(),
-										AOServClientConfiguration.getSslTruststorePassword()
-									);
-									try (AOServDaemonConnection daemonConn = daemonConnector.getConnection()) {
-										try {
-											final StreamableOutput daemonOut = daemonConn.getRequestOut(AOServDaemonProtocol.VNC_CONSOLE);
-											daemonOut.writeLong(daemonAccess.getKey());
-											daemonOut.flush();
+  @Override
+  @SuppressWarnings({"UseSpecificCatch", "TooBroadCatch", "SleepWhileInLoop"})
+  public void run() {
+    while (!Thread.currentThread().isInterrupted()) {
+      try {
+        try (ServerSocket serverSocket = new ServerSocket(listenPort, 50, listenAddress)) {
+          while (!Thread.currentThread().isInterrupted()) {
+            final Socket socket = serverSocket.accept();
+            new Thread(
+              () -> {
+                try {
+                  Server.DaemonAccess daemonAccess = virtualServer.requestVncConsoleAccess();
+                  AOServDaemonConnector daemonConnector = AOServDaemonConnector.getConnector(
+                    daemonAccess.getHost(),
+                    com.aoapps.net.InetAddress.UNSPECIFIED_IPV4,
+                    daemonAccess.getPort(),
+                    daemonAccess.getProtocol(),
+                    null,
+                    100,
+                    AOPool.DEFAULT_MAX_CONNECTION_AGE,
+                    AOServClientConfiguration.getSslTruststorePath(),
+                    AOServClientConfiguration.getSslTruststorePassword()
+                  );
+                  try (AOServDaemonConnection daemonConn = daemonConnector.getConnection()) {
+                    try {
+                      final StreamableOutput daemonOut = daemonConn.getRequestOut(AOServDaemonProtocol.VNC_CONSOLE);
+                      daemonOut.writeLong(daemonAccess.getKey());
+                      daemonOut.flush();
 
-											final StreamableInput daemonIn = daemonConn.getResponseIn();
-											int result=daemonIn.read();
-											if(result==AOServDaemonProtocol.NEXT) {
-												final OutputStream socketOut = socket.getOutputStream();
-												final InputStream socketIn = socket.getInputStream();
-												// socketIn -> daemonOut in another thread
-												Thread inThread = new Thread(
-													() -> {
-														try {
-															try {
-																byte[] buff = new byte[4096];
-																int ret;
-																while((ret=socketIn.read(buff, 0, 4096))!=-1) {
-																	daemonOut.write(buff, 0, ret);
-																	daemonOut.flush();
-																}
-															} finally {
-																// Always close after VNC tunnel since this is a connection-terminal command
-																daemonConn.abort();
-															}
-														} catch(ThreadDeath td) {
-															throw td;
-														} catch(Throwable t) {
-															logger.log(Level.SEVERE, null, t);
-														}
-													},
-													VncConsoleTunnel.class.getSimpleName() + ": " + socket.getInetAddress() + ":" + socket.getPort() + " -> " + socket.getLocalAddress() + ":" + socket.getLocalPort() + ", socketIn -> daemonOut: " + virtualServer.getHost().getName()
-												);
-												inThread.start();
-												//try {
-													// daemonIn -> socketOut in this thread
-													byte[] buff = new byte[4096];
-													int ret;
-													while((ret=daemonIn.read(buff, 0, 4096))!=-1) {
-														socketOut.write(buff, 0, ret);
-														socketOut.flush();
-													}
-												//} finally {
-													// Let the in thread complete its work before closing streams
-												//    inThread.join();
-												//}
-											} else {
-												if (result == AOServDaemonProtocol.IO_EXCEPTION) throw new IOException(daemonIn.readUTF());
-												else if (result == AOServDaemonProtocol.SQL_EXCEPTION) throw new SQLException(daemonIn.readUTF());
-												else if (result==-1) throw new EOFException();
-												else throw new IOException("Unknown result: " + result);
-											}
-										} finally {
-											// Always close after VNC tunnel since this is a connection-terminal command
-											daemonConn.abort();
-										}
-									}
-								} catch(ThreadDeath td) {
-									throw td;
-								} catch(Throwable t) {
-									logger.log(Level.SEVERE, null, t);
-								} finally {
-									try {
-										socket.close();
-									} catch(ThreadDeath td) {
-										throw td;
-									} catch(Throwable t) {
-										logger.log(Level.SEVERE, null, t);
-									}
-								}
-							},
-							VncConsoleTunnel.class.getSimpleName() + ": " + socket.getInetAddress() + ":" + socket.getPort() + " -> " + socket.getLocalAddress() + ":" + socket.getLocalPort() + ", daemonIn -> socketOut: " + virtualServer.getHost().getName()
-						).start();
-					}
-				}
-			} catch(ThreadDeath td) {
-				throw td;
-			} catch(Throwable t) {
-				logger.log(Level.SEVERE, null, t);
-				try {
-					Thread.sleep(10000);
-				} catch(InterruptedException err) {
-					logger.log(Level.WARNING, null, err);
-					// Restore the interrupted status
-					Thread.currentThread().interrupt();
-				}
-			}
-		}
-	}
+                      final StreamableInput daemonIn = daemonConn.getResponseIn();
+                      int result=daemonIn.read();
+                      if (result == AOServDaemonProtocol.NEXT) {
+                        final OutputStream socketOut = socket.getOutputStream();
+                        final InputStream socketIn = socket.getInputStream();
+                        // socketIn -> daemonOut in another thread
+                        Thread inThread = new Thread(
+                          () -> {
+                            try {
+                              try {
+                                byte[] buff = new byte[4096];
+                                int ret;
+                                while ((ret=socketIn.read(buff, 0, 4096)) != -1) {
+                                  daemonOut.write(buff, 0, ret);
+                                  daemonOut.flush();
+                                }
+                              } finally {
+                                // Always close after VNC tunnel since this is a connection-terminal command
+                                daemonConn.abort();
+                              }
+                            } catch (ThreadDeath td) {
+                              throw td;
+                            } catch (Throwable t) {
+                              logger.log(Level.SEVERE, null, t);
+                            }
+                          },
+                          VncConsoleTunnel.class.getSimpleName() + ": " + socket.getInetAddress() + ":" + socket.getPort() + " -> " + socket.getLocalAddress() + ":" + socket.getLocalPort() + ", socketIn -> daemonOut: " + virtualServer.getHost().getName()
+                        );
+                        inThread.start();
+                        //try {
+                          // daemonIn -> socketOut in this thread
+                          byte[] buff = new byte[4096];
+                          int ret;
+                          while ((ret=daemonIn.read(buff, 0, 4096)) != -1) {
+                            socketOut.write(buff, 0, ret);
+                            socketOut.flush();
+                          }
+                        //} finally {
+                          // Let the in thread complete its work before closing streams
+                        //    inThread.join();
+                        //}
+                      } else {
+                        if (result == AOServDaemonProtocol.IO_EXCEPTION) {
+                          throw new IOException(daemonIn.readUTF());
+                        } else if (result == AOServDaemonProtocol.SQL_EXCEPTION) {
+                          throw new SQLException(daemonIn.readUTF());
+                        } else if (result == -1) {
+                          throw new EOFException();
+                        } else {
+                          throw new IOException("Unknown result: " + result);
+                        }
+                      }
+                    } finally {
+                      // Always close after VNC tunnel since this is a connection-terminal command
+                      daemonConn.abort();
+                    }
+                  }
+                } catch (ThreadDeath td) {
+                  throw td;
+                } catch (Throwable t) {
+                  logger.log(Level.SEVERE, null, t);
+                } finally {
+                  try {
+                    socket.close();
+                  } catch (ThreadDeath td) {
+                    throw td;
+                  } catch (Throwable t) {
+                    logger.log(Level.SEVERE, null, t);
+                  }
+                }
+              },
+              VncConsoleTunnel.class.getSimpleName() + ": " + socket.getInetAddress() + ":" + socket.getPort() + " -> " + socket.getLocalAddress() + ":" + socket.getLocalPort() + ", daemonIn -> socketOut: " + virtualServer.getHost().getName()
+            ).start();
+          }
+        }
+      } catch (ThreadDeath td) {
+        throw td;
+      } catch (Throwable t) {
+        logger.log(Level.SEVERE, null, t);
+        try {
+          Thread.sleep(10000);
+        } catch (InterruptedException err) {
+          logger.log(Level.WARNING, null, err);
+          // Restore the interrupted status
+          Thread.currentThread().interrupt();
+        }
+      }
+    }
+  }
 }

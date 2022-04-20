@@ -40,91 +40,93 @@ import java.sql.SQLException;
  */
 public final class AddPostgresUser {
 
-	/** Make no instances. */
-	private AddPostgresUser() {throw new AssertionError();}
+  /** Make no instances. */
+  private AddPostgresUser() {
+    throw new AssertionError();
+  }
 
-	/**
-	 * Adds a <code>User</code> to the system.
-	 *
-	 * @param  aoClient        the <code>SimpleAOClient</code> to use
-	 * @param  packageName     the name of the <code>Package</code>
-	 * @param  username        the new username to allocate
-	 * @param  postgresServer  the name of the PostgreSQL server
-	 * @param  server          the hostname of the server to add the account to
-	 * @param  password        the password for the new account
-	 */
-	public static void addPostgresUser(
-		SimpleAOClient aoClient,
-		Account.Name packageName,
-		User.Name username,
-		Server.Name postgresServer,
-		String server,
-		String password
-	) throws IOException, SQLException {
-		// Reserve the username
-		aoClient.addUsername(packageName, username);
+  /**
+   * Adds a <code>User</code> to the system.
+   *
+   * @param  aoClient        the <code>SimpleAOClient</code> to use
+   * @param  packageName     the name of the <code>Package</code>
+   * @param  username        the new username to allocate
+   * @param  postgresServer  the name of the PostgreSQL server
+   * @param  server          the hostname of the server to add the account to
+   * @param  password        the password for the new account
+   */
+  public static void addPostgresUser(
+    SimpleAOClient aoClient,
+    Account.Name packageName,
+    User.Name username,
+    Server.Name postgresServer,
+    String server,
+    String password
+  ) throws IOException, SQLException {
+    // Reserve the username
+    aoClient.addUsername(packageName, username);
 
-		// Indicate the username will be used for PostgreSQL accounts
-		aoClient.addPostgresUser(username);
+    // Indicate the username will be used for PostgreSQL accounts
+    aoClient.addPostgresUser(username);
 
-		// Grant access to the server
-		aoClient.addPostgresServerUser(username, postgresServer, server);
+    // Grant access to the server
+    aoClient.addPostgresServerUser(username, postgresServer, server);
 
-		// Commit the changes before setting the password
-		aoClient.waitForPostgresUserRebuild(server);
+    // Commit the changes before setting the password
+    aoClient.waitForPostgresUserRebuild(server);
 
-		// Set the password
-		aoClient.setPostgresServerUserPassword(username, postgresServer, server, password);
-	}
+    // Set the password
+    aoClient.setPostgresServerUserPassword(username, postgresServer, server, password);
+  }
 
-	/**
-	 * Adds a <code>User</code> to the system.
-	 *
-	 * @param  conn            the <code>AOServConnector</code> to use
-	 * @param  packageName     the name of the <code>Package</code>
-	 * @param  username        the new username to allocate
-	 * @param  postgresServer  the name of the PostgreSQL server
-	 * @param  server          the hostname of the server to add the account to
-	 * @param  password        the password for the new account
-	 *
-	 * @return  the new <code>UserServer</code>
-	 */
-	public static UserServer addPostgresUser(
-		AOServConnector conn,
-		Account.Name packageName,
-		User.Name username,
-		Server.Name postgresServer,
-		String server,
-		String password
-	) throws IOException, SQLException {
-		// Find the Package
-		Package pk = conn.getBilling().getPackage().get(packageName);
+  /**
+   * Adds a <code>User</code> to the system.
+   *
+   * @param  conn            the <code>AOServConnector</code> to use
+   * @param  packageName     the name of the <code>Package</code>
+   * @param  username        the new username to allocate
+   * @param  postgresServer  the name of the PostgreSQL server
+   * @param  server          the hostname of the server to add the account to
+   * @param  password        the password for the new account
+   *
+   * @return  the new <code>UserServer</code>
+   */
+  public static UserServer addPostgresUser(
+    AOServConnector conn,
+    Account.Name packageName,
+    User.Name username,
+    Server.Name postgresServer,
+    String server,
+    String password
+  ) throws IOException, SQLException {
+    // Find the Package
+    Package pk = conn.getBilling().getPackage().get(packageName);
 
-		// Reserve the username
-		pk.addUsername(username);
-		com.aoindustries.aoserv.client.account.User un = conn.getAccount().getUser().get(username);
+    // Reserve the username
+    pk.addUsername(username);
+    com.aoindustries.aoserv.client.account.User un = conn.getAccount().getUser().get(username);
 
-		// Indicate the username will be used for PostgreSQL accounts
-		un.addPostgresUser();
-		User pu = un.getPostgresUser();
+    // Indicate the username will be used for PostgreSQL accounts
+    un.addPostgresUser();
+    User pu = un.getPostgresUser();
 
-		// Resolve the Host
-		com.aoindustries.aoserv.client.linux.Server linuxServer = conn.getNet().getHost().get(server).getLinuxServer();
+    // Resolve the Host
+    com.aoindustries.aoserv.client.linux.Server linuxServer = conn.getNet().getHost().get(server).getLinuxServer();
 
-		// Resolve the Server
-		Server ps = linuxServer.getPostgresServer(postgresServer);
+    // Resolve the Server
+    Server ps = linuxServer.getPostgresServer(postgresServer);
 
-		// Grant access to the server
-		int psuPKey = pu.addPostgresServerUser(ps);
-		UserServer psu = conn.getPostgresql().getUserServer().get(psuPKey);
+    // Grant access to the server
+    int psuPKey = pu.addPostgresServerUser(ps);
+    UserServer psu = conn.getPostgresql().getUserServer().get(psuPKey);
 
-		// Commit the changes before setting the password
-		linuxServer.waitForPostgresUserRebuild();
+    // Commit the changes before setting the password
+    linuxServer.waitForPostgresUserRebuild();
 
-		// Set the password
-		psu.setPassword(password);
+    // Set the password
+    psu.setPassword(password);
 
-		// Return the object
-		return psu;
-	}
+    // Return the object
+    return psu;
+  }
 }
