@@ -56,12 +56,12 @@ public final class AddPostgresUser {
    * @param  password        the password for the new account
    */
   public static void addPostgresUser(
-    SimpleAOClient aoClient,
-    Account.Name packageName,
-    User.Name username,
-    Server.Name postgresServer,
-    String server,
-    String password
+      SimpleAOClient aoClient,
+      Account.Name packageName,
+      User.Name username,
+      Server.Name postgresServer,
+      String server,
+      String password
   ) throws IOException, SQLException {
     // Reserve the username
     aoClient.addUsername(packageName, username);
@@ -92,12 +92,12 @@ public final class AddPostgresUser {
    * @return  the new <code>UserServer</code>
    */
   public static UserServer addPostgresUser(
-    AOServConnector conn,
-    Account.Name packageName,
-    User.Name username,
-    Server.Name postgresServer,
-    String server,
-    String password
+      AOServConnector conn,
+      Account.Name packageName,
+      User.Name username,
+      Server.Name postgresServer,
+      String server,
+      String password
   ) throws IOException, SQLException {
     // Find the Package
     Package pk = conn.getBilling().getPackage().get(packageName);

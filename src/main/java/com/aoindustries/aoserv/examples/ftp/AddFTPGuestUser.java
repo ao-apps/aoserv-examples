@@ -75,14 +75,14 @@ public final class AddFTPGuestUser {
    * @param  password     the password for the new account
    */
   public static void addFTPGuestuser(
-    SimpleAOClient aoClient,
-    Account.Name packageName,
-    User.Name username,
-    Gecos fullName,
-    Group.Name group,
-    String server,
-    PosixPath home,
-    String password
+      SimpleAOClient aoClient,
+      Account.Name packageName,
+      User.Name username,
+      Gecos fullName,
+      Group.Name group,
+      String server,
+      PosixPath home,
+      String password
   ) throws IOException, SQLException {
     // Allocate the username
     aoClient.addUsername(packageName, username);
@@ -118,17 +118,17 @@ public final class AddFTPGuestUser {
    * @return  the new <code>UserServer</code>
    */
   public static UserServer addFTPGuestuser(
-    AOServConnector conn,
-    Account.Name packageName,
-    User.Name username,
-    Gecos fullName,
-    Group.Name group,
-    DomainName server,
-    PosixPath home,
-    String password
+      AOServConnector conn,
+      Account.Name packageName,
+      User.Name username,
+      Gecos fullName,
+      Group.Name group,
+      DomainName server,
+      PosixPath home,
+      String password
   ) throws IOException, SQLException {
     // Resolve the Package
-    com.aoindustries.aoserv.client.billing.Package pk=conn.getBilling().getPackage().get(packageName);
+    com.aoindustries.aoserv.client.billing.Package pk = conn.getBilling().getPackage().get(packageName);
 
     // Allocate the username
     pk.addUsername(username);
@@ -136,17 +136,17 @@ public final class AddFTPGuestUser {
 
     // Reserve the username for use as a Linux account
     un.addLinuxAccount(group, fullName, null, null, null, UserType.FTPONLY, Shell.FTPPASSWD);
-    User la=un.getLinuxAccount();
+    User la = un.getLinuxAccount();
 
     // Limit the FTP transfers to the users home directory
     la.addFTPGuestUser();
 
     // Find the server
-    Server ao=conn.getLinux().getServer().get(server);
+    Server ao = conn.getLinux().getServer().get(server);
 
     // Grant the user access to the server
-    int lsaPKey=la.addLinuxServerAccount(ao, home);
-    UserServer lsa=conn.getLinux().getUserServer().get(lsaPKey);
+    int lsaPKey = la.addLinuxServerAccount(ao, home);
+    UserServer lsa = conn.getLinux().getUserServer().get(lsaPKey);
 
     // Wait for rebuild
     ao.waitForLinuxAccountRebuild();

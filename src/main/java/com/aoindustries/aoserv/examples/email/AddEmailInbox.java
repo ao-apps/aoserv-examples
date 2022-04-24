@@ -68,14 +68,14 @@ public final class AddEmailInbox {
    * @param  password     the password for the new user
    */
   public static void addEmailInbox(
-    SimpleAOClient aoClient,
-    Account.Name packageName,
-    User.Name username,
-    Gecos fullName,
-    String server,
-    String address,
-    DomainName domain,
-    String password
+      SimpleAOClient aoClient,
+      Account.Name packageName,
+      User.Name username,
+      Gecos fullName,
+      String server,
+      String address,
+      DomainName domain,
+      String password
   ) throws IOException, SQLException {
     // Reserve the username
     aoClient.addUsername(packageName, username);
@@ -110,14 +110,14 @@ public final class AddEmailInbox {
    * @return  the new <code>UserServer</code>
    */
   public static UserServer addEmailInbox(
-    AOServConnector conn,
-    Account.Name packageName,
-    User.Name username,
-    Gecos fullName,
-    String server,
-    String address,
-    DomainName domain,
-    String password
+      AOServConnector conn,
+      Account.Name packageName,
+      User.Name username,
+      Gecos fullName,
+      String server,
+      String address,
+      DomainName domain,
+      String password
   ) throws IOException, SQLException {
     // Resolve the Package
     com.aoindustries.aoserv.client.billing.Package pk = conn.getBilling().getPackage().get(packageName);

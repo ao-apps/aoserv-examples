@@ -59,13 +59,13 @@ public final class AddMySQLUser {
    * @param  password     the password for the new account
    */
   public static void addMySQLUser(
-    SimpleAOClient aoClient,
-    Account.Name packageName,
-    User.Name username,
-    Server.Name mysqlServer,
-    String server,
-    Database.Name database,
-    String password
+      SimpleAOClient aoClient,
+      Account.Name packageName,
+      User.Name username,
+      Server.Name mysqlServer,
+      String server,
+      Database.Name database,
+      String password
   ) throws IOException, SQLException {
     // Reserve the username
     aoClient.addUsername(packageName, username);
@@ -100,37 +100,37 @@ public final class AddMySQLUser {
    * @return  the new <code>UserServer</code>
    */
   public static UserServer addMySQLUser(
-    AOServConnector conn,
-    Account.Name packageName,
-    User.Name username,
-    Server.Name mysqlServer,
-    DomainName server,
-    Database.Name database,
-    String password
+      AOServConnector conn,
+      Account.Name packageName,
+      User.Name username,
+      Server.Name mysqlServer,
+      DomainName server,
+      Database.Name database,
+      String password
   ) throws IOException, SQLException {
     // Find the Package
-    Package pk=conn.getBilling().getPackage().get(packageName);
+    Package pk = conn.getBilling().getPackage().get(packageName);
 
     // Resolve the Host
-    com.aoindustries.aoserv.client.linux.Server ao=conn.getLinux().getServer().get(server);
+    com.aoindustries.aoserv.client.linux.Server ao = conn.getLinux().getServer().get(server);
 
     // Resolve the Server
-    Server ms=ao.getMySQLServer(mysqlServer);
+    Server ms = ao.getMySQLServer(mysqlServer);
 
     // Reserve the username
     pk.addUsername(username);
-    com.aoindustries.aoserv.client.account.User un=conn.getAccount().getUser().get(username);
+    com.aoindustries.aoserv.client.account.User un = conn.getAccount().getUser().get(username);
 
     // Indicate the username will be used for MySQL accounts
     un.addMySQLUser();
-    User mu=un.getMySQLUser();
+    User mu = un.getMySQLUser();
 
     // Grant access to the server
-    int msuPKey=mu.addMySQLServerUser(ms, UserServer.ANY_LOCAL_HOST);
-    UserServer msu=conn.getMysql().getUserServer().get(msuPKey);
+    int msuPKey = mu.addMySQLServerUser(ms, UserServer.ANY_LOCAL_HOST);
+    UserServer msu = conn.getMysql().getUserServer().get(msuPKey);
 
     // Find the Database
-    Database md=ms.getMySQLDatabase(database);
+    Database md = ms.getMySQLDatabase(database);
 
     // Grant access to the database
     conn.getMysql().getDatabaseUser().addMySQLDBUser(md, msu, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true);

@@ -91,33 +91,33 @@ public final class CreateAccount {
    * @param  tomcatVersion       the version of Tomcat to install
    */
   public static void createAccount(
-    AOServConnector conn,
-    PrintWriter out,
-    Account.Name accountingTemplate,
-    String server,
-    Account.Name parentAccount,
-    String packageDefinitionCategory,
-    String packageDefinitionName,
-    String packageDefinitionVersion,
-    User.Name jvmUsername,
-    String jvmPassword,
-    User.Name ftpUsername,
-    String ftpPassword,
-    Group.Name groupName,
-    String siteNameTemplate,
-    com.aoindustries.aoserv.client.mysql.User.Name mysqlAdminUsername,
-    com.aoindustries.aoserv.client.mysql.User.Name mysqlAppUsername,
-    String mysqlAppPassword,
-    InetAddress ipAddress,
-    String netDevice,
-    boolean ownsIPAddress,
-    Email serverAdmin,
-    DomainName primaryHttpHostname,
-    DomainName[] altHttpHostnames,
-    String tomcatVersion
+      AOServConnector conn,
+      PrintWriter out,
+      Account.Name accountingTemplate,
+      String server,
+      Account.Name parentAccount,
+      String packageDefinitionCategory,
+      String packageDefinitionName,
+      String packageDefinitionVersion,
+      User.Name jvmUsername,
+      String jvmPassword,
+      User.Name ftpUsername,
+      String ftpPassword,
+      Group.Name groupName,
+      String siteNameTemplate,
+      com.aoindustries.aoserv.client.mysql.User.Name mysqlAdminUsername,
+      com.aoindustries.aoserv.client.mysql.User.Name mysqlAppUsername,
+      String mysqlAppPassword,
+      InetAddress ipAddress,
+      String netDevice,
+      boolean ownsIPAddress,
+      Email serverAdmin,
+      DomainName primaryHttpHostname,
+      DomainName[] altHttpHostnames,
+      String tomcatVersion
   ) throws IOException, SQLException, ValidationException {
-    long startTime=System.currentTimeMillis();
-    SimpleAOClient client=conn.getSimpleAOClient();
+    long startTime = System.currentTimeMillis();
+    SimpleAOClient client = conn.getSimpleAOClient();
 
     // Resolve the parent account
     Account parent = conn.getAccount().getAccount().get(parentAccount);
@@ -139,17 +139,17 @@ public final class CreateAccount {
     if (pc == null) {
       throw new SQLException("Unable to find PackageCategory: " + packageDefinitionCategory);
     }
-    PackageDefinition packageDefinition=parent.getPackageDefinition(pc, packageDefinitionName, packageDefinitionVersion);
+    PackageDefinition packageDefinition = parent.getPackageDefinition(pc, packageDefinitionName, packageDefinitionVersion);
     if (packageDefinition == null) {
-      throw new SQLException("Unable to find PackageDefinition: accounting="+parentAccount+", category="+packageDefinitionCategory+", name="+packageDefinitionName+", version="+packageDefinitionVersion);
+      throw new SQLException("Unable to find PackageDefinition: accounting=" + parentAccount + ", category=" + packageDefinitionCategory + ", name=" + packageDefinitionName + ", version=" + packageDefinitionVersion);
     }
 
     // Add a Package to the Account
-    Account.Name packageName=client.generatePackageName(Account.Name.valueOf(accounting.toString()+'_'));
+    Account.Name packageName = client.generatePackageName(Account.Name.valueOf(accounting.toString() + '_'));
     client.addPackage(
-      packageName,
-      accounting,
-      packageDefinition.getPkey()
+        packageName,
+        accounting,
+        packageDefinition.getPkey()
     );
     if (out != null) {
       out.print("Package added, name=");
@@ -158,7 +158,7 @@ public final class CreateAccount {
     }
 
     // Find the site_name that will be used
-    String siteName=client.generateSiteName(siteNameTemplate);
+    String siteName = client.generateSiteName(siteNameTemplate);
 
     // Add the Linux group that the JVM and FTP account will use
     client.addLinuxGroup(groupName, packageName, GroupType.USER);
@@ -167,7 +167,7 @@ public final class CreateAccount {
       out.println(groupName);
       out.flush();
     }
-    int linuxServerGroupPKey=client.addLinuxServerGroup(groupName, server);
+    int linuxServerGroupPKey = client.addLinuxServerGroup(groupName, server);
     if (out != null) {
       out.print("LinuxServerGroup added, pkey=");
       out.println(linuxServerGroupPKey);
@@ -182,14 +182,14 @@ public final class CreateAccount {
       out.flush();
     }
     client.addLinuxAccount(
-      jvmUsername,
-      groupName,
-      Gecos.valueOf(siteName+" Java VM"),
-      null, // officeLocation
-      null, // officePhone
-      null, // homePhone
-      UserType.USER,
-      Shell.BASH
+        jvmUsername,
+        groupName,
+        Gecos.valueOf(siteName + " Java VM"),
+        null, // officeLocation
+        null, // officePhone
+        null, // homePhone
+        UserType.USER,
+        Shell.BASH
     );
     if (out != null) {
       out.print("User added, username=");
@@ -198,12 +198,12 @@ public final class CreateAccount {
     }
     // Find the directory containing the websites
     PosixPath wwwDir = conn.getLinux().getServer().get(
-      DomainName.valueOf(server)
+        DomainName.valueOf(server)
     ).getHost().getOperatingSystemVersion().getHttpdSitesDirectory();
-    int jvmLinuxServerAccountPKey=client.addLinuxServerAccount(
-      jvmUsername,
-      server,
-      PosixPath.valueOf(wwwDir.toString()+'/'+siteName)
+    int jvmLinuxServerAccountPKey = client.addLinuxServerAccount(
+        jvmUsername,
+        server,
+        PosixPath.valueOf(wwwDir.toString() + '/' + siteName)
     );
     if (out != null) {
       out.print("UserServer added, pkey=");
@@ -219,14 +219,14 @@ public final class CreateAccount {
       out.flush();
     }
     client.addLinuxAccount(
-      ftpUsername,
-      groupName,
-      Gecos.valueOf(siteName+" FTP"),
-      null,
-      null,
-      null,
-      UserType.FTPONLY,
-      Shell.FTPPASSWD
+        ftpUsername,
+        groupName,
+        Gecos.valueOf(siteName + " FTP"),
+        null,
+        null,
+        null,
+        UserType.FTPONLY,
+        Shell.FTPPASSWD
     );
     if (out != null) {
       out.print("User added, username=");
@@ -239,10 +239,10 @@ public final class CreateAccount {
       out.println(ftpUsername);
       out.flush();
     }
-    int ftpLinuxServerAccountPKey=client.addLinuxServerAccount(
-      ftpUsername,
-      server,
-      PosixPath.valueOf(wwwDir.toString()+'/'+siteName+"/webapps")
+    int ftpLinuxServerAccountPKey = client.addLinuxServerAccount(
+        ftpUsername,
+        server,
+        PosixPath.valueOf(wwwDir.toString() + '/' + siteName + "/webapps")
     );
     if (out != null) {
       out.print("UserServer added, pkey=");
@@ -359,18 +359,18 @@ public final class CreateAccount {
 
     // Create the site
     int tomcatStdSitePKey = client.addHttpdTomcatStdSite(
-      server,
-      siteName,
-      packageName,
-      jvmUsername,
-      groupName,
-      serverAdmin,
-      false,
-      ipAddress,
-      netDevice,
-      primaryHttpHostname,
-      altHttpHostnames,
-      tomcatVersion
+        server,
+        siteName,
+        packageName,
+        jvmUsername,
+        groupName,
+        serverAdmin,
+        false,
+        ipAddress,
+        netDevice,
+        primaryHttpHostname,
+        altHttpHostnames,
+        tomcatVersion
     );
     if (out != null) {
       out.print("HttpdTomcatStdSite added, pkey=");

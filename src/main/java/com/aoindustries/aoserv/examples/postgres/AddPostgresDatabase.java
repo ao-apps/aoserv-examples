@@ -67,13 +67,13 @@ public final class AddPostgresDatabase {
    * @param  enablePostgis   enables PostGIS on the database
    */
   public static void addPostgresDatabase(
-    SimpleAOClient aoClient,
-    Database.Name name,
-    Server.Name postgresServer,
-    String server,
-    User.Name datdba,
-    String encoding,
-    boolean enablePostgis
+      SimpleAOClient aoClient,
+      Database.Name name,
+      Server.Name postgresServer,
+      String server,
+      User.Name datdba,
+      String encoding,
+      boolean enablePostgis
   ) throws IOException, SQLException {
     aoClient.addPostgresDatabase(name, postgresServer, server, datdba, encoding, enablePostgis);
   }
@@ -92,29 +92,29 @@ public final class AddPostgresDatabase {
    * @return  the new <code>Database</code>
    */
   public static Database addPostgresDatabase(
-    AOServConnector conn,
-    Database.Name name,
-    Server.Name postgresServer,
-    DomainName server,
-    User.Name datdba,
-    String encoding,
-    boolean enablePostgis
+      AOServConnector conn,
+      Database.Name name,
+      Server.Name postgresServer,
+      DomainName server,
+      User.Name datdba,
+      String encoding,
+      boolean enablePostgis
   ) throws IOException, SQLException {
 
     // Resolve the Host
-    com.aoindustries.aoserv.client.linux.Server ao=conn.getLinux().getServer().get(server);
+    com.aoindustries.aoserv.client.linux.Server ao = conn.getLinux().getServer().get(server);
 
     // Resolve the Server
-    Server ps=ao.getPostgresServer(postgresServer);
+    Server ps = ao.getPostgresServer(postgresServer);
 
     // Resolve the datdba UserServer
-    UserServer psu=ps.getPostgresServerUser(datdba);
+    UserServer psu = ps.getPostgresServerUser(datdba);
 
     // Resolve the Encoding
-    Encoding pe=ps.getVersion().getPostgresEncoding(conn, encoding);
+    Encoding pe = ps.getVersion().getPostgresEncoding(conn, encoding);
 
     // Add the Database
-    int pdPKey=ps.addPostgresDatabase(name, psu, pe, enablePostgis);
+    int pdPKey = ps.addPostgresDatabase(name, psu, pe, enablePostgis);
 
     // Return the object
     return conn.getPostgresql().getDatabase().get(pdPKey);
