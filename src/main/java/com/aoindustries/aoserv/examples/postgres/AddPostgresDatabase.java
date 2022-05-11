@@ -24,8 +24,8 @@
 package com.aoindustries.aoserv.examples.postgres;
 
 import com.aoapps.net.DomainName;
-import com.aoindustries.aoserv.client.AOServConnector;
-import com.aoindustries.aoserv.client.SimpleAOClient;
+import com.aoindustries.aoserv.client.AoservConnector;
+import com.aoindustries.aoserv.client.SimpleAoservClient;
 import com.aoindustries.aoserv.client.postgresql.Database;
 import com.aoindustries.aoserv.client.postgresql.Encoding;
 import com.aoindustries.aoserv.client.postgresql.Server;
@@ -56,9 +56,9 @@ public final class AddPostgresDatabase {
   }
 
   /**
-   * Adds a <code>Database</code> to a <code>Host</code>
+   * Adds a <code>Database</code> to a <code>Host</code>.
    *
-   * @param  aoClient        the <code>SimpleAOClient</code> to use
+   * @param  aoClient        the <code>SimpleAoservClient</code> to use
    * @param  name            the name of the database to add
    * @param  postgresServer  the name of the PostgreSQL server
    * @param  server          the hostname of the server to add the database to
@@ -67,7 +67,7 @@ public final class AddPostgresDatabase {
    * @param  enablePostgis   enables PostGIS on the database
    */
   public static void addPostgresDatabase(
-      SimpleAOClient aoClient,
+      SimpleAoservClient aoClient,
       Database.Name name,
       Server.Name postgresServer,
       String server,
@@ -79,9 +79,9 @@ public final class AddPostgresDatabase {
   }
 
   /**
-   * Adds a <code>Database</code> to a <code>Host</code>
+   * Adds a <code>Database</code> to a <code>Host</code>.
    *
-   * @param  conn            the <code>AOServConnector</code> to use
+   * @param  conn            the <code>AoservConnector</code> to use
    * @param  name            the name of the database to add
    * @param  postgresServer  the name of the PostgreSQL server
    * @param  server          the hostname of the server to add the database to
@@ -92,7 +92,7 @@ public final class AddPostgresDatabase {
    * @return  the new <code>Database</code>
    */
   public static Database addPostgresDatabase(
-      AOServConnector conn,
+      AoservConnector conn,
       Database.Name name,
       Server.Name postgresServer,
       DomainName server,
@@ -114,9 +114,9 @@ public final class AddPostgresDatabase {
     Encoding pe = ps.getVersion().getPostgresEncoding(conn, encoding);
 
     // Add the Database
-    int pdPKey = ps.addPostgresDatabase(name, psu, pe, enablePostgis);
+    int pdId = ps.addPostgresDatabase(name, psu, pe, enablePostgis);
 
     // Return the object
-    return conn.getPostgresql().getDatabase().get(pdPKey);
+    return conn.getPostgresql().getDatabase().get(pdId);
   }
 }

@@ -24,8 +24,8 @@
 package com.aoindustries.aoserv.examples.ftp;
 
 import com.aoapps.net.DomainName;
-import com.aoindustries.aoserv.client.AOServConnector;
-import com.aoindustries.aoserv.client.SimpleAOClient;
+import com.aoindustries.aoserv.client.AoservConnector;
+import com.aoindustries.aoserv.client.SimpleAoservClient;
 import com.aoindustries.aoserv.client.account.Account;
 import com.aoindustries.aoserv.client.linux.Group;
 import com.aoindustries.aoserv.client.linux.PosixPath;
@@ -55,17 +55,17 @@ import java.sql.SQLException;
  *
  * @author  AO Industries, Inc.
  */
-public final class AddFTPGuestUser {
+public final class AddFtpGuestUser {
 
   /** Make no instances. */
-  private AddFTPGuestUser() {
+  private AddFtpGuestUser() {
     throw new AssertionError();
   }
 
   /**
-   * Adds a <code>FTPGuestUser</code> to the system.
+   * Adds a <code>FtpGuestUser</code> to the system.
    *
-   * @param  aoClient     the <code>SimpleAOClient</code> to use
+   * @param  aoClient     the <code>SimpleAoservClient</code> to use
    * @param  packageName  the name of the package to add the account to
    * @param  username     the username to allocate
    * @param  fullName     the full name of the user
@@ -74,8 +74,8 @@ public final class AddFTPGuestUser {
    * @param  home         the directory the user has access to
    * @param  password     the password for the new account
    */
-  public static void addFTPGuestuser(
-      SimpleAOClient aoClient,
+  public static void addFtpGuestUser(
+      SimpleAoservClient aoClient,
       Account.Name packageName,
       User.Name username,
       Gecos fullName,
@@ -91,7 +91,7 @@ public final class AddFTPGuestUser {
     aoClient.addLinuxAccount(username, group, fullName, null, null, null, UserType.FTPONLY, Shell.FTPPASSWD);
 
     // Limit the FTP transfers to the users home directory
-    aoClient.addFTPGuestUser(username);
+    aoClient.addFtpGuestUser(username);
 
     // Grant the user access to the server
     aoClient.addLinuxServerAccount(username, server, home);
@@ -104,9 +104,9 @@ public final class AddFTPGuestUser {
   }
 
   /**
-   * Adds a <code>FTPGuestUser</code> to the system.
+   * Adds a <code>FtpGuestUser</code> to the system.
    *
-   * @param  conn         the <code>AOServConnector</code> to use
+   * @param  conn         the <code>AoservConnector</code> to use
    * @param  packageName  the name of the package to add the account to
    * @param  username     the username to allocate
    * @param  fullName     the full name of the user
@@ -117,8 +117,8 @@ public final class AddFTPGuestUser {
    *
    * @return  the new <code>UserServer</code>
    */
-  public static UserServer addFTPGuestuser(
-      AOServConnector conn,
+  public static UserServer addFtpGuestUser(
+      AoservConnector conn,
       Account.Name packageName,
       User.Name username,
       Gecos fullName,
@@ -139,14 +139,14 @@ public final class AddFTPGuestUser {
     User la = un.getLinuxAccount();
 
     // Limit the FTP transfers to the users home directory
-    la.addFTPGuestUser();
+    la.addFtpGuestUser();
 
     // Find the server
     Server ao = conn.getLinux().getServer().get(server);
 
     // Grant the user access to the server
-    int lsaPKey = la.addLinuxServerAccount(ao, home);
-    UserServer lsa = conn.getLinux().getUserServer().get(lsaPKey);
+    int lsaId = la.addLinuxServerAccount(ao, home);
+    UserServer lsa = conn.getLinux().getUserServer().get(lsaId);
 
     // Wait for rebuild
     ao.waitForLinuxAccountRebuild();

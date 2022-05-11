@@ -24,8 +24,8 @@
 package com.aoindustries.aoserv.examples.email;
 
 import com.aoapps.net.DomainName;
-import com.aoindustries.aoserv.client.AOServConnector;
-import com.aoindustries.aoserv.client.SimpleAOClient;
+import com.aoindustries.aoserv.client.AoservConnector;
+import com.aoindustries.aoserv.client.SimpleAoservClient;
 import com.aoindustries.aoserv.client.account.Account;
 import com.aoindustries.aoserv.client.email.Address;
 import com.aoindustries.aoserv.client.email.Domain;
@@ -59,7 +59,7 @@ public final class AddEmailInbox {
   /**
    * Creates a new email inbox.
    *
-   * @param  aoClient     the <code>SimpleAOClient</code> to use
+   * @param  aoClient     the <code>SimpleAoservClient</code> to use
    * @param  packageName  the name of the <code>Package</code>
    * @param  username     the new username to allocate
    * @param  fullName     the user's full name
@@ -68,7 +68,7 @@ public final class AddEmailInbox {
    * @param  password     the password for the new user
    */
   public static void addEmailInbox(
-      SimpleAOClient aoClient,
+      SimpleAoservClient aoClient,
       Account.Name packageName,
       User.Name username,
       Gecos fullName,
@@ -99,7 +99,7 @@ public final class AddEmailInbox {
   /**
    * Creates a new email inbox.
    *
-   * @param  conn         the <code>AOServConnector</code> to use
+   * @param  conn         the <code>AoservConnector</code> to use
    * @param  packageName  the name of the <code>Package</code>
    * @param  username     the new username to allocate
    * @param  fullName     the user's full name
@@ -110,7 +110,7 @@ public final class AddEmailInbox {
    * @return  the new <code>UserServer</code>
    */
   public static UserServer addEmailInbox(
-      AOServConnector conn,
+      AoservConnector conn,
       Account.Name packageName,
       User.Name username,
       Gecos fullName,
@@ -134,15 +134,15 @@ public final class AddEmailInbox {
     Server linuxServer = conn.getNet().getHost().get(server).getLinuxServer();
 
     // Grant the new Linux account access to the server
-    int lsaPKey = la.addLinuxServerAccount(linuxServer, UserServer.getDefaultHomeDirectory(username));
-    UserServer lsa = conn.getLinux().getUserServer().get(lsaPKey);
+    int lsaId = la.addLinuxServerAccount(linuxServer, UserServer.getDefaultHomeDirectory(username));
+    UserServer lsa = conn.getLinux().getUserServer().get(lsaId);
 
     // Find the Domain
     Domain sd = linuxServer.getEmailDomain(domain);
 
     // Create the new email address
-    int eaPKey = sd.addEmailAddress(address);
-    Address ea = conn.getEmail().getAddress().get(eaPKey);
+    int eaId = sd.addEmailAddress(address);
+    Address ea = conn.getEmail().getAddress().get(eaId);
 
     // Attach the email address to the new inbox
     lsa.addEmailAddress(ea);

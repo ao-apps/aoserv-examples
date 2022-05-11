@@ -23,8 +23,8 @@
 
 package com.aoindustries.aoserv.examples.postgres;
 
-import com.aoindustries.aoserv.client.AOServConnector;
-import com.aoindustries.aoserv.client.SimpleAOClient;
+import com.aoindustries.aoserv.client.AoservConnector;
+import com.aoindustries.aoserv.client.SimpleAoservClient;
 import com.aoindustries.aoserv.client.account.Account;
 import com.aoindustries.aoserv.client.billing.Package;
 import com.aoindustries.aoserv.client.postgresql.Server;
@@ -48,7 +48,7 @@ public final class AddPostgresUser {
   /**
    * Adds a <code>User</code> to the system.
    *
-   * @param  aoClient        the <code>SimpleAOClient</code> to use
+   * @param  aoClient        the <code>SimpleAoservClient</code> to use
    * @param  packageName     the name of the <code>Package</code>
    * @param  username        the new username to allocate
    * @param  postgresServer  the name of the PostgreSQL server
@@ -56,7 +56,7 @@ public final class AddPostgresUser {
    * @param  password        the password for the new account
    */
   public static void addPostgresUser(
-      SimpleAOClient aoClient,
+      SimpleAoservClient aoClient,
       Account.Name packageName,
       User.Name username,
       Server.Name postgresServer,
@@ -82,7 +82,7 @@ public final class AddPostgresUser {
   /**
    * Adds a <code>User</code> to the system.
    *
-   * @param  conn            the <code>AOServConnector</code> to use
+   * @param  conn            the <code>AoservConnector</code> to use
    * @param  packageName     the name of the <code>Package</code>
    * @param  username        the new username to allocate
    * @param  postgresServer  the name of the PostgreSQL server
@@ -92,7 +92,7 @@ public final class AddPostgresUser {
    * @return  the new <code>UserServer</code>
    */
   public static UserServer addPostgresUser(
-      AOServConnector conn,
+      AoservConnector conn,
       Account.Name packageName,
       User.Name username,
       Server.Name postgresServer,
@@ -117,8 +117,8 @@ public final class AddPostgresUser {
     Server ps = linuxServer.getPostgresServer(postgresServer);
 
     // Grant access to the server
-    int psuPKey = pu.addPostgresServerUser(ps);
-    UserServer psu = conn.getPostgresql().getUserServer().get(psuPKey);
+    int psuId = pu.addPostgresServerUser(ps);
+    UserServer psu = conn.getPostgresql().getUserServer().get(psuId);
 
     // Commit the changes before setting the password
     linuxServer.waitForPostgresUserRebuild();

@@ -27,14 +27,14 @@ import com.aoapps.hodgepodge.io.AOPool;
 import com.aoapps.hodgepodge.io.stream.StreamableInput;
 import com.aoapps.hodgepodge.io.stream.StreamableOutput;
 import com.aoapps.lang.util.ErrorPrinter;
-import com.aoindustries.aoserv.client.AOServClientConfiguration;
-import com.aoindustries.aoserv.client.AOServConnector;
+import com.aoindustries.aoserv.client.AoservClientConfiguration;
+import com.aoindustries.aoserv.client.AoservConnector;
 import com.aoindustries.aoserv.client.infrastructure.VirtualServer;
 import com.aoindustries.aoserv.client.linux.Server;
 import com.aoindustries.aoserv.client.net.Host;
-import com.aoindustries.aoserv.daemon.client.AOServDaemonConnection;
-import com.aoindustries.aoserv.daemon.client.AOServDaemonConnector;
-import com.aoindustries.aoserv.daemon.client.AOServDaemonProtocol;
+import com.aoindustries.aoserv.daemon.client.AoservDaemonConnection;
+import com.aoindustries.aoserv.daemon.client.AoservDaemonConnector;
+import com.aoindustries.aoserv.daemon.client.AoservDaemonProtocol;
 import java.io.EOFException;
 import java.io.IOException;
 import java.io.InputStream;
@@ -57,6 +57,9 @@ public class VncConsoleTunnel implements Runnable {
 
   private static final Logger logger = Logger.getLogger(VncConsoleTunnel.class.getName());
 
+  /**
+   * Runs a VNC console tunnel.
+   */
   @SuppressWarnings("UseOfSystemOutOrSystemErr")
   public static void main(String[] args) {
     if (args.length != 3) {
@@ -64,7 +67,7 @@ public class VncConsoleTunnel implements Runnable {
       System.exit(1);
     } else {
       try {
-        AOServConnector conn = AOServConnector.getConnector();
+        AoservConnector conn = AoservConnector.getConnector();
         Host host = conn.getNet().getHost().get(args[0]);
         if (host == null) {
           throw new SQLException("Unable to find Host: " + args[0]);
@@ -89,6 +92,9 @@ public class VncConsoleTunnel implements Runnable {
   private final InetAddress listenAddress;
   private final int listenPort;
 
+  /**
+   * Creates a new VNC console tunnel.
+   */
   public VncConsoleTunnel(VirtualServer virtualServer, InetAddress listenAddress, int listenPort) {
     this.virtualServer = virtualServer;
     this.listenAddress = listenAddress;
@@ -107,7 +113,7 @@ public class VncConsoleTunnel implements Runnable {
                 () -> {
                   try {
                     Server.DaemonAccess daemonAccess = virtualServer.requestVncConsoleAccess();
-                    AOServDaemonConnector daemonConnector = AOServDaemonConnector.getConnector(
+                    AoservDaemonConnector daemonConnector = AoservDaemonConnector.getConnector(
                         daemonAccess.getHost(),
                         com.aoapps.net.InetAddress.UNSPECIFIED_IPV4,
                         daemonAccess.getPort(),
@@ -115,18 +121,18 @@ public class VncConsoleTunnel implements Runnable {
                         null,
                         100,
                         AOPool.DEFAULT_MAX_CONNECTION_AGE,
-                        AOServClientConfiguration.getSslTruststorePath(),
-                        AOServClientConfiguration.getSslTruststorePassword()
+                        AoservClientConfiguration.getSslTruststorePath(),
+                        AoservClientConfiguration.getSslTruststorePassword()
                     );
-                    try (AOServDaemonConnection daemonConn = daemonConnector.getConnection()) {
+                    try (AoservDaemonConnection daemonConn = daemonConnector.getConnection()) {
                       try {
-                        final StreamableOutput daemonOut = daemonConn.getRequestOut(AOServDaemonProtocol.VNC_CONSOLE);
+                        final StreamableOutput daemonOut = daemonConn.getRequestOut(AoservDaemonProtocol.VNC_CONSOLE);
                         daemonOut.writeLong(daemonAccess.getKey());
                         daemonOut.flush();
 
                         final StreamableInput daemonIn = daemonConn.getResponseIn();
                         int result = daemonIn.read();
-                        if (result == AOServDaemonProtocol.NEXT) {
+                        if (result == AoservDaemonProtocol.NEXT) {
                           final OutputStream socketOut = socket.getOutputStream();
                           final InputStream socketIn = socket.getInputStream();
                           // socketIn -> daemonOut in another thread
@@ -150,7 +156,9 @@ public class VncConsoleTunnel implements Runnable {
                                   logger.log(Level.SEVERE, null, t);
                                 }
                               },
-                              VncConsoleTunnel.class.getSimpleName() + ": " + socket.getInetAddress() + ":" + socket.getPort() + " -> " + socket.getLocalAddress() + ":" + socket.getLocalPort() + ", socketIn -> daemonOut: " + virtualServer.getHost().getName()
+                              VncConsoleTunnel.class.getSimpleName() + ": " + socket.getInetAddress() + ":" + socket.getPort()
+                                  + " -> " + socket.getLocalAddress() + ":" + socket.getLocalPort() + ", socketIn -> daemonOut: "
+                                  + virtualServer.getHost().getName()
                           );
                           inThread.start();
                           //try {
@@ -166,9 +174,9 @@ public class VncConsoleTunnel implements Runnable {
                           //    inThread.join();
                           //}
                         } else {
-                          if (result == AOServDaemonProtocol.IO_EXCEPTION) {
+                          if (result == AoservDaemonProtocol.IO_EXCEPTION) {
                             throw new IOException(daemonIn.readUTF());
-                          } else if (result == AOServDaemonProtocol.SQL_EXCEPTION) {
+                          } else if (result == AoservDaemonProtocol.SQL_EXCEPTION) {
                             throw new SQLException(daemonIn.readUTF());
                           } else if (result == -1) {
                             throw new EOFException();
@@ -195,7 +203,9 @@ public class VncConsoleTunnel implements Runnable {
                     }
                   }
                 },
-                VncConsoleTunnel.class.getSimpleName() + ": " + socket.getInetAddress() + ":" + socket.getPort() + " -> " + socket.getLocalAddress() + ":" + socket.getLocalPort() + ", daemonIn -> socketOut: " + virtualServer.getHost().getName()
+                VncConsoleTunnel.class.getSimpleName() + ": " + socket.getInetAddress() + ":" + socket.getPort()
+                    + " -> " + socket.getLocalAddress() + ":" + socket.getLocalPort() + ", daemonIn -> socketOut: "
+                    + virtualServer.getHost().getName()
             ).start();
           }
         }

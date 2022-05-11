@@ -28,8 +28,8 @@ import com.aoapps.net.DomainName;
 import com.aoapps.net.Email;
 import com.aoapps.net.InetAddress;
 import com.aoapps.sql.SQLUtility;
-import com.aoindustries.aoserv.client.AOServConnector;
-import com.aoindustries.aoserv.client.SimpleAOClient;
+import com.aoindustries.aoserv.client.AoservConnector;
+import com.aoindustries.aoserv.client.SimpleAoservClient;
 import com.aoindustries.aoserv.client.account.Account;
 import com.aoindustries.aoserv.client.billing.PackageCategory;
 import com.aoindustries.aoserv.client.billing.PackageDefinition;
@@ -62,7 +62,7 @@ public final class CreateAccount {
    * Creates an account, automatically allocating as many resources as possible.
    * More control of account layout may be obtained by customizing this code.
    *
-   * @param  conn                the <code>AOServConnector</code> to communicate with
+   * @param  conn                the <code>AoservConnector</code> to communicate with
    * @param  out                 if provided, verbose output is displayed during account creation
    * @param  accountingTemplate  the beginning part of the accounting code
    * @param  server              the hostname of the server to set up the account on
@@ -83,7 +83,7 @@ public final class CreateAccount {
    * @param  mysqlAppUsername    the username that will have limited access to the database
    * @param  mysqlAppPassword    the password associated with the newly created application user account
    * @param  ipAddress           the IP address the site will respond to
-   * @param  ownsIPAddress       if <code>true</code>, the IP address ownership will be changed to the
+   * @param  ownsIpAddress       if <code>true</code>, the IP address ownership will be changed to the
    *                             newly created <code>Package</code>
    * @param  serverAdmin         the email address of the business_administrator who is responsible for web site maintenance
    * @param  primaryHttpHostname  the primary hostname for the HTTP server
@@ -91,7 +91,7 @@ public final class CreateAccount {
    * @param  tomcatVersion       the version of Tomcat to install
    */
   public static void createAccount(
-      AOServConnector conn,
+      AoservConnector conn,
       PrintWriter out,
       Account.Name accountingTemplate,
       String server,
@@ -110,23 +110,23 @@ public final class CreateAccount {
       String mysqlAppPassword,
       InetAddress ipAddress,
       String netDevice,
-      boolean ownsIPAddress,
+      boolean ownsIpAddress,
       Email serverAdmin,
       DomainName primaryHttpHostname,
       DomainName[] altHttpHostnames,
       String tomcatVersion
   ) throws IOException, SQLException, ValidationException {
-    long startTime = System.currentTimeMillis();
-    SimpleAOClient client = conn.getSimpleAOClient();
+    final long startTime = System.currentTimeMillis();
+    final SimpleAoservClient client = conn.getSimpleClient();
 
     // Resolve the parent account
-    Account parent = conn.getAccount().getAccount().get(parentAccount);
+    final Account parent = conn.getAccount().getAccount().get(parentAccount);
     if (parent == null) {
       throw new SQLException("Unable to find Account: " + parentAccount);
     }
 
     // Create the account
-    Account.Name accounting = client.generateAccountingCode(accountingTemplate);
+    final Account.Name accounting = client.generateAccountingCode(accountingTemplate);
     client.addAccount(accounting, null, server, parentAccount, false, false, true, true);
     if (out != null) {
       out.print("Account added, accounting=");
@@ -135,17 +135,18 @@ public final class CreateAccount {
     }
 
     // Resolve the PackageDefinition
-    PackageCategory pc = conn.getBilling().getPackageCategory().get(packageDefinitionCategory);
+    final PackageCategory pc = conn.getBilling().getPackageCategory().get(packageDefinitionCategory);
     if (pc == null) {
       throw new SQLException("Unable to find PackageCategory: " + packageDefinitionCategory);
     }
-    PackageDefinition packageDefinition = parent.getPackageDefinition(pc, packageDefinitionName, packageDefinitionVersion);
+    final PackageDefinition packageDefinition = parent.getPackageDefinition(pc, packageDefinitionName, packageDefinitionVersion);
     if (packageDefinition == null) {
-      throw new SQLException("Unable to find PackageDefinition: accounting=" + parentAccount + ", category=" + packageDefinitionCategory + ", name=" + packageDefinitionName + ", version=" + packageDefinitionVersion);
+      throw new SQLException("Unable to find PackageDefinition: accounting=" + parentAccount + ", category="
+          + packageDefinitionCategory + ", name=" + packageDefinitionName + ", version=" + packageDefinitionVersion);
     }
 
     // Add a Package to the Account
-    Account.Name packageName = client.generatePackageName(Account.Name.valueOf(accounting.toString() + '_'));
+    final Account.Name packageName = client.generatePackageName(Account.Name.valueOf(accounting.toString() + '_'));
     client.addPackage(
         packageName,
         accounting,
@@ -158,7 +159,7 @@ public final class CreateAccount {
     }
 
     // Find the site_name that will be used
-    String siteName = client.generateSiteName(siteNameTemplate);
+    final String siteName = client.generateSiteName(siteNameTemplate);
 
     // Add the Linux group that the JVM and FTP account will use
     client.addLinuxGroup(groupName, packageName, GroupType.USER);
@@ -167,10 +168,10 @@ public final class CreateAccount {
       out.println(groupName);
       out.flush();
     }
-    int linuxServerGroupPKey = client.addLinuxServerGroup(groupName, server);
+    int linuxServerGroupId = client.addLinuxServerGroup(groupName, server);
     if (out != null) {
-      out.print("LinuxServerGroup added, pkey=");
-      out.println(linuxServerGroupPKey);
+      out.print("LinuxServerGroup added, id=");
+      out.println(linuxServerGroupId);
       out.flush();
     }
 
@@ -200,14 +201,14 @@ public final class CreateAccount {
     PosixPath wwwDir = conn.getLinux().getServer().get(
         DomainName.valueOf(server)
     ).getHost().getOperatingSystemVersion().getHttpdSitesDirectory();
-    int jvmLinuxServerAccountPKey = client.addLinuxServerAccount(
+    int jvmLinuxServerAccountId = client.addLinuxServerAccount(
         jvmUsername,
         server,
         PosixPath.valueOf(wwwDir.toString() + '/' + siteName)
     );
     if (out != null) {
-      out.print("UserServer added, pkey=");
-      out.println(jvmLinuxServerAccountPKey);
+      out.print("UserServer added, id=");
+      out.println(jvmLinuxServerAccountId);
       out.flush();
     }
 
@@ -233,20 +234,20 @@ public final class CreateAccount {
       out.println(ftpUsername);
       out.flush();
     }
-    client.addFTPGuestUser(ftpUsername);
+    client.addFtpGuestUser(ftpUsername);
     if (out != null) {
-      out.print("User flagged as FTPGuestUser, username=");
+      out.print("User flagged as FtpGuestUser, username=");
       out.println(ftpUsername);
       out.flush();
     }
-    int ftpLinuxServerAccountPKey = client.addLinuxServerAccount(
+    int ftpLinuxServerAccountId = client.addLinuxServerAccount(
         ftpUsername,
         server,
         PosixPath.valueOf(wwwDir.toString() + '/' + siteName + "/webapps")
     );
     if (out != null) {
-      out.print("UserServer added, pkey=");
-      out.println(ftpLinuxServerAccountPKey);
+      out.print("UserServer added, id=");
+      out.println(ftpLinuxServerAccountId);
       out.flush();
     }
 
@@ -273,10 +274,10 @@ public final class CreateAccount {
     }
 
     // Add the MySQL database
-    /*String mysqlDatabaseName=client.generateMySQLDatabaseName(siteName.replace('-', '_'), "_");
-    int mysqlDatabasePKey=client.addMySQLDatabase(mysqlDatabaseName, server, packageName);
+    /*String mysqlDatabaseName = client.generateMysqlDatabaseName(siteName.replace('-', '_'), "_");
+    int mysqlDatabaseId = client.addMysqlDatabase(mysqlDatabaseName, server, packageName);
     if (out != null) {
-      out.print("Database added, pkey=").println(mysqlDatabasePKey).flush();
+      out.print("Database added, id=").println(mysqlDatabaseId).flush();
     }
 
     // Create the MySQL database application user
@@ -286,17 +287,17 @@ public final class CreateAccount {
         out.print("Username added, username=").println(mysqlAppUsername).flush();
       }
     }
-    client.addMySQLUser(mysqlAppUsername);
+    client.addMysqlUser(mysqlAppUsername);
     if (out != null) {
       out.print("User added, username=").println(mysqlAppUsername).flush();
     }
-    int mysqlServerUserPKey=client.addMySQLServerUser(mysqlAppUsername, server, MySQLHost.ANY_LOCAL_HOST);
+    int mysqlServerUserId=client.addMysqlServerUser(mysqlAppUsername, server, MySQLHost.ANY_LOCAL_HOST);
     if (out != null) {
-      out.print("UserServer added, pkey=").println(mysqlServerUserPKey).flush();
+      out.print("UserServer added, id=").println(mysqlServerUserId).flush();
     }
 
     // Grant permissions to the administrative MySQL user
-    client.addMySQLDBUser(
+    client.addMysqlDbUser(
       mysqlDatabaseName,
       server,
       mysqlAdminUsername,
@@ -316,7 +317,7 @@ public final class CreateAccount {
     }
 
     // Grant permissions to the application MySQL user
-    client.addMySQLDBUser(
+    client.addMysqlDbUser(
       mysqlDatabaseName,
       server,
       mysqlAppUsername,
@@ -339,26 +340,26 @@ public final class CreateAccount {
     if (out != null) {
       out.print("Waiting for UserServer rebuilds on ").println(server).flush();
     }
-    client.waitForMySQLUserRebuild(server);
+    client.waitForMysqlUserRebuild(server);
 
     // Set the password for the application MySQL user
-    client.setMySQLServerUserPassword(mysqlAppUsername, server, mysqlAppPassword);
+    client.setMysqlServerUserPassword(mysqlAppUsername, server, mysqlAppPassword);
     if (out != null) {
       out.print("Password set for UserServer ").println(mysqlAppUsername).flush();
     }
     */
     // Change the IP Address ownership if a private IP is being allotted
-    if (ownsIPAddress) {
-      client.setIPAddressPackage(ipAddress, server, netDevice, packageName);
+    if (ownsIpAddress) {
+      client.setIpAddressPackage(ipAddress, server, netDevice, packageName);
       if (out != null) {
-        out.print("IPAddress package set, package=");
+        out.print("IpAddress package set, package=");
         out.println(packageName);
         out.flush();
       }
     }
 
     // Create the site
-    int tomcatStdSitePKey = client.addHttpdTomcatStdSite(
+    int tomcatStdSiteId = client.addHttpdTomcatStdSite(
         server,
         siteName,
         packageName,
@@ -373,8 +374,8 @@ public final class CreateAccount {
         tomcatVersion
     );
     if (out != null) {
-      out.print("HttpdTomcatStdSite added, pkey=");
-      out.println(tomcatStdSitePKey);
+      out.print("HttpdTomcatStdSite added, id=");
+      out.println(tomcatStdSiteId);
       out.flush();
     }
 

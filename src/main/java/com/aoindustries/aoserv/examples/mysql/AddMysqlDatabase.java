@@ -24,8 +24,8 @@
 package com.aoindustries.aoserv.examples.mysql;
 
 import com.aoapps.net.DomainName;
-import com.aoindustries.aoserv.client.AOServConnector;
-import com.aoindustries.aoserv.client.SimpleAOClient;
+import com.aoindustries.aoserv.client.AoservConnector;
+import com.aoindustries.aoserv.client.SimpleAoservClient;
 import com.aoindustries.aoserv.client.account.Account;
 import com.aoindustries.aoserv.client.billing.Package;
 import com.aoindustries.aoserv.client.mysql.Database;
@@ -36,40 +36,40 @@ import java.sql.SQLException;
 /**
  * Adds a new <code>Database</code> to the system.
  *
- * @see  AddMySQLUser
+ * @see  AddMysqlUser
  *
  * @author  AO Industries, Inc.
  */
-public final class AddMySQLDatabase {
+public final class AddMysqlDatabase {
 
   /** Make no instances. */
-  private AddMySQLDatabase() {
+  private AddMysqlDatabase() {
     throw new AssertionError();
   }
 
   /**
-   * Adds a <code>Database</code> to a <code>Host</code>
+   * Adds a <code>Database</code> to a <code>Host</code>.
    *
-   * @param  aoClient     the <code>SimpleAOClient</code> to use
+   * @param  aoClient     the <code>SimpleAoservClient</code> to use
    * @param  name         the name of the database to add
    * @param  mysqlServer  the name of the MySQL instance
    * @param  server       the hostname of the server to add the database to
    * @param  packageName  the name of the <code>Package</code> that owns the new database
    */
-  public static void addMySQLDatabase(
-      SimpleAOClient aoClient,
+  public static void addMysqlDatabase(
+      SimpleAoservClient aoClient,
       Database.Name name,
       Server.Name mysqlServer,
       String server,
       Account.Name packageName
   ) throws IOException, SQLException {
-    aoClient.addMySQLDatabase(name, mysqlServer, server, packageName);
+    aoClient.addMysqlDatabase(name, mysqlServer, server, packageName);
   }
 
   /**
-   * Adds a <code>Database</code> to a <code>Host</code>
+   * Adds a <code>Database</code> to a <code>Host</code>.
    *
-   * @param  conn  the <code>AOServConnector</code> to use
+   * @param  conn  the <code>AoservConnector</code> to use
    * @param  name  the name of the database to add
    * @param  mysqlServer  the name of the MySQL instance
    * @param  server  the hostname of the server to add the database to
@@ -77,8 +77,8 @@ public final class AddMySQLDatabase {
    *
    * @return  the new <code>Database</code>
    */
-  public static Database addMySQLDatabase(
-      AOServConnector conn,
+  public static Database addMysqlDatabase(
+      AoservConnector conn,
       Database.Name name,
       Server.Name mysqlServer,
       DomainName server,
@@ -89,14 +89,14 @@ public final class AddMySQLDatabase {
     com.aoindustries.aoserv.client.linux.Server ao = conn.getLinux().getServer().get(server);
 
     // Resolve the Server
-    Server ms = ao.getMySQLServer(mysqlServer);
+    Server ms = ao.getMysqlServer(mysqlServer);
 
     // Resolve the Package
     Package pk = conn.getBilling().getPackage().get(packageName);
 
     // Add the Database
-    int mdPKey = ms.addMySQLDatabase(name, pk);
-    Database md = conn.getMysql().getDatabase().get(mdPKey);
+    int mdId = ms.addMysqlDatabase(name, pk);
+    Database md = conn.getMysql().getDatabase().get(mdId);
 
     // Return the object
     return md;
