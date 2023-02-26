@@ -21,7 +21,7 @@ Automation examples for the [AOServ Platform](https://aoindustries.com/aoserv/).
 * [Project Home](https://aoindustries.com/aoserv/examples/)
 * [Changelog](https://aoindustries.com/aoserv/examples/changelog)
 * [API Docs](https://aoindustries.com/aoserv/examples/apidocs/)
-* [Maven Central Repository](https://search.maven.org/artifact/com.aoindustries/aoserv-examples)
+* [Maven Central Repository](https://central.sonatype.com/search?namespace=com.aoindustries&q=a%3Aaoserv-examples)
 * [GitHub](https://github.com/ao-apps/aoserv-examples)
 
 ## Contact Us
