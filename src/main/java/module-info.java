@@ -1,6 +1,6 @@
 /*
  * aoserv-examples - Automation examples for the AOServ Platform.
- * Copyright (C) 2021, 2022  AO Industries, Inc.
+ * Copyright (C) 2021, 2022, 2023  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -31,6 +31,7 @@ module com.aoindustries.aoserv.examples {
   requires com.aoapps.hodgepodge; // <groupId>com.aoapps</groupId><artifactId>ao-hodgepodge</artifactId>
   requires com.aoapps.lang; // <groupId>com.aoapps</groupId><artifactId>ao-lang</artifactId>
   requires com.aoapps.net.types; // <groupId>com.aoapps</groupId><artifactId>ao-net-types</artifactId>
+  requires com.aoapps.security; // <groupId>com.aoapps</groupId><artifactId>ao-security</artifactId>
   requires com.aoapps.sql; // <groupId>com.aoapps</groupId><artifactId>ao-sql</artifactId>
   requires com.aoindustries.aoserv.client; // <groupId>com.aoindustries</groupId><artifactId>aoserv-client</artifactId>
   requires com.aoindustries.aoserv.daemon.client; // <groupId>com.aoindustries</groupId><artifactId>aoserv-daemon-client</artifactId>

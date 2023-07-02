@@ -34,6 +34,7 @@ def upstreamProjects = [
   '../oss/hodgepodge', // <groupId>com.aoapps</groupId><artifactId>ao-hodgepodge</artifactId>
   '../oss/lang', // <groupId>com.aoapps</groupId><artifactId>ao-lang</artifactId>
   '../oss/net-types', // <groupId>com.aoapps</groupId><artifactId>ao-net-types</artifactId>
+  '../oss/security', // <groupId>com.aoapps</groupId><artifactId>ao-security</artifactId>
   '../oss/sql', // <groupId>com.aoapps</groupId><artifactId>ao-sql</artifactId>
   'client', // <groupId>com.aoindustries</groupId><artifactId>aoserv-client</artifactId>
   'daemon-client', // <groupId>com.aoindustries</groupId><artifactId>aoserv-daemon-client</artifactId>
