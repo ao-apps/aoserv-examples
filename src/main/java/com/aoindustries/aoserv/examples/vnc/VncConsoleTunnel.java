@@ -1,6 +1,6 @@
 /*
  * aoserv-examples - Automation examples for the AOServ Platform.
- * Copyright (C) 2009-2013, 2017, 2018, 2019, 2020, 2021, 2022  AO Industries, Inc.
+ * Copyright (C) 2009-2013, 2017, 2018, 2019, 2020, 2021, 2022, 2023  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -157,7 +157,7 @@ public class VncConsoleTunnel implements Runnable {
                                 }
                               },
                               VncConsoleTunnel.class.getSimpleName() + ": " + socket.getInetAddress() + ":" + socket.getPort()
-                                  + " -> " + socket.getLocalAddress() + ":" + socket.getLocalPort() + ", socketIn -> daemonOut: "
+                                  + " → " + socket.getLocalAddress() + ":" + socket.getLocalPort() + ", socketIn → daemonOut: "
                                   + virtualServer.getHost().getName()
                           );
                           inThread.start();
@@ -204,7 +204,7 @@ public class VncConsoleTunnel implements Runnable {
                   }
                 },
                 VncConsoleTunnel.class.getSimpleName() + ": " + socket.getInetAddress() + ":" + socket.getPort()
-                    + " -> " + socket.getLocalAddress() + ":" + socket.getLocalPort() + ", daemonIn -> socketOut: "
+                    + " → " + socket.getLocalAddress() + ":" + socket.getLocalPort() + ", daemonIn → socketOut: "
                     + virtualServer.getHost().getName()
             ).start();
           }
