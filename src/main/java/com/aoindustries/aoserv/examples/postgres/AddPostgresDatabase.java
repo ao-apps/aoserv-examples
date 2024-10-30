@@ -1,6 +1,6 @@
 /*
  * aoserv-examples - Automation examples for the AOServ Platform.
- * Copyright (C) 2001-2013, 2017, 2018, 2020, 2021, 2022  AO Industries, Inc.
+ * Copyright (C) 2001-2013, 2017, 2018, 2020, 2021, 2022, 2024  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -35,13 +35,10 @@ import java.io.IOException;
 import java.sql.SQLException;
 
 /**
- * <p>
  * Before creating a new PostgreSQL database, please make sure that a <code>User</code>
  * has been added for use as the Database Administrator (DBA).
- * </p>
- * <p>
- * The possible values for <code>encoding</code> may be found in the <code>postgres_encodings</code> table.
- * </p>
+ *
+ * <p>The possible values for <code>encoding</code> may be found in the <code>postgres_encodings</code> table.</p>
  *
  * @see  AddPostgresUser
  * @see  com.aoindustries.aoserv.client.postgresql.Encoding
