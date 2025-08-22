@@ -161,7 +161,7 @@ public class VncConsoleTunnel implements Runnable {
                                   + virtualServer.getHost().getName()
                           );
                           inThread.start();
-                          //try {
+                          // try {
                           // daemonIn -> socketOut in this thread
                           byte[] buff = new byte[4096];
                           int ret;
@@ -169,10 +169,10 @@ public class VncConsoleTunnel implements Runnable {
                             socketOut.write(buff, 0, ret);
                             socketOut.flush();
                           }
-                          //} finally {
+                          // } finally {
                           // Let the in thread complete its work before closing streams
-                          //    inThread.join();
-                          //}
+                          //     inThread.join();
+                          // }
                         } else {
                           if (result == AoservDaemonProtocol.IO_EXCEPTION) {
                             throw new IOException(daemonIn.readUTF());

@@ -388,10 +388,10 @@ public final class CreateAccount {
     client.waitForHttpdSiteRebuild(server);
 
     // Set the access password for the site
-    //client.initializeHttpdSitePasswdFile(siteName, server, jvmUsername, jvmPassword);
-    //if (out != null) {
-    //  out.println("Initialized passwd file").flush();
-    //}
+    // client.initializeHttpdSitePasswdFile(siteName, server, jvmUsername, jvmPassword);
+    // if (out != null) {
+    //   out.println("Initialized passwd file").flush();
+    // }
 
     long timeSpan = System.currentTimeMillis() - startTime;
 
