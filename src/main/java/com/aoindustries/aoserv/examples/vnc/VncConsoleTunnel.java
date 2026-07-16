@@ -1,6 +1,6 @@
 /*
  * aoserv-examples - Automation examples for the AOServ Platform.
- * Copyright (C) 2009-2013, 2017, 2018, 2019, 2020, 2021, 2022, 2023  AO Industries, Inc.
+ * Copyright (C) 2009-2013, 2017, 2018, 2019, 2020, 2021, 2022, 2023, 2026  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -150,8 +150,6 @@ public class VncConsoleTunnel implements Runnable {
                                     // Always close after VNC tunnel since this is a connection-terminal command
                                     daemonConn.abort();
                                   }
-                                } catch (ThreadDeath td) {
-                                  throw td;
                                 } catch (Throwable t) {
                                   logger.log(Level.SEVERE, null, t);
                                 }
@@ -189,15 +187,11 @@ public class VncConsoleTunnel implements Runnable {
                         daemonConn.abort();
                       }
                     }
-                  } catch (ThreadDeath td) {
-                    throw td;
                   } catch (Throwable t) {
                     logger.log(Level.SEVERE, null, t);
                   } finally {
                     try {
                       socket.close();
-                    } catch (ThreadDeath td) {
-                      throw td;
                     } catch (Throwable t) {
                       logger.log(Level.SEVERE, null, t);
                     }
@@ -209,8 +203,6 @@ public class VncConsoleTunnel implements Runnable {
             ).start();
           }
         }
-      } catch (ThreadDeath td) {
-        throw td;
       } catch (Throwable t) {
         logger.log(Level.SEVERE, null, t);
         try {
