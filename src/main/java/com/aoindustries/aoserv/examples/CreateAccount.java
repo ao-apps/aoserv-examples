@@ -1,6 +1,6 @@
 /*
  * aoserv-examples - Automation examples for the AOServ Platform.
- * Copyright (C) 2001-2009, 2015, 2017, 2018, 2019, 2020, 2021, 2022  AO Industries, Inc.
+ * Copyright (C) 2001-2009, 2015, 2017, 2018, 2019, 2020, 2021, 2022, 2026  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -274,80 +274,80 @@ public final class CreateAccount {
     }
 
     // Add the MySQL database
-    /*String mysqlDatabaseName = client.generateMysqlDatabaseName(siteName.replace('-', '_'), "_");
-    int mysqlDatabaseId = client.addMysqlDatabase(mysqlDatabaseName, server, packageName);
-    if (out != null) {
-      out.print("Database added, id=").println(mysqlDatabaseId).flush();
-    }
+    // String mysqlDatabaseName = client.generateMysqlDatabaseName(siteName.replace('-', '_'), "_");
+    // int mysqlDatabaseId = client.addMysqlDatabase(mysqlDatabaseName, server, packageName);
+    // if (out != null) {
+    //   out.print("Database added, id=").println(mysqlDatabaseId).flush();
+    // }
+    //
+    // // Create the MySQL database application user
+    // if (client.isUsernameAvailable(mysqlAppUsername)) {
+    //   client.addUsername(packageName, mysqlAppUsername);
+    //   if (out != null) {
+    //     out.print("Username added, username=").println(mysqlAppUsername).flush();
+    //   }
+    // }
+    // client.addMysqlUser(mysqlAppUsername);
+    // if (out != null) {
+    //   out.print("User added, username=").println(mysqlAppUsername).flush();
+    // }
+    // int mysqlServerUserId=client.addMysqlServerUser(mysqlAppUsername, server, MySQLHost.ANY_LOCAL_HOST);
+    // if (out != null) {
+    //   out.print("UserServer added, id=").println(mysqlServerUserId).flush();
+    // }
+    //
+    // // Grant permissions to the administrative MySQL user
+    // client.addMysqlDbUser(
+    //   mysqlDatabaseName,
+    //   server,
+    //   mysqlAdminUsername,
+    //   true,
+    //   true,
+    //   true,
+    //   true,
+    //   true,
+    //   true,
+    //   true,
+    //   true,
+    //   true,
+    //   true
+    // );
+    // if (out != null) {
+    //   out.print("Granted full privileges to ").println(mysqlAdminUsername).flush();
+    // }
+    //
+    // // Grant permissions to the application MySQL user
+    // client.addMysqlDbUser(
+    //   mysqlDatabaseName,
+    //   server,
+    //   mysqlAppUsername,
+    //   true,
+    //   true,
+    //   true,
+    //   true,
+    //   true,
+    //   false,
+    //   false,
+    //   true,
+    //   true,
+    //   true
+    // );
+    // if (out != null) {
+    //   out.print("Granted insert, update, select, delete, create, alter privileges to ").println(mysqlAppUsername).flush();
+    // }
+    //
+    // // Make sure the MySQL system updates are complete before continuing
+    // if (out != null) {
+    //   out.print("Waiting for UserServer rebuilds on ").println(server).flush();
+    // }
+    // client.waitForMysqlUserRebuild(server);
+    //
+    // // Set the password for the application MySQL user
+    // client.setMysqlServerUserPassword(mysqlAppUsername, server, mysqlAppPassword);
+    // if (out != null) {
+    //   out.print("Password set for UserServer ").println(mysqlAppUsername).flush();
+    // }
 
-    // Create the MySQL database application user
-    if (client.isUsernameAvailable(mysqlAppUsername)) {
-      client.addUsername(packageName, mysqlAppUsername);
-      if (out != null) {
-        out.print("Username added, username=").println(mysqlAppUsername).flush();
-      }
-    }
-    client.addMysqlUser(mysqlAppUsername);
-    if (out != null) {
-      out.print("User added, username=").println(mysqlAppUsername).flush();
-    }
-    int mysqlServerUserId=client.addMysqlServerUser(mysqlAppUsername, server, MySQLHost.ANY_LOCAL_HOST);
-    if (out != null) {
-      out.print("UserServer added, id=").println(mysqlServerUserId).flush();
-    }
-
-    // Grant permissions to the administrative MySQL user
-    client.addMysqlDbUser(
-      mysqlDatabaseName,
-      server,
-      mysqlAdminUsername,
-      true,
-      true,
-      true,
-      true,
-      true,
-      true,
-      true,
-      true,
-      true,
-      true
-    );
-    if (out != null) {
-      out.print("Granted full privileges to ").println(mysqlAdminUsername).flush();
-    }
-
-    // Grant permissions to the application MySQL user
-    client.addMysqlDbUser(
-      mysqlDatabaseName,
-      server,
-      mysqlAppUsername,
-      true,
-      true,
-      true,
-      true,
-      true,
-      false,
-      false,
-      true,
-      true,
-      true
-    );
-    if (out != null) {
-      out.print("Granted insert, update, select, delete, create, alter privileges to ").println(mysqlAppUsername).flush();
-    }
-
-    // Make sure the MySQL system updates are complete before continuing
-    if (out != null) {
-      out.print("Waiting for UserServer rebuilds on ").println(server).flush();
-    }
-    client.waitForMysqlUserRebuild(server);
-
-    // Set the password for the application MySQL user
-    client.setMysqlServerUserPassword(mysqlAppUsername, server, mysqlAppPassword);
-    if (out != null) {
-      out.print("Password set for UserServer ").println(mysqlAppUsername).flush();
-    }
-    */
     // Change the IP Address ownership if a private IP is being allotted
     if (ownsIpAddress) {
       client.setIpAddressPackage(ipAddress, server, netDevice, packageName);
