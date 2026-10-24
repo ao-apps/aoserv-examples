@@ -151,7 +151,7 @@ public class VncConsoleTunnel implements Runnable {
                                     daemonConn.abort();
                                   }
                                 } catch (Throwable t) {
-                                  logger.log(Level.SEVERE, null, t);
+                                  logger.log(Level.SEVERE, "TODO: message here", t);
                                 }
                               },
                               VncConsoleTunnel.class.getSimpleName() + ": " + socket.getInetAddress() + ":" + socket.getPort()
@@ -188,12 +188,12 @@ public class VncConsoleTunnel implements Runnable {
                       }
                     }
                   } catch (Throwable t) {
-                    logger.log(Level.SEVERE, null, t);
+                    logger.log(Level.SEVERE, "TODO: message here", t);
                   } finally {
                     try {
                       socket.close();
                     } catch (Throwable t) {
-                      logger.log(Level.SEVERE, null, t);
+                      logger.log(Level.SEVERE, "TODO: message here", t);
                     }
                   }
                 },
@@ -204,11 +204,11 @@ public class VncConsoleTunnel implements Runnable {
           }
         }
       } catch (Throwable t) {
-        logger.log(Level.SEVERE, null, t);
+        logger.log(Level.SEVERE, "TODO: message here", t);
         try {
           Thread.sleep(10000);
         } catch (InterruptedException err) {
-          logger.log(Level.WARNING, null, err);
+          logger.log(Level.WARNING, "TODO: message here", err);
           // Restore the interrupted status
           Thread.currentThread().interrupt();
         }
