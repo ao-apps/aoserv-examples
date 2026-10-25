@@ -1,6 +1,6 @@
 /*
  * aoserv-examples - Automation examples for the AOServ Platform.
- * Copyright (C) 2021, 2022, 2023  AO Industries, Inc.
+ * Copyright (C) 2021, 2022, 2023, 2026  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -21,12 +21,6 @@
  * along with aoserv-examples.  If not, see <https://www.gnu.org/licenses/>.
  */
 module com.aoindustries.aoserv.examples {
-  exports com.aoindustries.aoserv.examples;
-  exports com.aoindustries.aoserv.examples.email;
-  exports com.aoindustries.aoserv.examples.ftp;
-  exports com.aoindustries.aoserv.examples.mysql;
-  exports com.aoindustries.aoserv.examples.postgres;
-  exports com.aoindustries.aoserv.examples.vnc;
   // Direct
   requires com.aoapps.hodgepodge; // <groupId>com.aoapps</groupId><artifactId>ao-hodgepodge</artifactId>
   requires com.aoapps.lang; // <groupId>com.aoapps</groupId><artifactId>ao-lang</artifactId>
@@ -37,4 +31,11 @@ module com.aoindustries.aoserv.examples {
   requires com.aoindustries.aoserv.daemon.client; // <groupId>com.aoindustries</groupId><artifactId>aoserv-daemon-client</artifactId>
   // Java SE
   requires java.sql;
+
+  exports com.aoindustries.aoserv.examples;
+  exports com.aoindustries.aoserv.examples.email;
+  exports com.aoindustries.aoserv.examples.ftp;
+  exports com.aoindustries.aoserv.examples.mysql;
+  exports com.aoindustries.aoserv.examples.postgres;
+  exports com.aoindustries.aoserv.examples.vnc;
 }
