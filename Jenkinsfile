@@ -43,6 +43,10 @@ binding.setVariable('upstreamProjects', [
   'daemon-client', // <groupId>com.aoindustries</groupId><artifactId>aoserv-daemon-client</artifactId>
 ])
 
+// This project provides examples of API usage for developers to run locally.
+// This project will not be re-released solely for updated dependency versions.
+binding.setVariable('scmAdditionalAuditBranches', [])
+
 /******************************************************************************************
  *                                                                                        *
  * Everything below this line is identical for all projects, except the copied matrix     *
